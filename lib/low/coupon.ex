@@ -1,6 +1,8 @@
 
 defmodule Low.Coupon do
   use Ecto.Schema
+  use Ecto.Repo, otp_app: :my_app, adapter: Ecto.Adapters.Postgres
+
   import Ecto.Changeset
 
   schema "coupons" do
@@ -11,10 +13,17 @@ defmodule Low.Coupon do
   end
 
   #create a changeset
+  @spec changeset(
+          {map(), map()}
+          | %{
+              :__struct__ => atom() | %{:__changeset__ => map(), optional(any()) => any()},
+              optional(atom()) => any()
+            }
+        ) :: Ecto.Changeset.t()
   def changeset(coupon, params \\ %{}) do
     coupon
-    |> cast(params, [:id, :code, :active, :count, :promo_id])
-    |> validate_required([:id, :code, :promo_id])
+    |> cast(params, [:code, :active, :count, :promo_id])
+    |> validate_required([:code, :promo_id])
   end
 
   #create a new coupon
@@ -46,4 +55,6 @@ defmodule Low.Coupon do
    def get_coupon_by_code(code) do
     Low.Repo.get_by(Low.Coupon, code: code)
    end
+
+
   end
