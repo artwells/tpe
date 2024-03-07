@@ -9,7 +9,10 @@ defmodule Low.Coupon do
     field :code, :string
     field :active, :boolean
     field :count, :integer
+    field :max_count, :integer
     field :promo_id, :integer
+    field :inserted_at, :utc_datetime
+    field :updated_at, :utc_datetime
   end
 
   #create a changeset
@@ -22,12 +25,14 @@ defmodule Low.Coupon do
         ) :: Ecto.Changeset.t()
   def changeset(coupon, params \\ %{}) do
     coupon
-    |> cast(params, [:code, :active, :count, :promo_id])
+    |> cast(params, [:code, :active, :count, :promo_id, :inserted_at, :updated_at])
     |> validate_required([:code, :promo_id])
   end
 
   #create a new coupon
   def create_coupon(attrs \\ %{}) do
+    # add current datetime to inserted_at and updated_at
+    IO.puts("attrs: #{inspect(attrs)}")
     %Low.Coupon{}
     |> Low.Coupon.changeset(attrs)
     |> Low.Repo.insert()
@@ -35,6 +40,7 @@ defmodule Low.Coupon do
 
 
   #increment the count of a coupon
+
   def increment_count(coupon) do
     coupon
     |> Ecto.Changeset.change(count: coupon.count + 1)
@@ -43,6 +49,7 @@ defmodule Low.Coupon do
 
   #change a coupon
   def change_coupon(coupon, attrs \\ %{}) do
+    attrs = Map.put(attrs, :updated_at, DateTime.utc_now())
     coupon
     |> Low.Coupon.changeset(attrs)
     |> Low.Repo.update()

@@ -1,8 +1,9 @@
 coup = %Low.Coupon{}
 cs = Low.Coupon.changeset(coup, %{code: "dfdfd", active: true, promo_id: "454"})
 Low.Repo.insert(cs)
+Low.Coupon.create_coupon(%{code: "dfdfd", active: true, promo_id: "454"})
 
-update 
+update
 coup = Low.Coupon |> Ecto.Query.first |> Low.Repo.one
 cs = Low.Coupon.changeset(coup, %{code: "OLDdfdfd", active: true, promo_id: "1454"})
 Low.Repo.update(cs)

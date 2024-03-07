@@ -9,18 +9,18 @@ defmodule Low.CouponTest do
 
 
   test "changeset/2 casts and validates the coupon changeset" do
-    changeset = Coupon.changeset(%Coupon{}, %{code: "ABC123", active: true, count: 10, promo_id: 1})
+    changeset = Coupon.changeset(%Coupon{}, %{code: "ABC123", active: true, count: 10, promo_id: 1, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now()})
 
     assert changeset.valid?
     assert %{code: "ABC123", active: true, count: 10, promo_id: 1} == changeset.changes
   end
 
   test "create_coupon/1 creates a new coupon" do
-    attrs = %{code: "DEF456", active: true, count: 5, promo_id: 2}
+    attrs = %{code: "DEF4056", active: true, count: 5, promo_id: 2}
     {:ok, coupon} = Coupon.create_coupon(attrs)
 
     assert %Low.Coupon{} = coupon
-    assert "DEF456" == coupon.code
+    assert "DEF4056" == coupon.code
     assert true == coupon.active
     assert 5 == coupon.count
     assert 2 == coupon.promo_id
@@ -36,7 +36,7 @@ defmodule Low.CouponTest do
   end
 
   test "change_coupon/2 changes the attributes of a coupon" do
-    coupon = %{code: "ABC123", active: true, count: 10, promo_id: 1}
+    coupon = %{code: "ABC1239", active: true, count: 10, promo_id: 1}
     {:ok, coupon} = Coupon.create_coupon(coupon)
     attrs = %{code: "DEF456", active: false, count: 5, promo_id: 2}
     {:ok, updated_coupon} = Coupon.change_coupon(coupon, attrs)
@@ -61,7 +61,6 @@ defmodule Low.CouponTest do
 
   test "get_coupon_by_code/1 retrieves a coupon by code" do
     {:ok, retrieved_coupon} = Coupon.create_coupon(%{code: "ABC1236", active: true, count: 10, promo_id: 1})
-    # retrieved_coupon = Coupon.get_coupon_by_code("ABC123")
 
     assert %Low.Coupon{} = retrieved_coupon
     assert "ABC1236" == retrieved_coupon.code
