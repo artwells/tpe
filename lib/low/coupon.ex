@@ -73,7 +73,6 @@ defmodule Low.Coupon do
 
   # Get coupon by code checking to see that count is not greater than max_count
   def get_coupon_by_code_and_count(code) do
-
     case get_coupon_by_code(code)
     do
       {:ok, coupon} ->

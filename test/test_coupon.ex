@@ -91,4 +91,15 @@ defmodule Low.CouponTest do
     assert :coupon_count_greater_than_max_count == error
   end
 
+  #test that checks that updated_at is updated when a coupon is changed and inserted_at is unchanged
+  test "updated_at is updated when a coupon is changed" do
+    {:ok, coupon} = Coupon.create_coupon(%{code: "ABC12390", active: true, count: 10, promo_id: 1})
+    updated_at = coupon.updated_at
+    inserted_at = coupon.inserted_at
+    Process.sleep(1000)
+    {:ok, updated_coupon} = Coupon.change_coupon(coupon, %{code: "ABC12390", active: true, count: 10, promo_id: 1})
+    assert updated_at < updated_coupon.updated_at
+    assert inserted_at == updated_coupon.inserted_at
+  end
+
 end
