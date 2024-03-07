@@ -9,7 +9,7 @@ defmodule Low.CouponTest do
 
 
   test "changeset/2 casts and validates the coupon changeset" do
-    changeset = Coupon.changeset(%Coupon{}, %{code: "ABC123", active: true, count: 10, promo_id: 1, inserted_at: DateTime.utc_now(), updated_at: DateTime.utc_now()})
+    changeset = Coupon.changeset(%Coupon{}, %{code: "ABC123", active: true, count: 10, promo_id: 1})
 
     assert changeset.valid?
     assert %{code: "ABC123", active: true, count: 10, promo_id: 1} == changeset.changes
@@ -68,4 +68,25 @@ defmodule Low.CouponTest do
     assert 10 == retrieved_coupon.count
     assert 1 == retrieved_coupon.promo_id
   end
+
+
+
+  # ...
+
+  test "get_coupon_by_code_and_count/1 retrieves a coupon by code and count" do
+    {:ok, _coupon} = Coupon.create_coupon(%{code: "ABC12307", active: true, count: 5, max_count: 6, promo_id: 1})
+    {:ok, retrieved_coupon} = Coupon.get_coupon_by_code_and_count("ABC12307")
+
+    assert %Low.Coupon{} = retrieved_coupon
+    assert "ABC12307" == retrieved_coupon.code
+    assert true == retrieved_coupon.active
+    assert 5 == retrieved_coupon.count
+    assert 1 == retrieved_coupon.promo_id
+    # increse count to 11 and test for error
+    {:ok, _updated_coupon} = Coupon.increment_count(retrieved_coupon)
+    {:error, error} = Coupon.get_coupon_by_code_and_count("ABC12307")
+
+    assert "Coupon count is greater than max count" == error
+  end
+
 end

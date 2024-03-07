@@ -1,4 +1,3 @@
-
 defmodule Low.Coupon do
   use Ecto.Schema
   use Ecto.Repo, otp_app: :my_app, adapter: Ecto.Adapters.Postgres
@@ -15,7 +14,7 @@ defmodule Low.Coupon do
     field :updated_at, :utc_datetime
   end
 
-  #create a changeset
+  # Create a changeset
   @spec changeset(
           {map(), map()}
           | %{
@@ -25,29 +24,26 @@ defmodule Low.Coupon do
         ) :: Ecto.Changeset.t()
   def changeset(coupon, params \\ %{}) do
     coupon
-    |> cast(params, [:code, :active, :count, :promo_id, :inserted_at, :updated_at])
+    |> cast(params, [:code, :active, :count, :max_count, :promo_id, :inserted_at, :updated_at])
     |> validate_required([:code, :promo_id])
   end
 
-  #create a new coupon
+  # Create a new coupon
   def create_coupon(attrs \\ %{}) do
-    # add current datetime to inserted_at and updated_at
-    IO.puts("attrs: #{inspect(attrs)}")
+    # Add current datetime to inserted_at and updated_at
     %Low.Coupon{}
     |> Low.Coupon.changeset(attrs)
     |> Low.Repo.insert()
   end
 
-
-  #increment the count of a coupon
-
+  # Increment the count of a coupon
   def increment_count(coupon) do
     coupon
     |> Ecto.Changeset.change(count: coupon.count + 1)
     |> Low.Repo.update()
   end
 
-  #change a coupon
+  # Change a coupon
   def change_coupon(coupon, attrs \\ %{}) do
     attrs = Map.put(attrs, :updated_at, DateTime.utc_now())
     coupon
@@ -59,9 +55,17 @@ defmodule Low.Coupon do
     Low.Repo.get(Low.Coupon, id)
   end
 
-   def get_coupon_by_code(code) do
+  def get_coupon_by_code(code) do
     Low.Repo.get_by(Low.Coupon, code: code)
-   end
-
-
   end
+
+  # Get coupon by code checking to see that count is not greater than max_count
+  def get_coupon_by_code_and_count(code) do
+    coupon = Low.Repo.get_by(Low.Coupon, code: code)
+    if coupon.count < coupon.max_count do
+      {:ok, coupon}
+    else
+      {:error, "Coupon count is greater than max count"}
+    end
+  end
+end
