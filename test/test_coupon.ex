@@ -7,7 +7,6 @@ defmodule Low.CouponTest do
     :ok
   end
 
-
   test "changeset/2 casts and validates the coupon changeset" do
     changeset = Coupon.changeset(%Coupon{}, %{code: "ABC123", active: true, count: 10, promo_id: 1})
 
@@ -72,34 +71,39 @@ defmodule Low.CouponTest do
     assert 1 == retrieved_coupon.promo_id
   end
 
-  test "get_coupon_by_code_and_count/1 retrieves a coupon by code and count" do
+  test "get_valid_coupon/1 retrieves active coupon by code and count" do
     {:ok, _coupon} = Coupon.create_coupon(%{code: "ABC12307", active: true, count: 5, max_count: 6, promo_id: 1})
 
-    {:error, error} = Coupon.get_coupon_by_code_and_count("ABC1236NOTACOUPON")
+    {:error, error} = Coupon.get_valid_coupon("ABC1236NOTACOUPON")
     assert :coupon_not_found == error
 
-    {:ok, retrieved_coupon} = Coupon.get_coupon_by_code_and_count("ABC12307")
+    {:ok, retrieved_coupon} = Coupon.get_valid_coupon("ABC12307")
     assert %Low.Coupon{} = retrieved_coupon
     assert "ABC12307" == retrieved_coupon.code
     assert true == retrieved_coupon.active
     assert 5 == retrieved_coupon.count
     assert 1 == retrieved_coupon.promo_id
-    # increse count to 11 and test for error
+
+    {:ok, _updated_coupon} = Coupon.change_coupon(retrieved_coupon, %{active: false})
+    {:error, error} = Coupon.get_valid_coupon("ABC12307")
+    assert :coupon_not_active == error
+    {:ok, retrieved_coupon} = Coupon.get_coupon_by_code("ABC12307")
+    {:ok, _updated_coupon} = Coupon.change_coupon(retrieved_coupon, %{active: true})
+    # increase count to 11 and test for error
     {:ok, _updated_coupon} = Coupon.increment_count(retrieved_coupon)
-    {:error, error} = Coupon.get_coupon_by_code_and_count("ABC12307")
+    {:error, error} = Coupon.get_valid_coupon("ABC12307")
 
     assert :coupon_count_greater_than_max_count == error
   end
 
-  #test that checks that updated_at is updated when a coupon is changed and inserted_at is unchanged
+  # test that checks that updated_at is updated when a coupon is changed and inserted_at is unchanged
   test "updated_at is updated when a coupon is changed" do
     {:ok, coupon} = Coupon.create_coupon(%{code: "ABC12390", active: true, count: 10, promo_id: 1})
     updated_at = coupon.updated_at
     inserted_at = coupon.inserted_at
     Process.sleep(1000)
-    {:ok, updated_coupon} = Coupon.change_coupon(coupon, %{code: "ABC12390", active: true, count: 10, promo_id: 1})
+    {:ok, updated_coupon} = Coupon.change_coupon(coupon, %{count: 7, promo_id: 2})
     assert updated_at < updated_coupon.updated_at
     assert inserted_at == updated_coupon.inserted_at
   end
-
 end

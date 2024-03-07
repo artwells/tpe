@@ -15,16 +15,10 @@ defmodule Low.Coupon do
   end
 
   # Create a changeset
-  @spec changeset(
-          {map(), map()}
-          | %{
-              :__struct__ => atom() | %{:__changeset__ => map(), optional(any()) => any()},
-              optional(atom()) => any()
-            }
-        ) :: Ecto.Changeset.t()
+
   def changeset(coupon, params \\ %{}) do
     coupon
-    |> cast(params, [:code, :active, :count, :max_count, :promo_id, :inserted_at, :updated_at])
+    |> cast(params, [:code, :active, :count, :max_count, :promo_id, :updated_at])
     |> validate_required([:code, :promo_id])
   end
 
@@ -44,7 +38,7 @@ defmodule Low.Coupon do
 
   # Change a coupon
   def change_coupon(coupon, attrs \\ %{}) do
-    attrs = Map.put(attrs, :updated_at, DateTime.utc_now())
+   attrs = Map.put(attrs, :updated_at, DateTime.utc_now())
     coupon
     |> Low.Coupon.changeset(attrs)
     |> Low.Repo.update()
@@ -72,17 +66,25 @@ defmodule Low.Coupon do
   end
 
   # Get coupon by code checking to see that count is not greater than max_count
-  def get_coupon_by_code_and_count(code) do
+  def get_valid_coupon(code) do
     case get_coupon_by_code(code)
     do
       {:ok, coupon} ->
-        if coupon.count < coupon.max_count do
-          {:ok, coupon}
-        else
+        cond do
+        coupon.active != :true ->
+          {:error, :coupon_not_active}
+        coupon.count >= coupon.max_count ->
           {:error, :coupon_count_greater_than_max_count}
-        end
+        true ->
+          {:ok, coupon}
+      end
       {:error, error} ->
         {:error, error}
     end
+  end
+
+  # insert a map of coupons
+  def insert_coupons(coupons) do
+    Low.Repo.insert_all(Low.Coupon, coupons, on_conflict: :nothing)
   end
 end
