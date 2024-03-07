@@ -30,7 +30,6 @@ defmodule Low.Coupon do
 
   # Create a new coupon
   def create_coupon(attrs \\ %{}) do
-    # Add current datetime to inserted_at and updated_at
     %Low.Coupon{}
     |> Low.Coupon.changeset(attrs)
     |> Low.Repo.insert()
@@ -52,20 +51,39 @@ defmodule Low.Coupon do
   end
 
   def get_coupon(id) do
-    Low.Repo.get(Low.Coupon, id)
+    coupon = Low.Repo.get(Low.Coupon, id)
+    cond do
+      coupon == nil ->
+        {:error, :coupon_not_found}
+      true ->
+        {:ok, coupon}
+    end
   end
 
   def get_coupon_by_code(code) do
-    Low.Repo.get_by(Low.Coupon, code: code)
+    coupon = Low.Repo.get_by(Low.Coupon, code: code)
+    #return error if coupon not found
+    cond do
+      coupon == nil ->
+        {:error, :coupon_not_found}
+      true ->
+        {:ok, coupon}
+    end
   end
 
   # Get coupon by code checking to see that count is not greater than max_count
   def get_coupon_by_code_and_count(code) do
-    coupon = Low.Repo.get_by(Low.Coupon, code: code)
-    if coupon.count < coupon.max_count do
-      {:ok, coupon}
-    else
-      {:error, "Coupon count is greater than max count"}
+
+    case get_coupon_by_code(code)
+    do
+      {:ok, coupon} ->
+        if coupon.count < coupon.max_count do
+          {:ok, coupon}
+        else
+          {:error, :coupon_count_greater_than_max_count}
+        end
+      {:error, error} ->
+        {:error, error}
     end
   end
 end

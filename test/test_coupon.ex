@@ -50,7 +50,7 @@ defmodule Low.CouponTest do
 
   test "get_coupon/1 retrieves a coupon by id" do
     {:ok, coupon} = Coupon.create_coupon(%{code: "ABC1235", active: true, count: 10, promo_id: 1})
-    retrieved_coupon = Coupon.get_coupon(coupon.id)
+    {:ok, retrieved_coupon} = Coupon.get_coupon(coupon.id)
 
     assert %Low.Coupon{} = retrieved_coupon
     assert "ABC1235" == retrieved_coupon.code
@@ -60,8 +60,11 @@ defmodule Low.CouponTest do
   end
 
   test "get_coupon_by_code/1 retrieves a coupon by code" do
-    {:ok, retrieved_coupon} = Coupon.create_coupon(%{code: "ABC1236", active: true, count: 10, promo_id: 1})
+    Coupon.create_coupon(%{code: "ABC1236", active: true, count: 10, promo_id: 1})
 
+    {:error, error} = Coupon.get_coupon_by_code("ABC1236NOTACOUPON")
+    assert :coupon_not_found == error
+    {:ok, retrieved_coupon} = Coupon.get_coupon_by_code("ABC1236")
     assert %Low.Coupon{} = retrieved_coupon
     assert "ABC1236" == retrieved_coupon.code
     assert true == retrieved_coupon.active
@@ -69,14 +72,13 @@ defmodule Low.CouponTest do
     assert 1 == retrieved_coupon.promo_id
   end
 
-
-
-  # ...
-
   test "get_coupon_by_code_and_count/1 retrieves a coupon by code and count" do
     {:ok, _coupon} = Coupon.create_coupon(%{code: "ABC12307", active: true, count: 5, max_count: 6, promo_id: 1})
-    {:ok, retrieved_coupon} = Coupon.get_coupon_by_code_and_count("ABC12307")
 
+    {:error, error} = Coupon.get_coupon_by_code_and_count("ABC1236NOTACOUPON")
+    assert :coupon_not_found == error
+
+    {:ok, retrieved_coupon} = Coupon.get_coupon_by_code_and_count("ABC12307")
     assert %Low.Coupon{} = retrieved_coupon
     assert "ABC12307" == retrieved_coupon.code
     assert true == retrieved_coupon.active
@@ -86,7 +88,7 @@ defmodule Low.CouponTest do
     {:ok, _updated_coupon} = Coupon.increment_count(retrieved_coupon)
     {:error, error} = Coupon.get_coupon_by_code_and_count("ABC12307")
 
-    assert "Coupon count is greater than max count" == error
+    assert :coupon_count_greater_than_max_count == error
   end
 
 end
