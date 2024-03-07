@@ -84,6 +84,7 @@ defmodule Low.Coupon do
   end
 
   # insert a map of coupons
+
   def insert_coupons(coupons) do
     Low.Repo.insert_all(Low.Coupon, coupons, on_conflict: :nothing)
   end
