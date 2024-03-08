@@ -4,6 +4,8 @@ defmodule Low.Coupon do
 
   import Ecto.Changeset
 
+  @insert_all_timeout 600000
+
   schema "coupons" do
     field :code, :string
     field :active, :boolean
@@ -86,6 +88,10 @@ defmodule Low.Coupon do
   # insert a map of coupons
 
   def insert_coupons(coupons) do
-    Low.Repo.insert_all(Low.Coupon, coupons, on_conflict: :nothing)
+    Low.Repo.transaction(fn ->
+      Low.Repo.insert_all(Low.Coupon, coupons, on_conflict: :nothing)
+    end, timeout: @insert_all_timeout) # Set the timeout value in milliseconds
+
+
   end
 end
