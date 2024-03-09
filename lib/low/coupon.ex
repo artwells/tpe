@@ -102,7 +102,12 @@ defmodule Low.Coupon do
       {:ok, {count, _}} = Low.Coupon.insert_coupons(chunk)
       count + acc
     end)
-    IO.puts("Inserted #{success_count} codes")
+    #recurse if not all codes were inserted
+    if success_count < count do
+      fulfill_count(count - success_count, promo_id)
+    end
+    {:ok, success_count}
+
   end
 
 
