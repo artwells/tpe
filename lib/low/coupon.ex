@@ -1,10 +1,12 @@
 defmodule Low.Coupon do
+
   use Ecto.Schema
   use Ecto.Repo, otp_app: :my_app, adapter: Ecto.Adapters.Postgres
 
   import Ecto.Changeset
 
   @insert_all_timeout 600000
+
 
   schema "coupons" do
     field :code, :string
@@ -90,8 +92,29 @@ defmodule Low.Coupon do
   def insert_coupons(coupons) do
     Low.Repo.transaction(fn ->
       Low.Repo.insert_all(Low.Coupon, coupons, on_conflict: :nothing)
+
     end, timeout: @insert_all_timeout) # Set the timeout value in milliseconds
 
+  end
+  def fulfill_count(count, promo_id) do
+    codes = generate_random_codes(count, promo_id)
+    success_count = Enum.reduce(chunk(codes, 10), 0, fn chunk, acc ->
+      {:ok, {count, _}} = Low.Coupon.insert_coupons(chunk)
+      count + acc
+    end)
+    IO.puts("Inserted #{success_count} codes")
+  end
 
+
+  defp generate_random_codes(count, promo_id) do
+    Enum.map(1..count, fn _ ->
+      %{code: :crypto.strong_rand_bytes(3) |> Base.encode64(), promo_id: promo_id}
+    end)
+  end
+
+
+
+  defp chunk(list, size) when is_list(list) and is_integer(size) and size > 0 do
+    Enum.chunk_every(list, size)
   end
 end
