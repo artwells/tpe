@@ -96,15 +96,15 @@ defmodule Low.Coupon do
     end, timeout: @insert_all_timeout) # Set the timeout value in milliseconds
 
   end
-  def fulfill_count(count, promo_id) do
+  def fulfill_count(count, promo_id, max_chunk \\ 10000) do
     codes = generate_random_codes(count, promo_id)
-    success_count = Enum.reduce(chunk(codes, 10), 0, fn chunk, acc ->
+    success_count = Enum.reduce(chunk(codes, max_chunk), 0, fn chunk, acc ->
       {:ok, {count, _}} = Low.Coupon.insert_coupons(chunk)
       count + acc
     end)
     #recurse if not all codes were inserted
     if success_count < count do
-      fulfill_count(count - success_count, promo_id)
+      fulfill_count(count - success_count, promo_id, max_chunk)
     end
     {:ok, success_count}
 

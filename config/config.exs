@@ -12,3 +12,6 @@ config :low, Low.Repo, migration_timestamps: [
   type: :timestamptz,
   autogenerate: DateTime.utc_now()
 ]
+
+config :low,
+  max_chunk: 10000

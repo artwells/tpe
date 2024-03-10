@@ -9,7 +9,7 @@ defmodule CodeGenerator do
   Starts the CodeGenerator GenServer.
   """
   def start_link() do
-    GenServer.start_link(__MODULE__, nil, name: __MODULE__)
+    GenServer.start_link(__MODULE__, %{max_chunk: Application.fetch_env!(:low, :max_chunk)}, name: __MODULE__)
   end
 
   @doc """
@@ -28,22 +28,25 @@ defmodule CodeGenerator do
 
 
   @impl true
-  def init(nil) do
-    {:ok, %{}}
+  def init(state) do
+    {:ok, state}
   end
 
   @impl true
   def handle_call({:generate_codes, count, promo_id}, _from, state) do
-    Low.Coupon.fulfill_count(count, promo_id)
+    max_chunk = Map.get(state, :max_chunk)
+    Low.Coupon.fulfill_count(count, promo_id, max_chunk)
     {:reply, :ok, state}
   end
 
   @impl true
   def handle_cast({:generate_codes_async, count, promo_id}, state) do
-    spawn(fn -> Low.Coupon.fulfill_count(count, promo_id) end)
+    max_chunk = Map.get(state, :max_chunk)
+    spawn(fn -> Low.Coupon.fulfill_count(count, promo_id, max_chunk) end)
     {:noreply, state}
   end
 
+  # handle cast to resert genserver
 
 
 end
