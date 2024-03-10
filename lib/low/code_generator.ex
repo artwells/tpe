@@ -23,7 +23,7 @@ defmodule CodeGenerator do
   Generates codes by making an asynchronous cast to the CodeGenerator GenServer.
   """
   def generate_codes_async(count, promo_id) do
-    GenServer.cast(__MODULE__, {:generate_codes, count, promo_id})
+    GenServer.cast(__MODULE__, {:generate_codes_async, count, promo_id})
   end
 
 
@@ -38,11 +38,10 @@ defmodule CodeGenerator do
     {:reply, :ok, state}
   end
 
-  #@impl true
-  def handle_cast({:generate_codes, count, promo_id}) do
-    # Handle the cast message here
-    Low.Coupon.fulfill_count(count, promo_id)
-    {:noreply}
+  @impl true
+  def handle_cast({:generate_codes_async, count, promo_id}, state) do
+    spawn(fn -> Low.Coupon.fulfill_count(count, promo_id) end)
+    {:noreply, state}
   end
 
 
