@@ -30,7 +30,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: live_view_counter
+      POSTGRES_DB: tpe
 
 volumes:
   postgres-data:
