@@ -103,9 +103,9 @@ defmodule Tpe.Coupon do
   The created coupon.
   """
   def create_coupon(attrs \\ %{}) do
-    %Low.Coupon{}
-    |> Low.Coupon.changeset(attrs)
-    |> Low.Repo.insert()
+    %Tpe.Coupon{}
+    |> Tpe.Coupon.changeset(attrs)
+    |> Tpe.Repo.insert()
   end
 
   @doc """

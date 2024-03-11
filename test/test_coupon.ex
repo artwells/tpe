@@ -72,7 +72,7 @@ defmodule Tpe.CouponTest do
   end
 
   test "get_valid_coupon/1 retrieves active coupon by code and count" do
-    {:ok, _coupon} = Coupon.create_coupon(%{code: "ABC12307", active: true, count: 5, max_count: 6, promo_id: 1})
+    {:ok, _coupon} = Coupon.create_coupon(%{code: "ABC12307", active: true, count: 5, max_use: 6, promo_id: 1})
 
     {:error, error} = Coupon.get_valid_coupon("ABC1236NOTACOUPON")
     assert :coupon_not_found == error
@@ -93,7 +93,7 @@ defmodule Tpe.CouponTest do
     {:ok, _updated_coupon} = Coupon.increment_count(retrieved_coupon)
     {:error, error} = Coupon.get_valid_coupon("ABC12307")
 
-    assert :coupon_count_greater_than_max_count == error
+    assert :coupon_count_greater_than_max_use == error
   end
 
   # test that checks that updated_at is updated when a coupon is changed and inserted_at is unchanged
