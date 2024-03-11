@@ -26,6 +26,13 @@ defmodule CodeGenerator do
     GenServer.cast(__MODULE__, {:generate_codes_async, count, promo_id})
   end
 
+    @doc """
+  Shuts down the CodeGenerator GenServer.
+  """
+  def shutdown() do
+    GenServer.stop(__MODULE__)
+  end
+
   @impl true
   def init(state) do
     {:ok, state}
@@ -76,11 +83,5 @@ defmodule CodeGenerator do
     {:noreply, state}
   end
 
-  @doc """
-  Handles a cast to reset the GenServer.
-  """
-  def handle_cast({:reset}, state) do
-    # Reset the state of the GenServer here
-    {:noreply, state}
-  end
+
 end

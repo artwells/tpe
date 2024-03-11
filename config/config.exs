@@ -14,4 +14,7 @@ config :low, Low.Repo, migration_timestamps: [
 ]
 
 config :low,
-  max_chunk: 10000
+  max_chunk: 10000,
+  code_characters: 'ABCDEFGHJKLMNPQRTUVWXY346789', # less ambiguous characters, could be any set, must not include "-"
+  code_length: 24,
+  insert_all_timeout: 30_000

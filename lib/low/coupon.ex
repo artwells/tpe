@@ -8,7 +8,6 @@ defmodule Low.Coupon do
 
   import Ecto.Changeset
 
-  @insert_all_timeout 600000
 
   @doc """
   The `coupons` schema represents a coupon record in the database.
@@ -192,9 +191,11 @@ defmodule Low.Coupon do
   The number of successfully inserted coupons.
   """
   def insert_coupons(coupons) do
+    #get the insert_all_timeout value from the application environment
+    insert_all_timeout = Application.fetch_env!(:low, :max_chunk)
     Low.Repo.transaction(fn ->
       Low.Repo.insert_all(Low.Coupon, coupons, on_conflict: :nothing)
-    end, timeout: @insert_all_timeout) # Set the timeout value in milliseconds
+    end, timeout: insert_all_timeout) # Set the timeout value in milliseconds
   end
 
   @doc """
@@ -235,9 +236,25 @@ defmodule Low.Coupon do
   #   A list of maps, each containing a randomly generated code and the promo_id.
   defp generate_random_codes(count, promo_id) do
     Enum.map(1..count, fn _ ->
-      %{code: :crypto.strong_rand_bytes(3) |> Base.encode64(), promo_id: promo_id}
+      %{code: get_single_string(), promo_id: promo_id}
     end)
   end
+
+  @doc """
+    Generates a single string of random characters based on the configured environment variables.
+
+    ## Examples
+
+        iex> get_single_string()
+        "YLYNXR5FV388GGSC87KRFCWD"
+
+    """
+    defp get_single_string() do
+      characters = Application.fetch_env!(:low, :code_characters)
+      code_length = Application.fetch_env!(:low, :code_length)
+      to_string(Enum.map(1..code_length, fn _ -> Enum.random(characters) end))
+    end
+
 
   # Chunks a list into sublists of a specified size.
   #
