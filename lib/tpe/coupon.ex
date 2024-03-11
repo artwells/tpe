@@ -5,7 +5,7 @@ defmodule Tpe.Coupon do
 
   use Ecto.Schema
   use Ecto.Repo, otp_app: :my_app, adapter: Ecto.Adapters.Postgres
-
+  import Ecto.Query, only: [from: 2]
   import Ecto.Changeset
 
 
@@ -140,6 +140,7 @@ defmodule Tpe.Coupon do
   - `{:error, :coupon_not_found}`: If the coupon is not found.
   """
   def get_coupon_by_code(code) do
+    code = String.replace(code, "-", "")
     coupon = Tpe.Repo.get_by(Tpe.Coupon, code: code)
     cond do
       coupon == nil ->
@@ -269,4 +270,18 @@ defmodule Tpe.Coupon do
   defp chunk(list, size) when is_list(list) and is_integer(size) and size > 0 do
     Enum.chunk_every(list, size)
   end
+
+  # get all coupons by promo_id
+    @doc """
+    Retrieves all coupons associated with a given promo_id.
+
+    ## Examples
+
+        iex> Tpe.Coupon.get_coupons_by_promo_id(123)
+        [%Tpe.Coupon{...}, ...]
+
+    """
+    def get_coupons_by_promo_id(promo_id) do
+      Tpe.Repo.all(from(c in Tpe.Coupon, where: c.promo_id == ^promo_id))
+    end
 end
