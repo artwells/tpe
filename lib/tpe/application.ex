@@ -1,4 +1,4 @@
-defmodule Low.Application do
+defmodule Tpe.Application do
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
   @moduledoc false
@@ -8,14 +8,14 @@ defmodule Low.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      # Starts a worker by calling: Low.Worker.start_link(arg)
-      # {Low.Worker, arg}
-      Low.Repo
+      # Starts a worker by calling: Tpe.Worker.start_link(arg)
+      # {Tpe.Worker, arg}
+      Tpe.Repo
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: Low.Supervisor]
+    opts = [strategy: :one_for_one, name: Tpe.Supervisor]
     Supervisor.start_link(children, opts)
   end
 end

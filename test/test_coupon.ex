@@ -1,7 +1,7 @@
-defmodule Low.CouponTest do
+defmodule Tpe.CouponTest do
   use ExUnit.Case
   use Ecto.Repo, otp_app: :my_app, adapter: Ecto.Adapters.Postgres
-  alias Low.Coupon
+  alias Tpe.Coupon
 
   setup do
     :ok
@@ -18,7 +18,7 @@ defmodule Low.CouponTest do
     attrs = %{code: "DEF4056", active: true, count: 5, promo_id: 2}
     {:ok, coupon} = Coupon.create_coupon(attrs)
 
-    assert %Low.Coupon{} = coupon
+    assert %Tpe.Coupon{} = coupon
     assert "DEF4056" == coupon.code
     assert true == coupon.active
     assert 5 == coupon.count
@@ -30,7 +30,7 @@ defmodule Low.CouponTest do
     {:ok, coupon} = Coupon.create_coupon(coupon)
     {:ok, updated_coupon} = Coupon.increment_count(coupon)
 
-    assert %Low.Coupon{} = updated_coupon
+    assert %Tpe.Coupon{} = updated_coupon
     assert 11 == updated_coupon.count
   end
 
@@ -40,7 +40,7 @@ defmodule Low.CouponTest do
     attrs = %{code: "DEF456", active: false, count: 5, promo_id: 2}
     {:ok, updated_coupon} = Coupon.change_coupon(coupon, attrs)
 
-    assert %Low.Coupon{} = updated_coupon
+    assert %Tpe.Coupon{} = updated_coupon
     assert "DEF456" == updated_coupon.code
     assert false == updated_coupon.active
     assert 5 == updated_coupon.count
@@ -51,7 +51,7 @@ defmodule Low.CouponTest do
     {:ok, coupon} = Coupon.create_coupon(%{code: "ABC1235", active: true, count: 10, promo_id: 1})
     {:ok, retrieved_coupon} = Coupon.get_coupon(coupon.id)
 
-    assert %Low.Coupon{} = retrieved_coupon
+    assert %Tpe.Coupon{} = retrieved_coupon
     assert "ABC1235" == retrieved_coupon.code
     assert true == retrieved_coupon.active
     assert 10 == retrieved_coupon.count
@@ -64,7 +64,7 @@ defmodule Low.CouponTest do
     {:error, error} = Coupon.get_coupon_by_code("ABC1236NOTACOUPON")
     assert :coupon_not_found == error
     {:ok, retrieved_coupon} = Coupon.get_coupon_by_code("ABC1236")
-    assert %Low.Coupon{} = retrieved_coupon
+    assert %Tpe.Coupon{} = retrieved_coupon
     assert "ABC1236" == retrieved_coupon.code
     assert true == retrieved_coupon.active
     assert 10 == retrieved_coupon.count
@@ -78,7 +78,7 @@ defmodule Low.CouponTest do
     assert :coupon_not_found == error
 
     {:ok, retrieved_coupon} = Coupon.get_valid_coupon("ABC12307")
-    assert %Low.Coupon{} = retrieved_coupon
+    assert %Tpe.Coupon{} = retrieved_coupon
     assert "ABC12307" == retrieved_coupon.code
     assert true == retrieved_coupon.active
     assert 5 == retrieved_coupon.count

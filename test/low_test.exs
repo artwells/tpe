@@ -1,8 +1,8 @@
-defmodule LowTest do
+defmodule TpeTest do
   use ExUnit.Case
-  doctest Low
+  doctest Tpe
 
   test "greets the world" do
-    assert Low.hello() == :world
+    assert Tpe.hello() == :world
   end
 end

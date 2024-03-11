@@ -1,20 +1,20 @@
 import Config
 
-config :low, Low.Repo,
-  database: "low",
+config :tpe, Tpe.Repo,
+  database: "tpe",
   username: "postgres",
   password: "postgres",
   hostname: "db"
 
-config :low, ecto_repos: [Low.Repo]
+config :tpe, ecto_repos: [Tpe.Repo]
 
-config :low, Low.Repo, migration_timestamps: [
+config :tpe, Tpe.Repo, migration_timestamps: [
   type: :timestamptz,
   autogenerate: DateTime.utc_now()
 ]
 
-config :low,
-  max_chunk: 10000,
+config :tpe,
+  chunk_size: 10000,
   code_characters: 'ABCDEFGHJKLMNPQRTUVWXY346789', # less ambiguous characters, could be any set, must not include "-"
   code_length: 24,
   insert_all_timeout: 30_000

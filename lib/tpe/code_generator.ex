@@ -9,14 +9,15 @@ defmodule CodeGenerator do
   Starts the CodeGenerator GenServer.
   """
   def start_link() do
-    GenServer.start_link(__MODULE__, %{max_chunk: Application.fetch_env!(:low, :max_chunk)}, name: __MODULE__)
+    chunk_size = Application.fetch_env!(:tpe, :chunk_size)
+    GenServer.start_link(__MODULE__, %{chunk_size: chunk_size}, name: __MODULE__)
   end
 
   @doc """
   Generates codes by making a synchronous call to the CodeGenerator GenServer.
   """
-  def generate_codes(count, promo_id) do
-    GenServer.call(__MODULE__, {:generate_codes, count, promo_id})
+  def generate_codes(count, promo_id, max_use \\ 1) do
+    GenServer.call(__MODULE__, {:generate_codes, count, promo_id, max_use})
   end
 
   @doc """
@@ -47,7 +48,7 @@ defmodule CodeGenerator do
 
   ## Params
 
-  - `{:generate_codes, count, promo_id}` - A tuple containing the message and its parameters.
+  - `{:generate_codes, count, promo_id, max_use}` - A tuple containing the message and its parameters.
   - `_from` - The process that sent the message.
   - `state` - The current state of the process.
 
@@ -55,9 +56,9 @@ defmodule CodeGenerator do
 
   A tuple `{:reply, :ok, state}` indicating that the call was successful.
   """
-  def handle_call({:generate_codes, count, promo_id}, _from, state) do
-    max_chunk = Map.get(state, :max_chunk)
-    Low.Coupon.fulfill_count(count, promo_id, max_chunk)
+  def handle_call({:generate_codes, count, promo_id, max_use}, _from, state) do
+    chunk_size = Map.get(state, :chunk_size)
+    Tpe.Coupon.fulfill_count(count, promo_id, chunk_size, max_use)
     {:reply, :ok, state}
   end
 
@@ -72,14 +73,15 @@ defmodule CodeGenerator do
   ## Params:
   - `count`: The number of coupon codes to generate.
   - `promo_id`: The ID of the promotion.
+  - `max_use`: The maximum uses per coupon code.
   - `state`: The current state of the process.
 
   ## Returns:
   - `{:noreply, state}`: Indicates that the message has been handled and no reply is expected.
   """
-  def handle_cast({:generate_codes_async, count, promo_id}, state) do
-    max_chunk = Map.get(state, :max_chunk)
-    spawn(fn -> Low.Coupon.fulfill_count(count, promo_id, max_chunk) end)
+  def handle_cast({:generate_codes_async, qty, promo_id, max_use}, state) do
+    chunk_size = Map.get(state, :chunk_size)
+    spawn(fn -> Tpe.Coupon.fulfill_count(qty, promo_id, max_use, chunk_size) end)
     {:noreply, state}
   end
 

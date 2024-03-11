@@ -1,6 +1,6 @@
-defmodule Low do
+defmodule Tpe do
   @moduledoc """
-  Documentation for `Low`.
+  Documentation for `Tpe`.
   """
 
   @doc """
@@ -8,7 +8,7 @@ defmodule Low do
 
   ## Examples
 
-      iex> Low.hello()
+      iex> Tpe.hello()
       :world
 
   """
