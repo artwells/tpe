@@ -53,47 +53,6 @@ defmodule Tpe.Coupon do
   @doc """
   Creates a new coupon.
 
-
-  @doc """
-  Increments the count of a coupon.
-
-  ## Params
-
-  - `coupon` (`Tpe.Coupon`): The coupon struct.
-
-  ## Returns
-
-  The updated coupon.
-  """
-  def increment_count(coupon) do
-    coupon
-    |> Ecto.Changeset.change(count: coupon.count + 1)
-    |> Tpe.Repo.update()
-  end
-
-  @doc """
-  Changes a coupon.
-
-  ## Params
-
-  - `coupon` (`Tpe.Coupon`): The coupon struct.
-  - `attrs` (`map`): The attributes to update the coupon with.
-
-  ## Returns
-
-  The updated coupon.
-  """
-  def change_coupon(coupon, attrs \\ %{}) do
-    attrs = Map.put(attrs, :updated_at, DateTime.utc_now())
-    coupon
-    |> Tpe.Coupon.changeset(attrs)
-    |> Tpe.Repo.update()
-  end
-
-
-    @doc """
-  Creates a new coupon.
-
   ## Params
 
   - `attrs` (`map`): The attributes to create the coupon with.
@@ -218,7 +177,7 @@ defmodule Tpe.Coupon do
 
   - `{:ok, success_count}`: If the count is fulfilled successfully.
   """
-  def fulfill_count(count, promo_id, max_use, chunk_size \\ 10000) do
+  def fulfill_count(count, promo_id, chunk_size,  max_use) do
     codes = generate_random_codes(count, promo_id, max_use)
     success_count = Enum.reduce(chunk(codes, chunk_size), 0, fn chunk, acc ->
       {:ok, {count, _}} = Tpe.Coupon.insert_coupons(chunk)
@@ -246,11 +205,11 @@ defmodule Tpe.Coupon do
   end
 
 
-    defp get_single_string() do
-      characters = Application.fetch_env!(:tpe, :code_characters)
-      code_length = Application.fetch_env!(:tpe, :code_length)
-      to_string(Enum.map(1..code_length, fn _ -> Enum.random(characters) end))
-    end
+  defp get_single_string() do
+    characters = Application.fetch_env!(:tpe, :code_characters)
+    code_length = Application.fetch_env!(:tpe, :code_length)
+    to_string(Enum.map(1..code_length, fn _ -> Enum.random(characters) end))
+  end
 
 
   # Chunks a list into sublists of a specified size.

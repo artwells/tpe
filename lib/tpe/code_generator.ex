@@ -23,11 +23,11 @@ defmodule CodeGenerator do
   @doc """
   Generates codes by making an asynchronous cast to the CodeGenerator GenServer.
   """
-  def generate_codes_async(count, promo_id) do
-    GenServer.cast(__MODULE__, {:generate_codes_async, count, promo_id})
+  def generate_codes_async(count, promo_id, max_use  \\ 1) do
+    GenServer.cast(__MODULE__, {:generate_codes_async, count, promo_id, max_use})
   end
 
-    @doc """
+  @doc """
   Shuts down the CodeGenerator GenServer.
   """
   def shutdown() do
@@ -81,9 +81,7 @@ defmodule CodeGenerator do
   """
   def handle_cast({:generate_codes_async, qty, promo_id, max_use}, state) do
     chunk_size = Map.get(state, :chunk_size)
-    spawn(fn -> Tpe.Coupon.fulfill_count(qty, promo_id, max_use, chunk_size) end)
+    spawn(fn -> Tpe.Coupon.fulfill_count(qty, promo_id, chunk_size, max_use) end)
     {:noreply, state}
   end
-
-
 end
