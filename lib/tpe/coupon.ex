@@ -68,6 +68,44 @@ defmodule Tpe.Coupon do
   end
 
   @doc """
+  Increments the count of a coupon.
+
+  ## Params
+
+  - `coupon` (`Low.Coupon`): The coupon struct.
+
+  ## Returns
+
+  The updated coupon.
+  """
+  def increment_count(coupon) do
+    coupon
+    |> Ecto.Changeset.change(count: coupon.count + 1)
+    |> Tpe.Repo.update()
+  end
+
+
+
+   @doc """
+  Changes a coupon.
+
+  ## Params
+
+  - `coupon` (`Low.Coupon`): The coupon struct.
+  - `attrs` (`map`): The attributes to update the coupon with.
+
+  ## Returns
+
+  The updated coupon.
+  """
+  def change_coupon(coupon, attrs \\ %{}) do
+    attrs = Map.put(attrs, :updated_at, DateTime.utc_now())
+    coupon
+    |> Tpe.Coupon.changeset(attrs)
+    |> Tpe.Repo.update()
+  end
+
+  @doc """
   Retrieves a coupon by ID.
 
   ## Params
@@ -172,6 +210,7 @@ defmodule Tpe.Coupon do
   - `count` (`integer`): The desired count of coupons.
   - `promo_id` (`integer`): The ID of the associated promo.
   - `chunk_size` (`integer`): The maximum number of codes to insert in a single transaction.
+  - `max_use` (`integer`): The maximum uses allowed for the codes.
 
   ## Returns
 
@@ -205,25 +244,28 @@ defmodule Tpe.Coupon do
   end
 
 
+  # Generates a single string of random characters based on the configured code characters and length.
+  #
+  # Examples
+  #
+  #   iex> get_single_string()
+  #   "aBcDeFgH"
   defp get_single_string() do
     characters = Application.fetch_env!(:tpe, :code_characters)
     code_length = Application.fetch_env!(:tpe, :code_length)
     to_string(Enum.map(1..code_length, fn _ -> Enum.random(characters) end))
   end
 
-
   # Chunks a list into sublists of a specified size.
-  #
+
   # Examples
-  #
-  #   iex> chunk([1, 2, 3, 4, 5, 6], 2)
-  #   [[1, 2], [3, 4], [5, 6]]
-  #
-  #   iex> chunk([1, 2, 3, 4, 5, 6], 3)
-  #   [[1, 2, 3], [4, 5, 6]]
-  #
-  #   iex> chunk([1, 2, 3, 4, 5, 6], 4)
-  #   [[1, 2, 3, 4], [5, 6]]
+
+  # iex> chunk([1, 2, 3, 4, 5, 6], 2)
+  # [[1, 2], [3, 4], [5, 6]]
+
+  # iex> chunk([1, 2, 3, 4, 5, 6], 3)
+  # [[1, 2, 3], [4, 5, 6]]
+
   defp chunk(list, size) when is_list(list) and is_integer(size) and size > 0 do
     Enum.chunk_every(list, size)
   end
