@@ -90,6 +90,24 @@ defmodule Tpe.Coupon do
     |> Tpe.Repo.update()
   end
 
+
+    @doc """
+  Creates a new coupon.
+
+  ## Params
+
+  - `attrs` (`map`): The attributes to create the coupon with.
+
+  ## Returns
+
+  The created coupon.
+  """
+  def create_coupon(attrs \\ %{}) do
+    %Low.Coupon{}
+    |> Low.Coupon.changeset(attrs)
+    |> Low.Repo.insert()
+  end
+
   @doc """
   Retrieves a coupon by ID.
 
