@@ -53,19 +53,6 @@ defmodule Low.Coupon do
   @doc """
   Creates a new coupon.
 
-  ## Params
-
-  - `attrs` (`map`): The attributes to create the coupon with.
-
-  ## Returns
-
-  The created coupon.
-  """
-  def create_coupon(attrs \\ %{}) do
-    %Low.Coupon{}
-    |> Low.Coupon.changeset(attrs)
-    |> Low.Repo.insert()
-  end
 
   @doc """
   Increments the count of a coupon.
@@ -240,15 +227,7 @@ defmodule Low.Coupon do
     end)
   end
 
-  @doc """
-    Generates a single string of random characters based on the configured environment variables.
 
-    ## Examples
-
-        iex> get_single_string()
-        "YLYNXR5FV388GGSC87KRFCWD"
-
-    """
     defp get_single_string() do
       characters = Application.fetch_env!(:low, :code_characters)
       code_length = Application.fetch_env!(:low, :code_length)
