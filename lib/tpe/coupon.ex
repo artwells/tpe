@@ -140,7 +140,13 @@ defmodule Tpe.Coupon do
   - `{:error, :coupon_not_found}`: If the coupon is not found.
   """
   def get_coupon_by_code(code) do
-    code = String.replace(code, "-", "")
+    code =
+    cond do
+      Application.fetch_env!(:tpe, :remove_dashes) ->
+        String.replace(code, "-", "")
+      true -> code
+    end
+
     coupon = Tpe.Repo.get_by(Tpe.Coupon, code: code)
     cond do
       coupon == nil ->
@@ -281,7 +287,7 @@ defmodule Tpe.Coupon do
         [%Tpe.Coupon{...}, ...]
 
     """
-    def get_coupons_by_promo_id(promo_id) do
+    def dump_coupons_by_promo_id(promo_id) do
       Tpe.Repo.all(from(c in Tpe.Coupon, where: c.promo_id == ^promo_id))
     end
 
@@ -291,15 +297,15 @@ defmodule Tpe.Coupon do
 
     ## Examples
 
-        iex> Tpe.Coupon.get_coupon_codes_by_promo_id(123)
+        iex> Tpe.Coupon.dump_coupon_codes_by_promo_id(123)
         ["ABC123", "DEF456", ...]
 
     """
-    def get_coupon_codes_by_promo_id(promo_id) do
+    def dump_coupon_codes_by_promo_id(promo_id) do
       Tpe.Repo.all(from(c in Tpe.Coupon, where: c.promo_id == ^promo_id, select: c.code))
     end
 
-    # add dashes to codes returned by get_coupon_codes_by_promo_id
+    # add dashes to codes returned by dump_coupon_codes_by_promo_id
     # Adds dashes to coupon codes at specified intervals.
     #
     # This function takes a list of coupon codes and adds dashes at specified intervals.
@@ -316,7 +322,7 @@ defmodule Tpe.Coupon do
 
       ## Examples
 
-          iex> Coupon.get_coupon_codes_by_promo_id_with_dashes(123)
+          iex> Coupon.dump_coupon_codes_by_promo_id_with_dashes(123)
           ["ABCD-EFGH-IJKL", "MNOP-QRST-UVWX"]
 
       ### Parameters
@@ -329,8 +335,8 @@ defmodule Tpe.Coupon do
       A list of coupon codes with dashes added at the specified interval.
 
       """
-      def get_coupon_codes_by_promo_id_with_dashes(promo_id, interv \\ 4) do
-        codes = get_coupon_codes_by_promo_id(promo_id)
+      def dump_coupon_codes_by_promo_id_with_dashes(promo_id, interv \\ 4) do
+        codes = dump_coupon_codes_by_promo_id(promo_id)
         add_dashes_to_codes(codes, interv)
       end
 end

@@ -129,11 +129,11 @@ defmodule Tpe.CouponTest do
 
   end
 
-  test "get_coupons_by_promo_id/1 retrieves all coupons associated with a given promo_id" do
+  test "dump_coupons_by_promo_id/1 retrieves all coupons associated with a given promo_id" do
     {:ok, coupon1} = Coupon.create_coupon(%{code: "BYPROMOABC123", active: true, count: 10, promo_id: 4})
     {:ok, coupon2} = Coupon.create_coupon(%{code: "BYPROMODEF456", active: true, count: 5, promo_id: 4})
     {:ok, coupon3} = Coupon.create_coupon(%{code: "BYPROMOGHI789", active: true, count: 8, promo_id: 5})
-    coupons = Coupon.get_coupons_by_promo_id(4)
+    coupons = Coupon.dump_coupons_by_promo_id(4)
     assert Enum.any?(coupons, fn coupon -> coupon.id == coupon1.id end)
     assert Enum.any?(coupons, fn coupon -> coupon.id == coupon2.id end)
     refute Enum.any?(coupons, fn coupon -> coupon.id == coupon3.id end)
@@ -156,8 +156,7 @@ defmodule Tpe.CouponTest do
   end
 
 
-
-test "get_coupon_codes_by_promo_id_with_dashes/2 retrieves coupon codes by promo_id with dashes" do
+test "dump_coupon_codes_by_promo_id_with_dashes/2 retrieves coupon codes by promo_id with dashes" do
   cleanup()
   promo_id = 6
   interv = 3
@@ -176,7 +175,7 @@ test "get_coupon_codes_by_promo_id_with_dashes/2 retrieves coupon codes by promo
     "JKL-121-3"
   ]
 
-  actual_codes = Tpe.Coupon.get_coupon_codes_by_promo_id_with_dashes(promo_id, interv)
+  actual_codes = Tpe.Coupon.dump_coupon_codes_by_promo_id_with_dashes(promo_id, interv)
 
   assert expected_codes == actual_codes
 end
