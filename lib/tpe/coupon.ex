@@ -284,4 +284,28 @@ defmodule Tpe.Coupon do
     def get_coupons_by_promo_id(promo_id) do
       Tpe.Repo.all(from(c in Tpe.Coupon, where: c.promo_id == ^promo_id))
     end
+
+  # get just the code of all coupons by promo_id
+    @doc """
+    Retrieves all coupon codes associated with a given promo_id.
+
+    ## Examples
+
+        iex> Tpe.Coupon.get_coupon_codes_by_promo_id(123)
+        ["ABC123", "DEF456", ...]
+
+    """
+    def get_coupon_codes_by_promo_id(promo_id) do
+      Tpe.Repo.all(from(c in Tpe.Coupon, where: c.promo_id == ^promo_id, select: c.code))
+    end
+
+    # add dashes to codes returned by get_coupon_codes_by_promo_id
+    defp add_dashes_to_codes(codes, interv) do
+      Enum.map(codes, fn code -> String.replace_trailing(String.replace(code, ~r/(.{#{interv}})/, "\\1-"),"-","") end)
+    end
+
+    def get_coupon_codes_by_promo_id_with_dashes(promo_id, interv \\ 4) do
+      codes = get_coupon_codes_by_promo_id(promo_id)
+      add_dashes_to_codes(codes, interv)
+    end
 end

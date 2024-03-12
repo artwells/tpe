@@ -69,6 +69,11 @@ defmodule Tpe.CouponTest do
     assert true == retrieved_coupon.active
     assert 10 == retrieved_coupon.count
     assert 1 == retrieved_coupon.promo_id
+
+    #test that coupon is still retrieved if dashes are included
+    {:ok, retrieved_coupon} = Coupon.get_coupon_by_code("ABC-1236")
+    assert %Tpe.Coupon{} = retrieved_coupon
+    assert "ABC1236" == retrieved_coupon.code
   end
 
   test "get_valid_coupon/1 retrieves active coupon by code and count" do
@@ -129,23 +134,13 @@ defmodule Tpe.CouponTest do
     assert success_count == {2, nil}
   end
 
-
-
-
-
   test "get_coupons_by_promo_id/1 retrieves all coupons associated with a given promo_id" do
     {:ok, coupon1} = Coupon.create_coupon(%{code: "BYPROMOABC123", active: true, count: 10, promo_id: 4})
     {:ok, coupon2} = Coupon.create_coupon(%{code: "BYPROMODEF456", active: true, count: 5, promo_id: 4})
     {:ok, coupon3} = Coupon.create_coupon(%{code: "BYPROMOGHI789", active: true, count: 8, promo_id: 5})
-
-
-
     coupons = Coupon.get_coupons_by_promo_id(4)
     assert Enum.any?(coupons, fn coupon -> coupon.id == coupon1.id end)
     assert Enum.any?(coupons, fn coupon -> coupon.id == coupon2.id end)
     refute Enum.any?(coupons, fn coupon -> coupon.id == coupon3.id end)
-
-
   end
-
 end
