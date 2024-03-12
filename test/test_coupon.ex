@@ -7,6 +7,10 @@ defmodule Tpe.CouponTest do
     :ok
   end
 
+  def cleanup do
+    Ecto.Adapters.SQL.query!(Tpe.Repo, "DELETE FROM coupons WHERE promo_id < 100" )
+  end
+
   test "changeset/2 casts and validates the coupon changeset" do
     changeset = Coupon.changeset(%Coupon{}, %{code: "ABC123", active: true, count: 10, promo_id: 1})
 
@@ -125,15 +129,6 @@ defmodule Tpe.CouponTest do
 
   end
 
-  test "insert_coupons/1 inserts a list of coupons" do
-    coupons = [
-      %{code: "ABC8123", active: true, count: 10, promo_id: 1},
-      %{code: "DEF8456", active: true, count: 5, promo_id: 2}
-    ]
-    {:ok, success_count} = Coupon.insert_coupons(coupons)
-    assert success_count == {2, nil}
-  end
-
   test "get_coupons_by_promo_id/1 retrieves all coupons associated with a given promo_id" do
     {:ok, coupon1} = Coupon.create_coupon(%{code: "BYPROMOABC123", active: true, count: 10, promo_id: 4})
     {:ok, coupon2} = Coupon.create_coupon(%{code: "BYPROMODEF456", active: true, count: 5, promo_id: 4})
@@ -143,4 +138,46 @@ defmodule Tpe.CouponTest do
     assert Enum.any?(coupons, fn coupon -> coupon.id == coupon2.id end)
     refute Enum.any?(coupons, fn coupon -> coupon.id == coupon3.id end)
   end
+
+
+  test "insert_coupons/1 inserts a list of coupons" do
+    cleanup()
+    coupons = [
+      %{code: "ABC8123", active: true, count: 10, promo_id: 1},
+      %{code: "DEF8456", active: true, count: 5, promo_id: 2}
+    ]
+    {:ok, success_count} = Coupon.insert_coupons(coupons)
+    assert success_count == {2, nil}
+
+    inserted_coupons = Tpe.Repo.all(Tpe.Coupon)
+    assert length(inserted_coupons) == 2
+    assert Enum.any?(inserted_coupons, fn coupon -> coupon.code == "ABC8123" end)
+    assert Enum.any?(inserted_coupons, fn coupon -> coupon.code == "DEF8456" end)
+  end
+
+
+
+test "get_coupon_codes_by_promo_id_with_dashes/2 retrieves coupon codes by promo_id with dashes" do
+  cleanup()
+  promo_id = 6
+  interv = 3
+  coupons = [
+    %{code: "ABC1234", active: true, count: 10, promo_id: 6},
+    %{code: "DEF5678", active: true, count: 5, promo_id: 6},
+    %{code: "GHI9101", active: true, count: 5, promo_id: 6},
+    %{code: "JKL1213", active: true, count: 5, promo_id: 6}
+  ]
+
+  {:ok, _} = Tpe.Coupon.insert_coupons(coupons)
+  expected_codes = [
+    "ABC-123-4",
+    "DEF-567-8",
+    "GHI-910-1",
+    "JKL-121-3"
+  ]
+
+  actual_codes = Tpe.Coupon.get_coupon_codes_by_promo_id_with_dashes(promo_id, interv)
+
+  assert expected_codes == actual_codes
+end
 end
