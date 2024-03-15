@@ -289,19 +289,7 @@ defmodule Tpe.Coupon do
     Tpe.Repo.all(from(c in Tpe.Coupon, where: c.promo_id == ^promo_id))
   end
 
-  # get just the code of all coupons by promo_id
-  @doc """
-  Retrieves all coupon codes associated with a given promo_id.
 
-  ## Examples
-
-      iex> Tpe.Coupon.dump_coupon_codes_by_promo_id(123)
-      ["ABC123", "DEF456", ...]
-
-  """
-  def dump_coupon_codes_by_promo_id(promo_id) do
-    Tpe.Repo.all(from(c in Tpe.Coupon, where: c.promo_id == ^promo_id, select: c.code))
-  end
 
   # add dashes to codes returned by dump_coupon_codes_by_promo_id
   # Adds dashes to coupon codes at specified intervals.
@@ -315,26 +303,14 @@ defmodule Tpe.Coupon do
     Enum.map(codes, fn code -> String.replace_trailing(String.replace(code, ~r/(.{#{interv}})/, "\\1-"),"-","") end)
   end
 
-  @doc """
-    Retrieves coupon codes by promo ID and adds dashes to the codes.
 
-    ## Examples
-
-        iex> Coupon.dump_coupon_codes_by_promo_id_with_dashes(123)
-        ["ABCD-EFGH-IJKL", "MNOP-QRST-UVWX"]
-
-    ### Parameters
-
-    - `promo_id` (integer) - The ID of the promo.
-    - `interv` (integer) - The interval at which dashes should be added to the codes. Defaults to 4.
-
-    ### Returns
-
-    A list of coupon codes with dashes added at the specified interval.
-
-    """
-    def dump_coupon_codes_by_promo_id_with_dashes(promo_id, interv \\ 4) do
-      codes = dump_coupon_codes_by_promo_id(promo_id)
-      add_dashes_to_codes(codes, interv)
+    def dump_coupon_codes_by_promo_id_with_dashes(promo_id, interv \\ nil) do
+      codes = Tpe.Repo.all(from(c in Tpe.Coupon, where: c.promo_id == ^promo_id, select: c.code))
+      cond do
+        is_nil(interv) ->
+          codes
+        true ->
+          add_dashes_to_codes(codes, interv)
+      end
     end
 end

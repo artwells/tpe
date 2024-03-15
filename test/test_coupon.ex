@@ -171,8 +171,21 @@ defmodule Tpe.CouponTest do
       "JKL-121-3"
     ]
 
+
     actual_codes = Tpe.Coupon.dump_coupon_codes_by_promo_id_with_dashes(promo_id, interv)
 
     assert expected_codes == actual_codes
+    expected_undashed_codes = [
+      "ABC1234",
+      "DEF5678",
+      "GHI9101",
+      "JKL1213"
+    ]
+
+    actual_codes = Tpe.Coupon.dump_coupon_codes_by_promo_id_with_dashes(promo_id, nil)
+
+    assert expected_undashed_codes == actual_codes
   end
+
+
 end
