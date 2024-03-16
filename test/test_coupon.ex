@@ -133,7 +133,7 @@ defmodule Tpe.CouponTest do
     assert Enum.all?(Coupon.dump_coupons_by_promo_id(promo_id),
       #check each coupon with check_prefix_suffix
       fn coupon ->
-      check_prefix_suffix( coupon, "PREFIX", "SUFFIX")
+      check_prefix_suffix(coupon, "PREFIX", "SUFFIX")
       end
     )
   end
@@ -206,6 +206,4 @@ defmodule Tpe.CouponTest do
 
     assert expected_undashed_codes == actual_codes
   end
-
-
 end
