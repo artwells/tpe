@@ -221,7 +221,7 @@ defmodule Tpe.Coupon do
 
   - `{:ok, success_count}`: If the count is fulfilled successfully.
   """
-  def fulfill_count(count, promo_id, chunk_size,  max_use) do
+  def mass_create(count, promo_id, chunk_size,  max_use) do
     codes = generate_random_codes(count, promo_id, max_use)
     success_count = Enum.reduce(chunk(codes, chunk_size), 0, fn chunk, acc ->
       {:ok, {count, _}} = Tpe.Coupon.insert_coupons(chunk)
@@ -229,7 +229,7 @@ defmodule Tpe.Coupon do
     end)
     #recurse if not all codes were inserted
     if success_count < count do
-      fulfill_count(count - success_count, promo_id, max_use, chunk_size)
+      mass_create(count - success_count, promo_id, max_use, chunk_size)
     end
     {:ok, success_count}
   end

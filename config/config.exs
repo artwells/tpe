@@ -6,12 +6,14 @@ config :tpe, Tpe.Repo,
   password: "postgres",
   hostname: "db"
 
-config :tpe, ecto_repos: [Tpe.Repo]
+config :tpe,
+  ecto_repos: [Tpe.Repo]
 
-config :tpe, Tpe.Repo, migration_timestamps: [
-  type: :timestamptz,
-  autogenerate: DateTime.utc_now()
-]
+config :tpe, Tpe.Repo,
+  migration_timestamps: [
+    type: :timestamptz,
+    autogenerate: DateTime.utc_now()
+  ]
 
 config :tpe,
   chunk_size: 10000,

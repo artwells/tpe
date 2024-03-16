@@ -116,13 +116,13 @@ defmodule Tpe.CouponTest do
     assert inserted_at == updated_coupon.inserted_at
   end
 
-  test "fulfill_count/4 generates random codes and inserts them in chunks" do
+  test "mass_create/4 generates random codes and inserts them in chunks" do
     count = 100
     promo_id = 3
     chunk_size = 10
     max_use = 5
 
-    {:ok, success_count} = Coupon.fulfill_count(count, promo_id, chunk_size, max_use)
+    {:ok, success_count} = Coupon.mass_create(count, promo_id, chunk_size, max_use)
     # confirm that the count of coupons for the promo is equal to the count
     assert success_count == count
   end
