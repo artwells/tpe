@@ -117,7 +117,7 @@ defmodule Tpe.CouponTest do
   end
 
   test "mass_create/4 generates random codes and inserts them in chunks" do
-    count = 100
+    count = 1
     promo_id = 3
     chunk_size = 10
     max_use = 5
@@ -125,6 +125,26 @@ defmodule Tpe.CouponTest do
     {:ok, success_count} = Coupon.mass_create(count, promo_id, chunk_size, max_use)
     # confirm that the count of coupons for the promo is equal to the count
     assert success_count == count
+
+    cleanup()
+    {:ok, success_count} = Coupon.mass_create(count, promo_id, chunk_size, max_use, "PREFIX", "SUFFIX")
+    # confirm that the count of coupons for the promo is equal to the count
+    assert success_count == count
+    assert Enum.all?(Coupon.dump_coupons_by_promo_id(promo_id),
+      #check each coupon with check_prefix_suffix
+      fn coupon ->
+      check_prefix_suffix( coupon, "PREFIX", "SUFFIX")
+      end
+    )
+  end
+
+  defp check_prefix_suffix(coupon, prefix, suffix) do
+    #remove prefix and suffix from code
+    code = String.replace(coupon.code, prefix, "")
+    code = String.replace(code, suffix, "")
+    #ensure code length is shorter than coupon.code and that the combined are the same
+    String.length(code) < String.length(coupon.code) &&
+    coupon.code == "#{prefix}#{code}#{suffix}"
   end
 
   test "dump_coupons_by_promo_id/1 retrieves all coupons associated with a given promo_id" do

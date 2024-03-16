@@ -221,8 +221,8 @@ defmodule Tpe.Coupon do
 
   - `{:ok, success_count}`: If the count is fulfilled successfully.
   """
-  def mass_create(count, promo_id, chunk_size,  max_use) do
-    codes = generate_random_codes(count, promo_id, max_use)
+  def mass_create(count, promo_id, chunk_size,  max_use, prefix \\ "", suffix \\ "") do
+    codes = generate_random_codes(count, promo_id, max_use, prefix, suffix)
     success_count = Enum.reduce(chunk(codes, chunk_size), 0, fn chunk, acc ->
       {:ok, {count, _}} = Tpe.Coupon.insert_coupons(chunk)
       count + acc
@@ -242,10 +242,22 @@ defmodule Tpe.Coupon do
   #   - max_use: The maximum uses allowed for the codes.
   # Returns:
   #   A list of maps, each containing a randomly generated code and the promo_id.
-  defp generate_random_codes(count, promo_id, max_use) do
-    Enum.map(1..count, fn _ ->
-      %{code: get_single_string(), promo_id: promo_id, max_use: max_use}
-    end)
+  defp generate_random_codes(count, promo_id, max_use, prefix, suffix) do
+    cond do
+      count <= 0 ->
+        []
+      true ->
+        if(Application.fetch_env!(:tpe, :remove_dashes))
+          do
+            Enum.map(1..count, fn _ ->
+              %{code: String.replace(prefix <> get_single_string() <> suffix, "-", ""), promo_id: promo_id, max_use: max_use}
+            end)
+          else
+      Enum.map(1..count, fn _ ->
+        %{code: prefix <> get_single_string() <> suffix, promo_id: promo_id, max_use: max_use}
+      end)
+    end
+  end
   end
 
 
