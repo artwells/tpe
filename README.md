@@ -25,8 +25,7 @@ be found at <https://hexdocs.pm/low>.
 TODO:
 
 
-optional force upcase for coupons
-optional prefix
+
 tools to delete by promo_id, updated_id, inserted_at
 ability to upload/insert coupons
 
