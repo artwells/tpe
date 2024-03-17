@@ -1,6 +1,6 @@
 # Tpe
 
-**TODO: Add description**
+**WORK IN PROGRESS: Tempt Promotion Engine**
 
 ## Installation
 
