@@ -343,8 +343,4 @@ defmodule Tpe.Coupon do
    update: [set: [active: ^active, updated_at: ^now]])
    |> Tpe.Repo.update_all([])
    end
-
-
-
-
 end
