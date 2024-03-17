@@ -117,6 +117,7 @@ defmodule Tpe.CouponTest do
   end
 
   test "mass_create/4 generates random codes and inserts them in chunks" do
+    cleanup()
     count = 1
     promo_id = 3
     chunk_size = 10
@@ -125,6 +126,17 @@ defmodule Tpe.CouponTest do
     {:ok, success_count} = Coupon.mass_create(count, promo_id, chunk_size, max_use)
     # confirm that the count of coupons for the promo is equal to the count
     assert success_count == count
+
+    #check one coupon from the promo
+    coupon = Enum.at(Coupon.dump_coupons_by_promo_id(promo_id), 0)
+    #check that the code is the correct length from config
+
+    assert String.length(coupon.code) == Application.fetch_env!(:tpe, :code_length)
+    #check that inserted_at and updated_at are the same and not null
+    assert coupon.inserted_at == coupon.updated_at
+    assert coupon.inserted_at != nil
+
+
 
     cleanup()
     {:ok, success_count} = Coupon.mass_create(count, promo_id, chunk_size, max_use, "PREFIX", "SUFFIX")
