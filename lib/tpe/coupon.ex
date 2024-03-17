@@ -62,6 +62,7 @@ defmodule Tpe.Coupon do
   The created coupon.
   """
   def create_coupon(attrs \\ %{}) do
+    attrs = Map.put(attrs, :updated_at, DateTime.utc_now())
     %Tpe.Coupon{}
     |> Tpe.Coupon.changeset(attrs)
     |> Tpe.Repo.insert()
@@ -96,7 +97,7 @@ defmodule Tpe.Coupon do
 
   The updated coupon.
   """
-  def change_coupon(coupon, attrs \\ %{}) do
+  def update_coupon(coupon, attrs \\ %{}) do
     attrs = Map.put(attrs, :updated_at, DateTime.utc_now())
     coupon
     |> Tpe.Coupon.changeset(attrs)
@@ -316,13 +317,34 @@ defmodule Tpe.Coupon do
   end
 
 
-    def dump_coupon_codes_by_promo_id_with_dashes(promo_id, interv \\ nil) do
-      codes = Tpe.Repo.all(from(c in Tpe.Coupon, where: c.promo_id == ^promo_id, select: c.code))
-      cond do
-        is_nil(interv) ->
-          codes
-        true ->
-          add_dashes_to_codes(codes, interv)
-      end
+  def dump_coupon_codes_by_promo_id_with_dashes(promo_id, interv \\ nil) do
+    codes = Tpe.Repo.all(from(c in Tpe.Coupon, where: c.promo_id == ^promo_id, select: c.code))
+    cond do
+      is_nil(interv) ->
+        codes
+      true ->
+        add_dashes_to_codes(codes, interv)
     end
+  end
+
+
+  # Sets the `active` boolean for all coupons associated with a given `promo_id`.
+  # Updates the `updated_at` field for the updated coupons.
+  #
+  # Params:
+  #   - `promo_id` (integer): The ID of the promo.
+  #   - `active` (boolean): The value to set for the `active` field.
+  #
+  # Returns:
+  #   The number of coupons updated.
+  def set_active_by_promo_id(promo_id, active) do
+    now = DateTime.utc_now()
+   from(c in Tpe.Coupon, where: c.promo_id == ^promo_id,
+   update: [set: [active: ^active, updated_at: ^now]])
+   |> Tpe.Repo.update_all([])
+   end
+
+
+
+
 end

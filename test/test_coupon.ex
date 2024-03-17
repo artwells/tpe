@@ -38,11 +38,11 @@ defmodule Tpe.CouponTest do
     assert 11 == updated_coupon.count
   end
 
-  test "change_coupon/2 changes the attributes of a coupon" do
+  test "update_coupon/2 changes the attributes of a coupon" do
     coupon = %{code: "ABC1239", active: true, count: 10, promo_id: 1}
     {:ok, coupon} = Coupon.create_coupon(coupon)
     attrs = %{code: "DEF456", active: false, count: 5, promo_id: 2}
-    {:ok, updated_coupon} = Coupon.change_coupon(coupon, attrs)
+    {:ok, updated_coupon} = Coupon.update_coupon(coupon, attrs)
 
     assert %Tpe.Coupon{} = updated_coupon
     assert "DEF456" == updated_coupon.code
@@ -93,11 +93,11 @@ defmodule Tpe.CouponTest do
     assert 5 == retrieved_coupon.count
     assert 1 == retrieved_coupon.promo_id
 
-    {:ok, _updated_coupon} = Coupon.change_coupon(retrieved_coupon, %{active: false})
+    {:ok, _updated_coupon} = Coupon.update_coupon(retrieved_coupon, %{active: false})
     {:error, error} = Coupon.get_valid_coupon("ABC12307")
     assert :coupon_not_active == error
     {:ok, retrieved_coupon} = Coupon.get_coupon_by_code("ABC12307")
-    {:ok, _updated_coupon} = Coupon.change_coupon(retrieved_coupon, %{active: true})
+    {:ok, _updated_coupon} = Coupon.update_coupon(retrieved_coupon, %{active: true})
     # increase count to 11 and test for error
     {:ok, _updated_coupon} = Coupon.increment_count(retrieved_coupon)
     {:error, error} = Coupon.get_valid_coupon("ABC12307")
@@ -111,7 +111,7 @@ defmodule Tpe.CouponTest do
     updated_at = coupon.updated_at
     inserted_at = coupon.inserted_at
     Process.sleep(1000)
-    {:ok, updated_coupon} = Coupon.change_coupon(coupon, %{count: 7, promo_id: 2})
+    {:ok, updated_coupon} = Coupon.update_coupon(coupon, %{count: 7, promo_id: 2})
     assert updated_at < updated_coupon.updated_at
     assert inserted_at == updated_coupon.inserted_at
   end
@@ -205,5 +205,34 @@ defmodule Tpe.CouponTest do
     actual_codes = Tpe.Coupon.dump_coupon_codes_by_promo_id_with_dashes(promo_id, nil)
 
     assert expected_undashed_codes == actual_codes
+  end
+
+  test "set_active_by_promo_id/2 sets the active status of coupons by promo_id" do
+    cleanup()
+    promo_id = 1
+    active = true
+
+    {:ok, coupon1} = Coupon.create_coupon(%{code: "ABC123", active: false, count: 10, promo_id: promo_id})
+    {:ok, coupon2} = Coupon.create_coupon(%{code: "DEF456", active: false, count: 5, promo_id: promo_id})
+    {:ok, coupon3} = Coupon.create_coupon(%{code: "GHI789", active: false, count: 8, promo_id: promo_id})
+    {:ok, coupon4} = Coupon.create_coupon(%{code: "GHI000", active: false, count: 8, promo_id: 8})
+    Process.sleep(2000)
+    assert {3, nil} == Coupon.set_active_by_promo_id(promo_id, active)
+
+
+    updated_coupon1 = Tpe.Repo.get(Tpe.Coupon, coupon1.id)
+    updated_coupon2 = Tpe.Repo.get(Tpe.Coupon, coupon2.id)
+    updated_coupon3 = Tpe.Repo.get(Tpe.Coupon, coupon3.id)
+    updated_coupon4 = Tpe.Repo.get(Tpe.Coupon, coupon4.id)
+
+    assert true == updated_coupon1.active
+    assert true == updated_coupon2.active
+    assert true == updated_coupon3.active
+    refute true == updated_coupon4.active
+
+    assert updated_coupon1.updated_at > coupon1.updated_at
+    assert updated_coupon2.updated_at > coupon2.updated_at
+    assert updated_coupon3.updated_at > coupon3.updated_at
+    assert updated_coupon4.updated_at == coupon4.updated_at
   end
 end
