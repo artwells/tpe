@@ -73,13 +73,13 @@ defmodule Tpe.Coupon do
 
   ## Params
 
-  - `coupon` (`Low.Coupon`): The coupon struct.
+  - `coupon` (`Tpe.Coupon`): The coupon struct.
 
   ## Returns
 
   The updated coupon.
   """
-  def increment_count(coupon) do
+  def increment_use(coupon) do
     coupon
     |> Ecto.Changeset.change(count: coupon.count + 1)
     |> Tpe.Repo.update()
@@ -90,7 +90,7 @@ defmodule Tpe.Coupon do
 
   ## Params
 
-  - `coupon` (`Low.Coupon`): The coupon struct.
+  - `coupon` (`Tpe.Coupon`): The coupon struct.
   - `attrs` (`map`): The attributes to update the coupon with.
 
   ## Returns
@@ -177,7 +177,7 @@ defmodule Tpe.Coupon do
         cond do
           coupon.active != :true ->
             {:error, :coupon_not_active}
-          coupon.count >= coupon.max_use ->
+          coupon.max_use != 0 && coupon.count >= coupon.max_use ->
             {:error, :coupon_count_greater_than_max_use}
           true ->
             {:ok, coupon}
@@ -343,4 +343,8 @@ defmodule Tpe.Coupon do
    update: [set: [active: ^active, updated_at: ^now]])
    |> Tpe.Repo.update_all([])
    end
+
+
+
+
 end

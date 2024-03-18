@@ -29,10 +29,10 @@ defmodule Tpe.CouponTest do
     assert 2 == coupon.promo_id
   end
 
-  test "increment_count/1 increments the count of a coupon" do
+  test "increment_use/1 increments the count of a coupon" do
     coupon = %{code: "ABC1238", active: true, count: 10, promo_id: 1}
     {:ok, coupon} = Coupon.create_coupon(coupon)
-    {:ok, updated_coupon} = Coupon.increment_count(coupon)
+    {:ok, updated_coupon} = Coupon.increment_use(coupon)
 
     assert %Tpe.Coupon{} = updated_coupon
     assert 11 == updated_coupon.count
@@ -99,10 +99,14 @@ defmodule Tpe.CouponTest do
     {:ok, retrieved_coupon} = Coupon.get_coupon_by_code("ABC12307")
     {:ok, _updated_coupon} = Coupon.update_coupon(retrieved_coupon, %{active: true})
     # increase count to 11 and test for error
-    {:ok, _updated_coupon} = Coupon.increment_count(retrieved_coupon)
+    {:ok, _updated_coupon} = Coupon.increment_use(retrieved_coupon)
     {:error, error} = Coupon.get_valid_coupon("ABC12307")
-
     assert :coupon_count_greater_than_max_use == error
+    # check that if the max_use is zero, no coupon_counter_greater_than_max_use error is returned
+    {:ok, _updated_coupon} = Coupon.update_coupon(retrieved_coupon, %{max_use: 0})
+    {:ok, infinite_coupon} = Coupon.get_valid_coupon("ABC12307")
+    assert "ABC12307" = infinite_coupon.code
+
   end
 
   # test that checks that updated_at is updated when a coupon is changed and inserted_at is unchanged
