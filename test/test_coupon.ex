@@ -260,7 +260,7 @@ defmodule Tpe.CouponTest do
     {:ok, _coupon2} = Coupon.create_coupon(%{code: "DEF456", active: true, count: 5, promo_id: promo_id})
     {:ok, _coupon3} = Coupon.create_coupon(%{code: "GHI789", active: true, count: 8, promo_id: promo_id})
 
-    deleted_count = Coupon.delete_by_promo_id(promo_id)
+    deleted_count = Coupon.Delete.delete_by_promo_id(promo_id)
 
     assert deleted_count == {3, nil}
     assert [] == Tpe.Repo.all(Tpe.Coupon)
@@ -275,7 +275,7 @@ defmodule Tpe.CouponTest do
     Process.sleep(1000)
     {:ok, _coupon3} = Coupon.create_coupon(%{code: "TIMEGHI789", active: true, count: 8, promo_id: 3})
     #delete all coupons inserted before date
-    deleted_count = Coupon.delete_by_inserted_at_before(date)
+    deleted_count = Coupon.Delete.delete_by_inserted_at_before(date)
     assert deleted_count == {2, nil}
 
     #get all remaining coupons
