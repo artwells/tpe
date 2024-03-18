@@ -39,6 +39,7 @@ defmodule Tpe.CouponTest do
   end
 
   test "update_coupon/2 changes the attributes of a coupon" do
+    cleanup()
     coupon = %{code: "ABC1239", active: true, count: 10, promo_id: 1}
     {:ok, coupon} = Coupon.create_coupon(coupon)
     attrs = %{code: "DEF456", active: false, count: 5, promo_id: 2}
@@ -251,4 +252,38 @@ defmodule Tpe.CouponTest do
     assert updated_coupon3.updated_at > coupon3.updated_at
     assert updated_coupon4.updated_at == coupon4.updated_at
   end
+
+  test "delete_by_promo_id/1 deletes all coupons with a given promo_id" do
+    cleanup()
+    promo_id = 12
+    {:ok, _coupon1} = Coupon.create_coupon(%{code: "ABC123", active: true, count: 10, promo_id: promo_id})
+    {:ok, _coupon2} = Coupon.create_coupon(%{code: "DEF456", active: true, count: 5, promo_id: promo_id})
+    {:ok, _coupon3} = Coupon.create_coupon(%{code: "GHI789", active: true, count: 8, promo_id: promo_id})
+
+    deleted_count = Coupon.delete_by_promo_id(promo_id)
+
+    assert deleted_count == {3, nil}
+    assert [] == Tpe.Repo.all(Tpe.Coupon)
+  end
+
+  test "delete_by_inserted_at_before/1 deletes all coupons inserted before a given date" do
+    cleanup()
+    {:ok, _coupon1} = Coupon.create_coupon(%{code: "TIMEABC123", active: true, count: 10, promo_id: 1})
+    {:ok, _coupon2} = Coupon.create_coupon(%{code: "TIMEDEF456", active: true, count: 5, promo_id: 2})
+
+    date = DateTime.utc_now()
+    Process.sleep(1000)
+    {:ok, _coupon3} = Coupon.create_coupon(%{code: "TIMEGHI789", active: true, count: 8, promo_id: 3})
+    #delete all coupons inserted before date
+    deleted_count = Coupon.delete_by_inserted_at_before(date)
+    assert deleted_count == {2, nil}
+
+    #get all remaining coupons
+    count = Tpe.Repo.all(Tpe.Coupon)
+    |> Enum.count()
+
+    assert count == 1
+  end
+
+  # ...
 end

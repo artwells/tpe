@@ -28,8 +28,8 @@ defmodule Tpe.Coupon do
     field :count, :integer
     field :max_use, :integer
     field :promo_id, :integer
-    field :inserted_at, :utc_datetime
-    field :updated_at, :utc_datetime
+    field :inserted_at, :utc_datetime_usec
+    field :updated_at, :utc_datetime_usec
   end
 
   @doc """
@@ -344,7 +344,33 @@ defmodule Tpe.Coupon do
    |> Tpe.Repo.update_all([])
    end
 
+  # Deletes all coupons with a given promo_id.
+  #
+  # ## Examples
+  #
+  #     iex> Tpe.Coupon.delete_by_promo_id(123)
+  #
+  # @param promo_id [integer] the promo_id to match
+  # @return [integer] the number of deleted coupons
+  def delete_by_promo_id(promo_id) do
+    from(c in Tpe.Coupon, where: c.promo_id == ^promo_id)
+    |> Tpe.Repo.delete_all()
+  end
 
 
+
+    @doc """
+    Deletes all coupons inserted before a given date.
+
+    ## Examples
+
+        iex> Tpe.Coupon.delete_by_inserted_at_before(~D[2022-01-01])
+        :ok
+
+    """
+    def delete_by_inserted_at_before(date) do
+      from(c in Tpe.Coupon, where: c.inserted_at < ^date)
+      |> Tpe.Repo.delete_all()
+    end
 
 end
