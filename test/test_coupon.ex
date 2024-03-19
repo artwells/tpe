@@ -20,7 +20,7 @@ defmodule Tpe.CouponTest do
 
   test "create_coupon/1 creates a new coupon" do
     attrs = %{code: "DEF4056", active: true, count: 5, promo_id: 2}
-    {:ok, coupon} = Coupon.create_coupon(attrs)
+    {:ok, coupon} = Coupon.Create.create_coupon(attrs)
 
     assert %Tpe.Coupon{} = coupon
     assert "DEF4056" == coupon.code
@@ -31,8 +31,8 @@ defmodule Tpe.CouponTest do
 
   test "increment_use/1 increments the count of a coupon" do
     coupon = %{code: "ABC1238", active: true, count: 10, promo_id: 1}
-    {:ok, coupon} = Coupon.create_coupon(coupon)
-    {:ok, updated_coupon} = Coupon.increment_use(coupon)
+    {:ok, coupon} = Coupon.Create.create_coupon(coupon)
+    {:ok, updated_coupon} = Coupon.Update.increment_use(coupon)
 
     assert %Tpe.Coupon{} = updated_coupon
     assert 11 == updated_coupon.count
@@ -41,9 +41,9 @@ defmodule Tpe.CouponTest do
   test "update_coupon/2 changes the attributes of a coupon" do
     cleanup()
     coupon = %{code: "ABC1239", active: true, count: 10, promo_id: 1}
-    {:ok, coupon} = Coupon.create_coupon(coupon)
+    {:ok, coupon} = Coupon.Create.create_coupon(coupon)
     attrs = %{code: "DEF456", active: false, count: 5, promo_id: 2}
-    {:ok, updated_coupon} = Coupon.update_coupon(coupon, attrs)
+    {:ok, updated_coupon} = Coupon.Update.update_coupon(coupon, attrs)
 
     assert %Tpe.Coupon{} = updated_coupon
     assert "DEF456" == updated_coupon.code
@@ -53,8 +53,8 @@ defmodule Tpe.CouponTest do
   end
 
   test "get_coupon/1 retrieves a coupon by id" do
-    {:ok, coupon} = Coupon.create_coupon(%{code: "ABC1235", active: true, count: 10, promo_id: 1})
-    {:ok, retrieved_coupon} = Coupon.get_coupon(coupon.id)
+    {:ok, coupon} = Coupon.Create.create_coupon(%{code: "ABC1235", active: true, count: 10, promo_id: 1})
+    {:ok, retrieved_coupon} = Coupon.Read.get_coupon(coupon.id)
 
     assert %Tpe.Coupon{} = retrieved_coupon
     assert "ABC1235" == retrieved_coupon.code
@@ -64,11 +64,11 @@ defmodule Tpe.CouponTest do
   end
 
   test "get_coupon_by_code/1 retrieves a coupon by code" do
-    Coupon.create_coupon(%{code: "ABC1236", active: true, count: 10, promo_id: 1})
+    Coupon.Create.create_coupon(%{code: "ABC1236", active: true, count: 10, promo_id: 1})
 
-    {:error, error} = Coupon.get_coupon_by_code("ABC1236NOTACOUPON")
+    {:error, error} = Coupon.Read.get_coupon_by_code("ABC1236NOTACOUPON")
     assert :coupon_not_found == error
-    {:ok, retrieved_coupon} = Coupon.get_coupon_by_code("ABC1236")
+    {:ok, retrieved_coupon} = Coupon.Read.get_coupon_by_code("ABC1236")
     assert %Tpe.Coupon{} = retrieved_coupon
     assert "ABC1236" == retrieved_coupon.code
     assert true == retrieved_coupon.active
@@ -76,47 +76,47 @@ defmodule Tpe.CouponTest do
     assert 1 == retrieved_coupon.promo_id
 
     # test that coupon is still retrieved if dashes are included
-    {:ok, retrieved_coupon} = Coupon.get_coupon_by_code("ABC-1236")
+    {:ok, retrieved_coupon} = Coupon.Read.get_coupon_by_code("ABC-1236")
     assert %Tpe.Coupon{} = retrieved_coupon
     assert "ABC1236" == retrieved_coupon.code
   end
 
   test "get_valid_coupon/1 retrieves active coupon by code and count" do
-    {:ok, _coupon} = Coupon.create_coupon(%{code: "ABC12307", active: true, count: 5, max_use: 6, promo_id: 1})
+    {:ok, _coupon} = Coupon.Create.create_coupon(%{code: "ABC12307", active: true, count: 5, max_use: 6, promo_id: 1})
 
-    {:error, error} = Coupon.get_valid_coupon("ABC1236NOTACOUPON")
+    {:error, error} = Coupon.Read.get_valid_coupon("ABC1236NOTACOUPON")
     assert :coupon_not_found == error
 
-    {:ok, retrieved_coupon} = Coupon.get_valid_coupon("ABC12307")
+    {:ok, retrieved_coupon} = Coupon.Read.get_valid_coupon("ABC12307")
     assert %Tpe.Coupon{} = retrieved_coupon
     assert "ABC12307" == retrieved_coupon.code
     assert true == retrieved_coupon.active
     assert 5 == retrieved_coupon.count
     assert 1 == retrieved_coupon.promo_id
 
-    {:ok, _updated_coupon} = Coupon.update_coupon(retrieved_coupon, %{active: false})
-    {:error, error} = Coupon.get_valid_coupon("ABC12307")
+    {:ok, _updated_coupon} = Coupon.Update.update_coupon(retrieved_coupon, %{active: false})
+    {:error, error} = Coupon.Read.get_valid_coupon("ABC12307")
     assert :coupon_not_active == error
-    {:ok, retrieved_coupon} = Coupon.get_coupon_by_code("ABC12307")
-    {:ok, _updated_coupon} = Coupon.update_coupon(retrieved_coupon, %{active: true})
+    {:ok, retrieved_coupon} = Coupon.Read.get_coupon_by_code("ABC12307")
+    {:ok, _updated_coupon} = Coupon.Update.update_coupon(retrieved_coupon, %{active: true})
     # increase count to 11 and test for error
-    {:ok, _updated_coupon} = Coupon.increment_use(retrieved_coupon)
-    {:error, error} = Coupon.get_valid_coupon("ABC12307")
+    {:ok, _updated_coupon} = Coupon.Update.increment_use(retrieved_coupon)
+    {:error, error} = Coupon.Read.get_valid_coupon("ABC12307")
     assert :coupon_count_greater_than_max_use == error
     # check that if the max_use is zero, no coupon_counter_greater_than_max_use error is returned
-    {:ok, _updated_coupon} = Coupon.update_coupon(retrieved_coupon, %{max_use: 0})
-    {:ok, infinite_coupon} = Coupon.get_valid_coupon("ABC12307")
+    {:ok, _updated_coupon} = Coupon.Update.update_coupon(retrieved_coupon, %{max_use: 0})
+    {:ok, infinite_coupon} = Coupon.Read.get_valid_coupon("ABC12307")
     assert "ABC12307" = infinite_coupon.code
 
   end
 
   # test that checks that updated_at is updated when a coupon is changed and inserted_at is unchanged
   test "updated_at is updated when a coupon is changed" do
-    {:ok, coupon} = Coupon.create_coupon(%{code: "ABC12390", active: true, count: 10, promo_id: 1})
+    {:ok, coupon} = Coupon.Create.create_coupon(%{code: "ABC12390", active: true, count: 10, promo_id: 1})
     updated_at = coupon.updated_at
     inserted_at = coupon.inserted_at
     Process.sleep(1000)
-    {:ok, updated_coupon} = Coupon.update_coupon(coupon, %{count: 7, promo_id: 2})
+    {:ok, updated_coupon} = Coupon.Update.update_coupon(coupon, %{count: 7, promo_id: 2})
     assert updated_at < updated_coupon.updated_at
     assert inserted_at == updated_coupon.inserted_at
   end
@@ -128,12 +128,12 @@ defmodule Tpe.CouponTest do
     chunk_size = 10
     max_use = 5
 
-    {:ok, success_count} = Coupon.mass_create(count, promo_id, chunk_size, max_use)
+    {:ok, success_count} = Coupon.Create.mass_create(count, promo_id, chunk_size, max_use)
     # confirm that the count of coupons for the promo is equal to the count
     assert success_count == count
 
     #check one coupon from the promo
-    coupon = Enum.at(Coupon.dump_coupons_by_promo_id(promo_id), 0)
+    coupon = Enum.at(Coupon.Read.dump_coupons_by_promo_id(promo_id), 0)
     #check that the code is the correct length from config
 
     assert String.length(coupon.code) == Application.fetch_env!(:tpe, :code_length)
@@ -144,10 +144,10 @@ defmodule Tpe.CouponTest do
 
 
     cleanup()
-    {:ok, success_count} = Coupon.mass_create(count, promo_id, chunk_size, max_use, "PREFIX", "SUFFIX")
+    {:ok, success_count} = Coupon.Create.mass_create(count, promo_id, chunk_size, max_use, "PREFIX", "SUFFIX")
     # confirm that the count of coupons for the promo is equal to the count
     assert success_count == count
-    assert Enum.all?(Coupon.dump_coupons_by_promo_id(promo_id),
+    assert Enum.all?(Coupon.Read.dump_coupons_by_promo_id(promo_id),
       #check each coupon with check_prefix_suffix
       fn coupon ->
       check_prefix_suffix(coupon, "PREFIX", "SUFFIX")
@@ -165,10 +165,10 @@ defmodule Tpe.CouponTest do
   end
 
   test "dump_coupons_by_promo_id/1 retrieves all coupons associated with a given promo_id" do
-    {:ok, coupon1} = Coupon.create_coupon(%{code: "BYPROMOABC123", active: true, count: 10, promo_id: 4})
-    {:ok, coupon2} = Coupon.create_coupon(%{code: "BYPROMODEF456", active: true, count: 5, promo_id: 4})
-    {:ok, coupon3} = Coupon.create_coupon(%{code: "BYPROMOGHI789", active: true, count: 8, promo_id: 5})
-    coupons = Coupon.dump_coupons_by_promo_id(4)
+    {:ok, coupon1} = Coupon.Create.create_coupon(%{code: "BYPROMOABC123", active: true, count: 10, promo_id: 4})
+    {:ok, coupon2} = Coupon.Create.create_coupon(%{code: "BYPROMODEF456", active: true, count: 5, promo_id: 4})
+    {:ok, coupon3} = Coupon.Create.create_coupon(%{code: "BYPROMOGHI789", active: true, count: 8, promo_id: 5})
+    coupons = Coupon.Read.dump_coupons_by_promo_id(4)
     assert Enum.any?(coupons, fn coupon -> coupon.id == coupon1.id end)
     assert Enum.any?(coupons, fn coupon -> coupon.id == coupon2.id end)
     refute Enum.any?(coupons, fn coupon -> coupon.id == coupon3.id end)
@@ -180,7 +180,7 @@ defmodule Tpe.CouponTest do
       %{code: "ABC8123", active: true, count: 10, promo_id: 1},
       %{code: "DEF8456", active: true, count: 5, promo_id: 2}
     ]
-    {:ok, success_count} = Coupon.insert_coupons(coupons)
+    {:ok, success_count} = Coupon.Create.insert_coupons(coupons)
     assert success_count == {2, nil}
 
     inserted_coupons = Tpe.Repo.all(Tpe.Coupon)
@@ -200,7 +200,7 @@ defmodule Tpe.CouponTest do
       %{code: "JKL1213", active: true, count: 5, promo_id: 6}
     ]
 
-    {:ok, _} = Tpe.Coupon.insert_coupons(coupons)
+    {:ok, _} = Tpe.Coupon.Create.insert_coupons(coupons)
     expected_codes = [
       "ABC-123-4",
       "DEF-567-8",
@@ -209,7 +209,7 @@ defmodule Tpe.CouponTest do
     ]
 
 
-    actual_codes = Tpe.Coupon.dump_coupon_codes_by_promo_id_with_dashes(promo_id, interv)
+    actual_codes = Tpe.Coupon.Read.dump_coupon_codes_by_promo_id_with_dashes(promo_id, interv)
 
     assert expected_codes == actual_codes
     expected_undashed_codes = [
@@ -219,7 +219,7 @@ defmodule Tpe.CouponTest do
       "JKL1213"
     ]
 
-    actual_codes = Tpe.Coupon.dump_coupon_codes_by_promo_id_with_dashes(promo_id, nil)
+    actual_codes = Tpe.Coupon.Read.dump_coupon_codes_by_promo_id_with_dashes(promo_id, nil)
 
     assert expected_undashed_codes == actual_codes
   end
@@ -229,12 +229,12 @@ defmodule Tpe.CouponTest do
     promo_id = 1
     active = true
 
-    {:ok, coupon1} = Coupon.create_coupon(%{code: "ABC123", active: false, count: 10, promo_id: promo_id})
-    {:ok, coupon2} = Coupon.create_coupon(%{code: "DEF456", active: false, count: 5, promo_id: promo_id})
-    {:ok, coupon3} = Coupon.create_coupon(%{code: "GHI789", active: false, count: 8, promo_id: promo_id})
-    {:ok, coupon4} = Coupon.create_coupon(%{code: "GHI000", active: false, count: 8, promo_id: 8})
+    {:ok, coupon1} = Coupon.Create.create_coupon(%{code: "ABC123", active: false, count: 10, promo_id: promo_id})
+    {:ok, coupon2} = Coupon.Create.create_coupon(%{code: "DEF456", active: false, count: 5, promo_id: promo_id})
+    {:ok, coupon3} = Coupon.Create.create_coupon(%{code: "GHI789", active: false, count: 8, promo_id: promo_id})
+    {:ok, coupon4} = Coupon.Create.create_coupon(%{code: "GHI000", active: false, count: 8, promo_id: 8})
     Process.sleep(2000)
-    assert {3, nil} == Coupon.set_active_by_promo_id(promo_id, active)
+    assert {3, nil} == Coupon.Update.set_active_by_promo_id(promo_id, active)
 
 
     updated_coupon1 = Tpe.Repo.get(Tpe.Coupon, coupon1.id)
@@ -256,9 +256,9 @@ defmodule Tpe.CouponTest do
   test "delete_by_promo_id/1 deletes all coupons with a given promo_id" do
     cleanup()
     promo_id = 12
-    {:ok, _coupon1} = Coupon.create_coupon(%{code: "ABC123", active: true, count: 10, promo_id: promo_id})
-    {:ok, _coupon2} = Coupon.create_coupon(%{code: "DEF456", active: true, count: 5, promo_id: promo_id})
-    {:ok, _coupon3} = Coupon.create_coupon(%{code: "GHI789", active: true, count: 8, promo_id: promo_id})
+    {:ok, _coupon1} = Coupon.Create.create_coupon(%{code: "ABC123", active: true, count: 10, promo_id: promo_id})
+    {:ok, _coupon2} = Coupon.Create.create_coupon(%{code: "DEF456", active: true, count: 5, promo_id: promo_id})
+    {:ok, _coupon3} = Coupon.Create.create_coupon(%{code: "GHI789", active: true, count: 8, promo_id: promo_id})
 
     deleted_count = Coupon.Delete.delete_by_promo_id(promo_id)
 
@@ -268,12 +268,12 @@ defmodule Tpe.CouponTest do
 
   test "delete_by_inserted_at_before/1 deletes all coupons inserted before a given date" do
     cleanup()
-    {:ok, _coupon1} = Coupon.create_coupon(%{code: "TIMEABC123", active: true, count: 10, promo_id: 1})
-    {:ok, _coupon2} = Coupon.create_coupon(%{code: "TIMEDEF456", active: true, count: 5, promo_id: 2})
+    {:ok, _coupon1} = Coupon.Create.create_coupon(%{code: "TIMEABC123", active: true, count: 10, promo_id: 1})
+    {:ok, _coupon2} = Coupon.Create.create_coupon(%{code: "TIMEDEF456", active: true, count: 5, promo_id: 2})
 
     date = DateTime.utc_now()
     Process.sleep(1000)
-    {:ok, _coupon3} = Coupon.create_coupon(%{code: "TIMEGHI789", active: true, count: 8, promo_id: 3})
+    {:ok, _coupon3} = Coupon.Create.create_coupon(%{code: "TIMEGHI789", active: true, count: 8, promo_id: 3})
     #delete all coupons inserted before date
     deleted_count = Coupon.Delete.delete_by_inserted_at_before(date)
     assert deleted_count == {2, nil}

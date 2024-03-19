@@ -58,7 +58,7 @@ defmodule CodeGenerator do
   """
   def handle_call({:generate_codes, count, promo_id, max_use}, _from, state) do
     chunk_size = Map.get(state, :chunk_size)
-    Tpe.Coupon.mass_create(count, promo_id, chunk_size, max_use)
+    Tpe.Coupon.Create.mass_create(count, promo_id, chunk_size, max_use)
     {:reply, :ok, state}
   end
 
@@ -81,7 +81,7 @@ defmodule CodeGenerator do
   """
   def handle_cast({:generate_codes_async, qty, promo_id, max_use}, state) do
     chunk_size = Map.get(state, :chunk_size)
-    spawn(fn -> Tpe.Coupon.mass_create(qty, promo_id, chunk_size, max_use) end)
+    spawn(fn -> Tpe.Coupon.Create.mass_create(qty, promo_id, chunk_size, max_use) end)
     {:noreply, state}
   end
 end
