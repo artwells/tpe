@@ -24,7 +24,8 @@ defmodule Tpe.MixProject do
     [
        {:dep_from_hexpm, "~> 0.3.0"},
        {:ecto_sql, "~> 3.11.1"},
-       {:postgrex, ">= 0.0.0"}
+       {:postgrex, ">= 0.0.0"},
+       {:csv, "~> 2.3.0"}
     ]
   end
 end

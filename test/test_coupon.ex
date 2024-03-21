@@ -286,5 +286,15 @@ defmodule Tpe.CouponTest do
     assert count == 1
   end
 
-  # ...
+  test "insert_coupons_from_csv/1 inserts coupons from a CSV file" do
+    cleanup()
+    file_path = "test/fixtures/coupons_with_promo_id.csv"
+    {:ok, 42_000} = Coupon.Create.insert_coupons_from_csv(file_path)
+
+    # Assert that the coupons are inserted correctly
+     assert {:ok, coupon1} = Coupon.Read.get_coupon_by_code("KNMTLXHEGDRC9BQY6JU34AP8")
+     assert %Coupon{code: "KNMTLXHEGDRC9BQY6JU34AP8", promo_id: 30} = coupon1
+     assert {:ok, coupon2} = Coupon.Read.get_coupon_by_code("FKP8UC69NTQB3RXAJWDMGYL4")
+     assert %Coupon{code: "FKP8UC69NTQB3RXAJWDMGYL4", promo_id: 26} = coupon2
+  end
 end

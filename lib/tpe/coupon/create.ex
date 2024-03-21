@@ -31,7 +31,7 @@ defmodule Tpe.Coupon.Create do
   """
   def insert_coupons(coupons) do
     #get the insert_all_timeout value from the application environment
-    insert_all_timeout = Application.fetch_env!(:tpe, :chunk_size)
+    insert_all_timeout = Application.fetch_env!(:tpe, :insert_all_timeout)
     Tpe.Repo.transaction(fn ->
       Tpe.Repo.insert_all(Tpe.Coupon, coupons, on_conflict: :nothing)
     end, timeout: insert_all_timeout) # Set the timeout value in milliseconds
@@ -48,6 +48,8 @@ defmodule Tpe.Coupon.Create do
   - `promo_id` (`integer`): The ID of the associated promo.
   - `chunk_size` (`integer`): The maximum number of codes to insert in a single transaction.
   - `max_use` (`integer`): The maximum uses allowed for the codes.
+
+  import CSV
 
   ## Returns
 
@@ -125,6 +127,33 @@ defmodule Tpe.Coupon.Create do
 
   defp chunk(list, size) when is_list(list) and is_integer(size) and size > 0 do
     Enum.chunk_every(list, size)
+  end
+
+  @doc """
+  Inserts coupon codes and promo IDs from a CSV file into the database.
+
+  ## Params
+
+  - `file_path` (`string`): The path to the CSV file.
+
+  ## Returns
+
+  The number of successfully inserted coupons.
+  """
+  def insert_coupons_from_csv(file_path) do
+    chunk_size = Application.fetch_env!(:tpe, :chunk_size)
+    codes_and_promos = File.stream!(file_path)
+      |> CSV.decode()
+      |> Enum.map(fn {:ok, [code, promo_id]} -> %{code: code, promo_id: String.to_integer(promo_id)} end)
+      |> Enum.to_list()
+
+    #take codes and promo_ids and insert them in chunks
+    success_count = Enum.reduce(chunk(codes_and_promos, chunk_size), 0, fn chunk, acc ->
+      {:ok, {count, _}} = Tpe.Coupon.Create.insert_coupons(chunk)
+      count + acc
+    end)
+
+    {:ok, success_count}
   end
 
 end
