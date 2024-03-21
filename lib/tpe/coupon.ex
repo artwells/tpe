@@ -1,5 +1,4 @@
 defmodule Tpe.Coupon do
-
   @moduledoc """
   This module defines the `Tpe.Coupon` schema and changeset
   """

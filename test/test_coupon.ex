@@ -2,6 +2,7 @@ defmodule Tpe.CouponTest do
   use ExUnit.Case
   use Ecto.Repo, otp_app: :my_app, adapter: Ecto.Adapters.Postgres
   alias Tpe.Coupon
+  doctest Tpe
 
   setup do
     :ok
