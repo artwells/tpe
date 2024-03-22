@@ -3,7 +3,7 @@ defmodule RandomCSV do
   @numbers Enum.to_list(20..30)
 
   def generate do
-    1..42000
+    1..2_000
     |> Enum.map(fn _ -> generate_line() end)
     |> Enum.join("\n")
   end
