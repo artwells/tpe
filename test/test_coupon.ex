@@ -292,9 +292,22 @@ defmodule Tpe.CouponTest do
     {:ok, 2_000} = Coupon.Create.insert_coupons_from_csv(file_path)
 
     # Assert that the coupons are inserted correctly
-     assert {:ok, coupon1} = Coupon.Read.get_coupon_by_code("CEMLK39DXP47J8RQ6NFHWVUT")
-     assert %Coupon{code: "CEMLK39DXP47J8RQ6NFHWVUT", promo_id: 26} = coupon1
-     assert {:ok, coupon2} = Coupon.Read.get_coupon_by_code("8VXJRDLGWCM4NFHPYB6AEU9K")
-     assert %Coupon{code: "8VXJRDLGWCM4NFHPYB6AEU9K", promo_id: 27} = coupon2
+     assert {:ok, coupon1} = Coupon.Read.get_coupon_by_code("RPCXAF47HWLQYKM6BV9NDTJ8")
+     assert %Coupon{code: "RPCXAF47HWLQYKM6BV9NDTJ8", promo_id: 28} = coupon1
+     assert {:ok, coupon2} = Coupon.Read.get_coupon_by_code("43XYNM7AE86HGVQWKUJTCLPF")
+     assert %Coupon{code: "43XYNM7AE86HGVQWKUJTCLPF", promo_id: 21} = coupon2
+  end
+
+  test "insert_coupons_from_csv_fixed_promo_id/2 inserts coupons from a CSV file with a fixed promo_id" do
+    cleanup()
+    file_path = "test/fixtures/coupons.csv"
+    promo_id = 17
+    {:ok, 2_000} = Coupon.Create.insert_coupons_from_csv_fixed_promo_id(file_path, promo_id)
+
+    # Assert that the coupons are inserted correctly
+    assert {:ok, coupon1} = Coupon.Read.get_coupon_by_code("FYGEP4VXA9KBJDQHL7RTW8M6")
+    assert %Coupon{code: "FYGEP4VXA9KBJDQHL7RTW8M6", promo_id: 17} = coupon1
+    assert {:ok, coupon2} = Coupon.Read.get_coupon_by_code("JEBG6DXRQ9AFCU3LV4YNPWKH")
+    assert %Coupon{code: "JEBG6DXRQ9AFCU3LV4YNPWKH", promo_id: 17} = coupon2
   end
 end

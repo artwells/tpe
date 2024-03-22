@@ -156,4 +156,20 @@ defmodule Tpe.Coupon.Create do
     {:ok, success_count}
   end
 
+  def insert_coupons_from_csv_fixed_promo_id(file_path, promo_id) do
+    chunk_size = Application.fetch_env!(:tpe, :chunk_size)
+    codes = File.stream!(file_path)
+      |> CSV.decode()
+      |> Enum.map(fn {:ok, [code]} -> %{code: code, promo_id: promo_id} end)
+      |> Enum.to_list()
+
+    #take codes and promo_ids and insert them in chunks
+    success_count = Enum.reduce(chunk(codes, chunk_size), 0, fn chunk, acc ->
+      {:ok, {count, _}} = Tpe.Coupon.Create.insert_coupons(chunk)
+      count + acc
+    end)
+
+    {:ok, success_count}
+  end
+
 end
