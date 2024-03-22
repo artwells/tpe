@@ -8,8 +8,6 @@ defmodule Tpe.Coupon.Read do
   This module provides functions for reading coupons.
   """
 
-  # Rest of the code...
-
 
   @doc """
   Retrieves a coupon by ID.
@@ -63,36 +61,41 @@ defmodule Tpe.Coupon.Read do
   end
 
   @doc """
-  Retrieves a valid coupon by code.
+    Retrieves a valid coupon by code.
 
-  A coupon is considered valid if it is active and the count is not greater than the max_use.
+    A coupon is considered valid if it is active and the count is not greater than the max_use.
 
-  ## Params
+    ## Params
 
-  - `code` (`string`): The code of the coupon.
+    - `code` (`string`): The code of the coupon.
 
-  ## Returns
+    ## Returns
 
-  - `{:ok, coupon}`: If the coupon is valid.
-  - `{:error, :coupon_not_active}`: If the coupon is not active.
-  - `{:error, :coupon_count_greater_than_max_use}`: If the coupon count is greater than the max_use.
-  - `{:error, :coupon_not_found}`: If the coupon is not found.
-  """
-  def get_valid_coupon(code) do
-    case get_coupon_by_code(code) do
-      {:ok, coupon} ->
-        cond do
-          coupon.active != :true ->
-            {:error, :coupon_not_active}
-          coupon.max_use != 0 && coupon.count >= coupon.max_use ->
-            {:error, :coupon_count_greater_than_max_use}
-          true ->
-            {:ok, coupon}
-        end
-      {:error, error} ->
-        {:error, error}
+    - `{:ok, coupon}`: If the coupon is valid.
+    - `{:error, :coupon_not_active}`: If the coupon is not active.
+    - `{:error, :coupon_count_greater_than_max_use}`: If the coupon count is greater than the max_use.
+    - `{:error, :coupon_not_found}`: If the coupon is not found.
+
+    ## Example
+
+        iex> get_valid_coupon("ABC123")
+        {:ok, %Coupon{code: "ABC123", active: true, count: 0, max_use: 10}}
+    """
+    def get_valid_coupon(code) do
+      case get_coupon_by_code(code) do
+        {:ok, coupon} ->
+          cond do
+            coupon.active != :true ->
+              {:error, :coupon_not_active}
+            coupon.max_use != 0 && coupon.count >= coupon.max_use ->
+              {:error, :coupon_count_greater_than_max_use}
+            true ->
+              {:ok, coupon}
+          end
+        {:error, error} ->
+          {:error, error}
+      end
     end
-  end
 
 
 

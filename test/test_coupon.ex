@@ -1,8 +1,8 @@
 defmodule Tpe.CouponTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
   use Ecto.Repo, otp_app: :my_app, adapter: Ecto.Adapters.Postgres
   alias Tpe.Coupon
-  doctest Tpe
+  doctest Tpe, import: true
 
   setup do
     :ok
@@ -114,12 +114,13 @@ defmodule Tpe.CouponTest do
   # test that checks that updated_at is updated when a coupon is changed and inserted_at is unchanged
   test "updated_at is updated when a coupon is changed" do
     {:ok, coupon} = Coupon.Create.create_coupon(%{code: "ABC12390", active: true, count: 10, promo_id: 1})
-    updated_at = coupon.updated_at
-    inserted_at = coupon.inserted_at
+    {:ok, retrieved_coupon} = Coupon.Read.get_coupon(coupon.id)
+    updated_at = retrieved_coupon.updated_at
+    inserted_at = retrieved_coupon.inserted_at
     Process.sleep(1000)
-    {:ok, updated_coupon} = Coupon.Update.update_coupon(coupon, %{count: 7, promo_id: 2})
-    assert updated_at < updated_coupon.updated_at
-    assert inserted_at == updated_coupon.inserted_at
+    {:ok, updated_coupon} = Coupon.Update.update_coupon(retrieved_coupon, %{count: 7, promo_id: 2})
+    assert :lt == DateTime.compare(updated_at, updated_coupon.updated_at)
+    assert :eq == DateTime.compare(inserted_at, updated_coupon.inserted_at)
   end
 
   test "mass_create/4 generates random codes and inserts them in chunks" do
