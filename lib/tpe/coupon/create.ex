@@ -7,6 +7,12 @@ defmodule Tpe.Coupon.Create do
 
   - `attrs` (`map`): The attributes to create the coupon with.
 
+  ## Examples
+
+  iex> {:ok, coupon} = Tpe.Coupon.Create.create_coupon(%{code: "ABC12387", active: true, count: 5, max_use: 6, promo_id: 1})
+  iex> coup = Map.from_struct(coupon)
+  iex> coup.code
+  "ABC12387"
   ## Returns
 
   The created coupon.
@@ -24,6 +30,16 @@ defmodule Tpe.Coupon.Create do
   ## Params
 
   - `coupons` (`list`): The list of coupons to insert.
+
+  ## Examples
+    iex> Tpe.TestTools.cleanup()
+    iex> coupons = [
+    ...>   %{code: "ABC8123", active: true, count: 10, promo_id: 1},
+    ...>   %{code: "DEF8456", active: true, count: 5, promo_id: 2}
+    ...> ]
+    iex> {:ok, success_count} = Tpe.Coupon.Create.insert_coupons(coupons)
+    iex> success_count
+    {2, nil}
 
   ## Returns
 
@@ -51,6 +67,12 @@ defmodule Tpe.Coupon.Create do
 
   import CSV
 
+  ## Examples
+  iex>  {:ok, success_count} = Tpe.Coupon.Create.mass_create(100, 3, 10, 5)
+  iex> success_count
+  100
+
+
   ## Returns
 
   - `{:ok, success_count}`: If the count is fulfilled successfully.
@@ -66,7 +88,7 @@ defmodule Tpe.Coupon.Create do
       mass_create(count - success_count, promo_id, max_use, chunk_size)
     end
     {:ok, success_count}
-  end
+    end
 
 
   # Generates random codes for a given count and promo_id.
@@ -136,6 +158,12 @@ defmodule Tpe.Coupon.Create do
 
   - `file_path` (`string`): The path to the CSV file.
 
+  ## Examples
+    iex> Tpe.TestTools.cleanup()
+    iex> {:ok, success_count} = Tpe.Coupon.Create.insert_coupons_from_csv("test/fixtures/coupons_with_promo_id.csv")
+    iex> success_count
+    2000
+
   ## Returns
 
   The number of successfully inserted coupons.
@@ -155,21 +183,39 @@ defmodule Tpe.Coupon.Create do
 
     {:ok, success_count}
   end
+   @doc """
+   Inserts coupons from a CSV file with a fixed promo_id in chunks.
 
-  def insert_coupons_from_csv_fixed_promo_id(file_path, promo_id) do
-    chunk_size = Application.fetch_env!(:tpe, :chunk_size)
-    codes = File.stream!(file_path)
-      |> CSV.decode()
-      |> Enum.map(fn {:ok, [code]} -> %{code: code, promo_id: promo_id} end)
-      |> Enum.to_list()
+  ## Examples
+    iex> Tpe.TestTools.cleanup()
+    iex> {:ok, success_count} = Tpe.Coupon.Create.insert_coupons_from_csv_fixed_promo_id("test/fixtures/coupons.csv", 13)
+    iex> success_count
+    2000
 
-    #take codes and promo_ids and insert them in chunks
-    success_count = Enum.reduce(chunk(codes, chunk_size), 0, fn chunk, acc ->
-      {:ok, {count, _}} = Tpe.Coupon.Create.insert_coupons(chunk)
-      count + acc
-    end)
+  ## Parameters:
+     - file_path: The path to the CSV file.
+     - promo_id: The fixed promo_id to assign to each coupon.
 
-    {:ok, success_count}
-  end
+  ## Returns:
+     - {:ok, success_count}: A tuple with the success count indicating the number of
+       coupons successfully inserted into the database.
+  """
+
+
+    def insert_coupons_from_csv_fixed_promo_id(file_path, promo_id) do
+      chunk_size = Application.fetch_env!(:tpe, :chunk_size)
+      codes = File.stream!(file_path)
+        |> CSV.decode()
+        |> Enum.map(fn {:ok, [code]} -> %{code: code, promo_id: promo_id} end)
+        |> Enum.to_list()
+
+      #take codes and promo_ids and insert them in chunks
+      success_count = Enum.reduce(chunk(codes, chunk_size), 0, fn chunk, acc ->
+        {:ok, {count, _}} = Tpe.Coupon.Create.insert_coupons(chunk)
+        count + acc
+      end)
+
+      {:ok, success_count}
+    end
 
 end

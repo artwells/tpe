@@ -8,7 +8,7 @@ defmodule Tpe.CouponTest do
     :ok
   end
 
-  def cleanup do
+  def Tpe.TestTools.cleanup do
     Ecto.Adapters.SQL.query!(Tpe.Repo, "DELETE FROM coupons WHERE promo_id < 100")
   end
 
@@ -40,7 +40,7 @@ defmodule Tpe.CouponTest do
   end
 
   test "update_coupon/2 changes the attributes of a coupon" do
-    cleanup()
+    Tpe.TestTools.cleanup()
     coupon = %{code: "ABC1239", active: true, count: 10, promo_id: 1}
     {:ok, coupon} = Coupon.Create.create_coupon(coupon)
     attrs = %{code: "DEF456", active: false, count: 5, promo_id: 2}
@@ -124,7 +124,7 @@ defmodule Tpe.CouponTest do
   end
 
   test "mass_create/4 generates random codes and inserts them in chunks" do
-    cleanup()
+    Tpe.TestTools.cleanup()
     count = 1
     promo_id = 3
     chunk_size = 10
@@ -145,7 +145,7 @@ defmodule Tpe.CouponTest do
 
 
 
-    cleanup()
+    Tpe.TestTools.cleanup()
     {:ok, success_count} = Coupon.Create.mass_create(count, promo_id, chunk_size, max_use, "PREFIX", "SUFFIX")
     # confirm that the count of coupons for the promo is equal to the count
     assert success_count == count
@@ -177,7 +177,7 @@ defmodule Tpe.CouponTest do
   end
 
   test "insert_coupons/1 inserts a list of coupons" do
-    cleanup()
+    Tpe.TestTools.cleanup()
     coupons = [
       %{code: "ABC8123", active: true, count: 10, promo_id: 1},
       %{code: "DEF8456", active: true, count: 5, promo_id: 2}
@@ -192,7 +192,7 @@ defmodule Tpe.CouponTest do
   end
 
   test "dump_coupon_codes_by_promo_id_with_dashes/2 retrieves coupon codes by promo_id with dashes" do
-    cleanup()
+    Tpe.TestTools.cleanup()
     promo_id = 6
     interv = 3
     coupons = [
@@ -227,7 +227,7 @@ defmodule Tpe.CouponTest do
   end
 
   test "set_active_by_promo_id/2 sets the active status of coupons by promo_id" do
-    cleanup()
+    Tpe.TestTools.cleanup()
     promo_id = 1
     active = true
 
@@ -256,7 +256,7 @@ defmodule Tpe.CouponTest do
   end
 
   test "delete_by_promo_id/1 deletes all coupons with a given promo_id" do
-    cleanup()
+    Tpe.TestTools.cleanup()
     promo_id = 12
     {:ok, _coupon1} = Coupon.Create.create_coupon(%{code: "ABC123", active: true, count: 10, promo_id: promo_id})
     {:ok, _coupon2} = Coupon.Create.create_coupon(%{code: "DEF456", active: true, count: 5, promo_id: promo_id})
@@ -269,7 +269,7 @@ defmodule Tpe.CouponTest do
   end
 
   test "delete_by_inserted_at_before/1 deletes all coupons inserted before a given date" do
-    cleanup()
+    Tpe.TestTools.cleanup()
     {:ok, _coupon1} = Coupon.Create.create_coupon(%{code: "TIMEABC123", active: true, count: 10, promo_id: 1})
     {:ok, _coupon2} = Coupon.Create.create_coupon(%{code: "TIMEDEF456", active: true, count: 5, promo_id: 2})
 
@@ -288,7 +288,7 @@ defmodule Tpe.CouponTest do
   end
 
   test "insert_coupons_from_csv/1 inserts coupons from a CSV file" do
-    cleanup()
+    Tpe.TestTools.cleanup()
     file_path = "test/fixtures/coupons_with_promo_id.csv"
     {:ok, 2_000} = Coupon.Create.insert_coupons_from_csv(file_path)
 
@@ -300,7 +300,7 @@ defmodule Tpe.CouponTest do
   end
 
   test "insert_coupons_from_csv_fixed_promo_id/2 inserts coupons from a CSV file with a fixed promo_id" do
-    cleanup()
+    Tpe.TestTools.cleanup()
     file_path = "test/fixtures/coupons.csv"
     promo_id = 17
     {:ok, 2_000} = Coupon.Create.insert_coupons_from_csv_fixed_promo_id(file_path, promo_id)
