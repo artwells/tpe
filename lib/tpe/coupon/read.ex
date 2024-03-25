@@ -10,12 +10,7 @@ defmodule Tpe.Coupon.Read do
   @doc """
   Retrieves a coupon by ID.
 
-  ## Examples
-  iex> Tpe.TestTools.cleanup()
-  iex> {:ok, coupon} = Tpe.Coupon.Create.create_coupon(%{code: "ABC123", active: true, count: 10, promo_id: 1})
-  iex> {:ok, retrieved_coupon} = Tpe.Coupon.Read.get_coupon(coupon.id)
-  iex> retrieved_coupon.code
-  "ABC123"
+
   ## Params
 
   - `id` (`integer`): The ID of the coupon.
@@ -24,6 +19,13 @@ defmodule Tpe.Coupon.Read do
 
   - `{:ok, coupon}`: If the coupon is found.
   - `{:error, :coupon_not_found}`: If the coupon is not found.
+
+    ## Examples
+  iex> Tpe.TestTools.cleanup()
+  iex> {:ok, coupon} = Tpe.Coupon.Create.create_coupon(%{code: "ABC123", active: true, count: 10, promo_id: 1})
+  iex> {:ok, retrieved_coupon} = Tpe.Coupon.Read.get_coupon(coupon.id)
+  iex> retrieved_coupon.code
+  "ABC123"
   """
   def get_coupon(id) do
     coupon = Tpe.Repo.get(Tpe.Coupon, id)
@@ -38,21 +40,23 @@ defmodule Tpe.Coupon.Read do
   end
 
   @doc """
-  Retrieves a coupon by code.
-  ## Examples
+    Retrieves a coupon by code.
+
+    ## Params
+
+    - `code` (`string`): The code of the coupon.
+
+    ## Returns
+
+    - `{:ok, coupon}`: If the coupon is found.
+    - `{:error, :coupon_not_found}`: If the coupon is not found.
+
+    ## Examples
     iex> Tpe.TestTools.cleanup()
     iex> {:ok, _coupon} = Tpe.Coupon.Create.create_coupon(%{code: "ABC123", active: true, count: 10, promo_id: 1})
     iex> {:ok, retrieved_coupon} = Tpe.Coupon.Read.get_coupon_by_code("ABC123")
     iex> retrieved_coupon.code
     "ABC123"
-  ## Params
-
-  - `code` (`string`): The code of the coupon.
-
-  ## Returns
-
-  - `{:ok, coupon}`: If the coupon is found.
-  - `{:error, :coupon_not_found}`: If the coupon is not found.
   """
   def get_coupon_by_code(code) do
     code =
@@ -120,6 +124,11 @@ defmodule Tpe.Coupon.Read do
   # get all coupons by promo_id
   @doc """
   Retrieves all coupons associated with a given promo_id.
+  ## Params
+  - `promo_id` (`integer`): The ID of the promo.
+  ## Returns
+  - A list of coupons associated with the promo_id.
+
 
   ## Examples
       iex> Tpe.TestTools.cleanup()
@@ -149,6 +158,13 @@ defmodule Tpe.Coupon.Read do
 
   @doc """
   Retrieves coupon codes by promo ID with optional dashes.
+
+  ## Params
+  - `promo_id` (`integer`): The ID of the promo.
+  - `interv` (`integer`): The interval at which dashes should be added to the coupon codes.
+
+  ## Returns
+  - A list of coupon codes with optional dashes added at the specified interval.
 
   ## Examples
       iex> Tpe.TestTools.cleanup()
