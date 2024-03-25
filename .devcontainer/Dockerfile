@@ -53,6 +53,7 @@ RUN su ${USERNAME} -c "mix local.hex --force \
   && mix local.rebar --force \
   && mix archive.install --force hex phx_new ${PHOENIX_VERSION}"
 
+
 # [Optional] Uncomment this section to install additional OS packages.
 # RUN apt-get update \
 #     && export DEBIAN_FRONTEND=noninteractive \
@@ -60,3 +61,5 @@ RUN su ${USERNAME} -c "mix local.hex --force \
 
 # [Optional] Uncomment this line to install additional package.
 # RUN  mix ...
+
+
