@@ -11,7 +11,6 @@ defmodule Tpe.Coupon.Update do
     iex> {:ok, updated_coupon} = Tpe.Coupon.Read.get_coupon(coupon.id)
     iex> updated_coupon.count
     6
-
   ## Params
 
   - `coupon` (`Tpe.Coupon`): The coupon struct.
@@ -36,7 +35,6 @@ defmodule Tpe.Coupon.Update do
     iex> {:ok, updated_coupon} = Tpe.Coupon.Read.get_coupon(coupon.id)
     iex> updated_coupon.promo_id
     2
-
   ## Params
 
   - `coupon` (`Tpe.Coupon`): The coupon struct.

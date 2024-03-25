@@ -26,7 +26,9 @@ defmodule Tpe.MixProject do
        {:dep_from_hexpm, "~> 0.3.0"},
        {:ecto_sql, "~> 3.11.1"},
        {:postgrex, ">= 0.0.0"},
-       {:csv, "~> 2.3.0"}
+       {:csv, "~> 2.3.0"},
+       {:ex_doc, ">= 0.0.0", runtime: false, only: [:docs, :dev]},
+       {:livebook_helpers, ">= 0.0.0", only: [:docs, :dev]},
     ]
   end
 

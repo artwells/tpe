@@ -8,7 +8,6 @@ defmodule Tpe.Coupon.Create do
   - `attrs` (`map`): The attributes to create the coupon with.
 
   ## Examples
-
   iex> {:ok, coupon} = Tpe.Coupon.Create.create_coupon(%{code: "ABC12387", active: true, count: 5, max_use: 6, promo_id: 1})
   iex> coup = Map.from_struct(coupon)
   iex> coup.code
@@ -33,14 +32,10 @@ defmodule Tpe.Coupon.Create do
 
   ## Examples
     iex> Tpe.TestTools.cleanup()
-    iex> coupons = [
-    ...>   %{code: "ABC8123", active: true, count: 10, promo_id: 1},
-    ...>   %{code: "DEF8456", active: true, count: 5, promo_id: 2}
-    ...> ]
+    iex> coupons = [%{code: "ABC8123", active: true, count: 10, promo_id: 1}, %{code: "DEF8456", active: true, count: 5, promo_id: 2}]
     iex> {:ok, success_count} = Tpe.Coupon.Create.insert_coupons(coupons)
     iex> success_count
     {2, nil}
-
   ## Returns
 
   The number of successfully inserted coupons.
@@ -71,8 +66,6 @@ defmodule Tpe.Coupon.Create do
   iex>  {:ok, success_count} = Tpe.Coupon.Create.mass_create(100, 3, 10, 5)
   iex> success_count
   100
-
-
   ## Returns
 
   - `{:ok, success_count}`: If the count is fulfilled successfully.
@@ -163,7 +156,6 @@ defmodule Tpe.Coupon.Create do
     iex> {:ok, success_count} = Tpe.Coupon.Create.insert_coupons_from_csv("test/fixtures/coupons_with_promo_id.csv")
     iex> success_count
     2000
-
   ## Returns
 
   The number of successfully inserted coupons.
@@ -191,14 +183,12 @@ defmodule Tpe.Coupon.Create do
     iex> {:ok, success_count} = Tpe.Coupon.Create.insert_coupons_from_csv_fixed_promo_id("test/fixtures/coupons.csv", 13)
     iex> success_count
     2000
-
   ## Parameters:
      - file_path: The path to the CSV file.
      - promo_id: The fixed promo_id to assign to each coupon.
 
   ## Returns:
-     - {:ok, success_count}: A tuple with the success count indicating the number of
-       coupons successfully inserted into the database.
+     - `{:ok, success_count}`: A tuple with the success count indicating the number of coupons successfully inserted into the database.
   """
 
 
@@ -214,7 +204,6 @@ defmodule Tpe.Coupon.Create do
         {:ok, {count, _}} = Tpe.Coupon.Create.insert_coupons(chunk)
         count + acc
       end)
-
       {:ok, success_count}
     end
 

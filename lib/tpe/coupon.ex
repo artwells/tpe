@@ -37,7 +37,6 @@ defmodule Tpe.Coupon do
     iex>  Tpe.Coupon.changeset(coupon, %{code: "ABC123", active: true, count: 10, promo_id: 1})
     #Ecto.Changeset<action: nil, changes: %{active: true, code: "ABC123", count: 10, promo_id: 1}, errors: [], data: #Tpe.Coupon<>, valid?: true>
 
-
   ## Params
 
   - `coupon` (`Tpe.Coupon`): The coupon struct.

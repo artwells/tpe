@@ -12,6 +12,12 @@ defmodule Tpe.Coupon.Read do
   @doc """
   Retrieves a coupon by ID.
 
+  ## Examples
+  iex> Tpe.TestTools.cleanup()
+  iex> {:ok, coupon} = Tpe.Coupon.Create.create_coupon(%{code: "ABC123", active: true, count: 10, promo_id: 1})
+  iex> {:ok, retrieved_coupon} = Tpe.Coupon.Read.get_coupon(coupon.id)
+  iex> retrieved_coupon.code
+  "ABC123"
   ## Params
 
   - `id` (`integer`): The ID of the coupon.
@@ -33,7 +39,12 @@ defmodule Tpe.Coupon.Read do
 
   @doc """
   Retrieves a coupon by code.
-
+  ## Examples
+    iex> Tpe.TestTools.cleanup()
+    iex> {:ok, _coupon} = Tpe.Coupon.Create.create_coupon(%{code: "ABC123", active: true, count: 10, promo_id: 1})
+    iex> {:ok, retrieved_coupon} = Tpe.Coupon.Read.get_coupon_by_code("ABC123")
+    iex> retrieved_coupon.code
+    "ABC123"
   ## Params
 
   - `code` (`string`): The code of the coupon.
@@ -76,7 +87,7 @@ defmodule Tpe.Coupon.Read do
     - `{:error, :coupon_count_greater_than_max_use}`: If the coupon count is greater than the max_use.
     - `{:error, :coupon_not_found}`: If the coupon is not found.
 
-    ## Example
+    ## Examples
         iex> Tpe.TestTools.cleanup()
         iex> {:ok, _coupon} = Tpe.Coupon.Create.create_coupon(%{code: "ABC123", active: true, count: 0, max_use: 10, promo_id: 1})
         iex> {:ok, coupon} = get_valid_coupon("ABC123")
@@ -113,8 +124,6 @@ defmodule Tpe.Coupon.Read do
       iex> coupons = Tpe.Coupon.Read.dump_coupons_by_promo_id(22)
       iex> Enum.reduce(coupons, %{}, fn coupon, acc -> Map.put(acc, coupon.promo_id, coupon.code) end)
       %{22 => "ABC123", 22 => "DEF456"}
-
-
   """
   def dump_coupons_by_promo_id(promo_id) do
     Tpe.Repo.all(from(c in Tpe.Coupon, where: c.promo_id == ^promo_id))
@@ -145,7 +154,6 @@ defmodule Tpe.Coupon.Read do
         ["ABC123", "DEF456", "GHI789"]
         iex> Tpe.Coupon.Read.dump_coupon_codes_by_promo_id_with_dashes(3, 3)
         ["ABC-123", "DEF-456", "GHI-789"]
-
     """
     def dump_coupon_codes_by_promo_id_with_dashes(promo_id, interv \\ nil) do
       codes = Tpe.Repo.all(from(c in Tpe.Coupon, where: c.promo_id == ^promo_id, select: c.code))
@@ -156,6 +164,4 @@ defmodule Tpe.Coupon.Read do
           add_dashes_to_codes(codes, interv)
       end
     end
-
-
 end
