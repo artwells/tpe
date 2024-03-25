@@ -1,5 +1,5 @@
 defmodule RandomCSV do
-  @characters 'ABCDEFGHJKLMNPQRTUVWXY346789' |> to_string() |> String.split("", trim: true)
+  @characters ~c"ABCDEFGHJKLMNPQRTUVWXY346789" |> to_string() |> String.split("", trim: true)
   @numbers Enum.to_list(20..30)
 
   def generate(no_promo_id \\ nil) do
@@ -11,6 +11,7 @@ defmodule RandomCSV do
   defp generate_line(no_promo_id) do
     random_characters = Enum.take_random(@characters, 24) |> Enum.join("")
     random_number = Enum.random(@numbers)
+
     if no_promo_id do
       "#{random_characters}"
     else

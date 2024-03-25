@@ -23,7 +23,7 @@ defmodule CodeGenerator do
   @doc """
   Generates codes by making an asynchronous cast to the CodeGenerator GenServer.
   """
-  def generate_codes_async(count, promo_id, max_use  \\ 1) do
+  def generate_codes_async(count, promo_id, max_use \\ 1) do
     GenServer.cast(__MODULE__, {:generate_codes_async, count, promo_id, max_use})
   end
 

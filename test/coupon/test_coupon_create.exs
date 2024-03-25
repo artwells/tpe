@@ -4,7 +4,6 @@ defmodule Tpe.CoupTest do
   alias Tpe.Coupon
   doctest Tpe.Coupon.Create, import: true
 
-
   test "create_coupon/1 creates a new coupon" do
     attrs = %{code: "DEF4056", active: true, count: 5, promo_id: 2}
     {:ok, coupon} = Coupon.Create.create_coupon(attrs)
@@ -27,44 +26,49 @@ defmodule Tpe.CoupTest do
     # confirm that the count of coupons for the promo is equal to the count
     assert success_count == count
 
-    #check one coupon from the promo
+    # check one coupon from the promo
     coupon = Enum.at(Coupon.Read.dump_coupons_by_promo_id(promo_id), 0)
-    #check that the code is the correct length from config
+    # check that the code is the correct length from config
 
     assert String.length(coupon.code) == Application.fetch_env!(:tpe, :code_length)
-    #check that inserted_at and updated_at are the same and not null
+    # check that inserted_at and updated_at are the same and not null
     assert coupon.inserted_at == coupon.updated_at
     assert coupon.inserted_at != nil
 
-
-
     Tpe.TestTools.cleanup()
-    {:ok, success_count} = Coupon.Create.mass_create(count, promo_id, chunk_size, max_use, "PREFIX", "SUFFIX")
+
+    {:ok, success_count} =
+      Coupon.Create.mass_create(count, promo_id, chunk_size, max_use, "PREFIX", "SUFFIX")
+
     # confirm that the count of coupons for the promo is equal to the count
     assert success_count == count
-    assert Enum.all?(Coupon.Read.dump_coupons_by_promo_id(promo_id),
-      #check each coupon with check_prefix_suffix
-      fn coupon ->
-      check_prefix_suffix(coupon, "PREFIX", "SUFFIX")
-      end
-    )
+
+    assert Enum.all?(
+             Coupon.Read.dump_coupons_by_promo_id(promo_id),
+             # check each coupon with check_prefix_suffix
+             fn coupon ->
+               check_prefix_suffix(coupon, "PREFIX", "SUFFIX")
+             end
+           )
   end
 
   defp check_prefix_suffix(coupon, prefix, suffix) do
-    #remove prefix and suffix from code
+    # remove prefix and suffix from code
     code = String.replace(coupon.code, prefix, "")
     code = String.replace(code, suffix, "")
-    #ensure code length is shorter than coupon.code and that the combined are the same
+    # ensure code length is shorter than coupon.code and that the combined are the same
     String.length(code) < String.length(coupon.code) &&
-    coupon.code == "#{prefix}#{code}#{suffix}"
+      coupon.code == "#{prefix}#{code}#{suffix}"
   end
 
   test "insert_coupons/1 inserts a list of coupons" do
     Tpe.TestTools.cleanup()
+
     coupons = [
       %{code: "ABC8123", active: true, count: 10, promo_id: 1},
       %{code: "DEF8456", active: true, count: 5, promo_id: 2}
     ]
+
     {:ok, success_count} = Coupon.Create.insert_coupons(coupons)
     assert success_count == {2, nil}
 
@@ -74,17 +78,16 @@ defmodule Tpe.CoupTest do
     assert Enum.any?(inserted_coupons, fn coupon -> coupon.code == "DEF8456" end)
   end
 
-
   test "insert_coupons_from_csv/1 inserts coupons from a CSV file" do
     Tpe.TestTools.cleanup()
     file_path = "test/fixtures/coupons_with_promo_id.csv"
     {:ok, 2_000} = Coupon.Create.insert_coupons_from_csv(file_path)
 
     # Assert that the coupons are inserted correctly
-     assert {:ok, coupon1} = Coupon.Read.get_coupon_by_code("RPCXAF47HWLQYKM6BV9NDTJ8")
-     assert %Coupon{code: "RPCXAF47HWLQYKM6BV9NDTJ8", promo_id: 28} = coupon1
-     assert {:ok, coupon2} = Coupon.Read.get_coupon_by_code("43XYNM7AE86HGVQWKUJTCLPF")
-     assert %Coupon{code: "43XYNM7AE86HGVQWKUJTCLPF", promo_id: 21} = coupon2
+    assert {:ok, coupon1} = Coupon.Read.get_coupon_by_code("RPCXAF47HWLQYKM6BV9NDTJ8")
+    assert %Coupon{code: "RPCXAF47HWLQYKM6BV9NDTJ8", promo_id: 28} = coupon1
+    assert {:ok, coupon2} = Coupon.Read.get_coupon_by_code("43XYNM7AE86HGVQWKUJTCLPF")
+    assert %Coupon{code: "43XYNM7AE86HGVQWKUJTCLPF", promo_id: 21} = coupon2
   end
 
   test "insert_coupons_from_csv_fixed_promo_id/2 inserts coupons from a CSV file with a fixed promo_id" do

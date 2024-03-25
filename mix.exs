@@ -23,19 +23,14 @@ defmodule Tpe.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-       {:dep_from_hexpm, "~> 0.3.0"},
-       {:ecto_sql, "~> 3.11.1"},
-       {:postgrex, ">= 0.0.0"},
-       {:csv, "~> 2.3.0"},
-       {:ex_doc, ">= 0.0.0", runtime: false, only: [:docs, :dev]},
-       {:livebook_helpers, ">= 0.0.0", only: [:docs, :dev]},
+      {:dep_from_hexpm, "~> 0.3.0"},
+      {:ecto_sql, "~> 3.11.1"},
+      {:postgrex, ">= 0.0.0"},
+      {:csv, "~> 2.3.0"},
+      {:ex_doc, ">= 0.0.0", runtime: false, only: [:docs, :dev]},
+      {:livebook_helpers, ">= 0.0.0", only: [:docs, :dev]}
     ]
   end
-
-
-
-
-
 
   defp elixirc_paths(:test), do: ["lib", "test/helpers"]
   defp elixirc_paths(_), do: ["lib"]

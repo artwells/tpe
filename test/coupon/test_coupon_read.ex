@@ -5,7 +5,9 @@ defmodule Tpe.CouponTest do
   doctest Tpe.Coupon.Read, import: true
 
   test "get_coupon/1 retrieves a coupon by id" do
-    {:ok, coupon} = Coupon.Create.create_coupon(%{code: "ABC1235", active: true, count: 10, promo_id: 1})
+    {:ok, coupon} =
+      Coupon.Create.create_coupon(%{code: "ABC1235", active: true, count: 10, promo_id: 1})
+
     {:ok, retrieved_coupon} = Coupon.Read.get_coupon(coupon.id)
 
     assert %Tpe.Coupon{} = retrieved_coupon
@@ -34,7 +36,14 @@ defmodule Tpe.CouponTest do
   end
 
   test "get_valid_coupon/1 retrieves active coupon by code and count" do
-    {:ok, _coupon} = Coupon.Create.create_coupon(%{code: "ABC12307", active: true, count: 5, max_use: 6, promo_id: 1})
+    {:ok, _coupon} =
+      Coupon.Create.create_coupon(%{
+        code: "ABC12307",
+        active: true,
+        count: 5,
+        max_use: 6,
+        promo_id: 1
+      })
 
     {:error, error} = Coupon.Read.get_valid_coupon("ABC1236NOTACOUPON")
     assert :coupon_not_found == error
@@ -59,14 +68,18 @@ defmodule Tpe.CouponTest do
     {:ok, _updated_coupon} = Coupon.Update.update_coupon(retrieved_coupon, %{max_use: 0})
     {:ok, infinite_coupon} = Coupon.Read.get_valid_coupon("ABC12307")
     assert "ABC12307" = infinite_coupon.code
-
   end
 
-
   test "dump_coupons_by_promo_id/1 retrieves all coupons associated with a given promo_id" do
-    {:ok, coupon1} = Coupon.Create.create_coupon(%{code: "BYPROMOABC123", active: true, count: 10, promo_id: 4})
-    {:ok, coupon2} = Coupon.Create.create_coupon(%{code: "BYPROMODEF456", active: true, count: 5, promo_id: 4})
-    {:ok, coupon3} = Coupon.Create.create_coupon(%{code: "BYPROMOGHI789", active: true, count: 8, promo_id: 5})
+    {:ok, coupon1} =
+      Coupon.Create.create_coupon(%{code: "BYPROMOABC123", active: true, count: 10, promo_id: 4})
+
+    {:ok, coupon2} =
+      Coupon.Create.create_coupon(%{code: "BYPROMODEF456", active: true, count: 5, promo_id: 4})
+
+    {:ok, coupon3} =
+      Coupon.Create.create_coupon(%{code: "BYPROMOGHI789", active: true, count: 8, promo_id: 5})
+
     coupons = Coupon.Read.dump_coupons_by_promo_id(4)
     assert Enum.any?(coupons, fn coupon -> coupon.id == coupon1.id end)
     assert Enum.any?(coupons, fn coupon -> coupon.id == coupon2.id end)
@@ -77,6 +90,7 @@ defmodule Tpe.CouponTest do
     Tpe.TestTools.cleanup()
     promo_id = 6
     interv = 3
+
     coupons = [
       %{code: "ABC1234", active: true, count: 10, promo_id: 6},
       %{code: "DEF5678", active: true, count: 5, promo_id: 6},
@@ -85,6 +99,7 @@ defmodule Tpe.CouponTest do
     ]
 
     {:ok, _} = Tpe.Coupon.Create.insert_coupons(coupons)
+
     expected_codes = [
       "ABC-123-4",
       "DEF-567-8",
@@ -92,10 +107,10 @@ defmodule Tpe.CouponTest do
       "JKL-121-3"
     ]
 
-
     actual_codes = Tpe.Coupon.Read.dump_coupon_codes_by_promo_id_with_dashes(promo_id, interv)
 
     assert expected_codes == actual_codes
+
     expected_undashed_codes = [
       "ABC1234",
       "DEF5678",
@@ -107,5 +122,4 @@ defmodule Tpe.CouponTest do
 
     assert expected_undashed_codes == actual_codes
   end
-
 end

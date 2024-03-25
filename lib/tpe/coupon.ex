@@ -20,13 +20,13 @@ defmodule Tpe.Coupon do
   - `updated_at` (`utc_datetime`): The timestamp when the coupon was last updated.
   """
   schema "coupons" do
-    field :code, :string
-    field :active, :boolean
-    field :count, :integer
-    field :max_use, :integer
-    field :promo_id, :integer
-    field :inserted_at, :utc_datetime_usec
-    field :updated_at, :utc_datetime_usec
+    field(:code, :string)
+    field(:active, :boolean)
+    field(:count, :integer)
+    field(:max_use, :integer)
+    field(:promo_id, :integer)
+    field(:inserted_at, :utc_datetime_usec)
+    field(:updated_at, :utc_datetime_usec)
   end
 
   @doc """
@@ -51,5 +51,4 @@ defmodule Tpe.Coupon do
     |> cast(params, [:code, :active, :count, :max_use, :promo_id, :updated_at])
     |> validate_required([:code, :promo_id])
   end
-
 end

@@ -46,6 +46,7 @@ defmodule Tpe.Coupon.Update do
   """
   def update_coupon(coupon, attrs \\ %{}) do
     attrs = Map.put(attrs, :updated_at, DateTime.utc_now())
+
     coupon
     |> Tpe.Coupon.changeset(attrs)
     |> Tpe.Repo.update()
@@ -76,9 +77,11 @@ defmodule Tpe.Coupon.Update do
   """
   def set_active_by_promo_id(promo_id, active) do
     now = DateTime.utc_now()
-    from(c in Tpe.Coupon, where: c.promo_id == ^promo_id,
-    update: [set: [active: ^active, updated_at: ^now]])
+
+    from(c in Tpe.Coupon,
+      where: c.promo_id == ^promo_id,
+      update: [set: [active: ^active, updated_at: ^now]]
+    )
     |> Tpe.Repo.update_all([])
   end
-
 end

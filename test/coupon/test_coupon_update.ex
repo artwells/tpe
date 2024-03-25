@@ -4,8 +4,6 @@ defmodule Tpe.CouponTest.Update do
   alias Tpe.Coupon
   doctest Tpe.Coupon.Update, import: true
 
-
-
   test "increment_use/1 increments the count of a coupon" do
     coupon = %{code: "ABC1238", active: true, count: 10, promo_id: 1}
     {:ok, coupon} = Coupon.Create.create_coupon(coupon)
@@ -31,12 +29,17 @@ defmodule Tpe.CouponTest.Update do
 
   # test that checks that updated_at is updated when a coupon is changed and inserted_at is unchanged
   test "updated_at is updated when a coupon is changed" do
-    {:ok, coupon} = Coupon.Create.create_coupon(%{code: "ABC12390", active: true, count: 10, promo_id: 1})
+    {:ok, coupon} =
+      Coupon.Create.create_coupon(%{code: "ABC12390", active: true, count: 10, promo_id: 1})
+
     {:ok, retrieved_coupon} = Coupon.Read.get_coupon(coupon.id)
     updated_at = retrieved_coupon.updated_at
     inserted_at = retrieved_coupon.inserted_at
     Process.sleep(1000)
-    {:ok, updated_coupon} = Coupon.Update.update_coupon(retrieved_coupon, %{count: 7, promo_id: 2})
+
+    {:ok, updated_coupon} =
+      Coupon.Update.update_coupon(retrieved_coupon, %{count: 7, promo_id: 2})
+
     assert :lt == DateTime.compare(updated_at, updated_coupon.updated_at)
     assert :eq == DateTime.compare(inserted_at, updated_coupon.inserted_at)
   end
@@ -46,13 +49,20 @@ defmodule Tpe.CouponTest.Update do
     promo_id = 1
     active = true
 
-    {:ok, coupon1} = Coupon.Create.create_coupon(%{code: "ABC123", active: false, count: 10, promo_id: promo_id})
-    {:ok, coupon2} = Coupon.Create.create_coupon(%{code: "DEF456", active: false, count: 5, promo_id: promo_id})
-    {:ok, coupon3} = Coupon.Create.create_coupon(%{code: "GHI789", active: false, count: 8, promo_id: promo_id})
-    {:ok, coupon4} = Coupon.Create.create_coupon(%{code: "GHI000", active: false, count: 8, promo_id: 8})
+    {:ok, coupon1} =
+      Coupon.Create.create_coupon(%{code: "ABC123", active: false, count: 10, promo_id: promo_id})
+
+    {:ok, coupon2} =
+      Coupon.Create.create_coupon(%{code: "DEF456", active: false, count: 5, promo_id: promo_id})
+
+    {:ok, coupon3} =
+      Coupon.Create.create_coupon(%{code: "GHI789", active: false, count: 8, promo_id: promo_id})
+
+    {:ok, coupon4} =
+      Coupon.Create.create_coupon(%{code: "GHI000", active: false, count: 8, promo_id: 8})
+
     Process.sleep(2000)
     assert {3, nil} == Coupon.Update.set_active_by_promo_id(promo_id, active)
-
 
     updated_coupon1 = Tpe.Repo.get(Tpe.Coupon, coupon1.id)
     updated_coupon2 = Tpe.Repo.get(Tpe.Coupon, coupon2.id)
