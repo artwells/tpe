@@ -7,11 +7,11 @@ services:
       - 8090:8090
       - 8091:8091
     volumes:  
-      - ..:/tpe-docs:cached
+      - ..:/livebook:cached
     environment:
       - LIVEBOOK_PORT=8090
       - LIVEBOOK_IFRAME_PORT=8091
-      - LIVEBOOK_HOME=/tpe-docs
+      - LIVEBOOK_HOME=/livebook
       - LIVEBOOK_DEFAULT_RUNTIME=standalone
       - LIVEBOOK_COOKIE=supersecret
       - LIVEBOOK_PASSWORD=securesecret
