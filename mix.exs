@@ -28,7 +28,7 @@ defmodule Tpe.MixProject do
       {:postgrex, ">= 0.0.0"},
       {:csv, "~> 2.3.0"},
       {:ex_doc, ">= 0.0.0", runtime: false, only: [:docs, :dev]},
-      {:livebook_helpers, ">= 0.0.0", only: [:docs, :dev]}
+      {:wongi_engine, "~> 0.9.13"}
     ]
   end
 

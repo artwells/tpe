@@ -1,0 +1,9 @@
+{application,tpe,
+             [{optional_applications,[]},
+              {applications,[kernel,stdlib,elixir,logger,dep_from_hexpm,
+                             ecto_sql,postgrex,csv,wongi_engine]},
+              {description,"tpe"},
+              {modules,[]},
+              {registered,[]},
+              {vsn,"0.1.0"},
+              {mod,{'Elixir.Tpe.Application',[]}}]}.
