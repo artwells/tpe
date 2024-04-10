@@ -19,7 +19,7 @@ defmodule Tpe.RulePart do
   use Ecto.Schema
   import Ecto.Changeset
 
-  schema "rule_part" do
+  schema "rule_parts" do
     field(:rule_id, :integer)
     field(:block, :string)
     field(:verb, :string)

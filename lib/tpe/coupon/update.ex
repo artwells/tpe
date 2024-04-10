@@ -5,12 +5,12 @@ defmodule Tpe.Coupon.Update do
   Increments the count of a coupon.
 
   ## Examples
-    iex> Tpe.TestTools.cleanup()
-    iex> {:ok, coupon} = Tpe.Coupon.Create.create_coupon(%{code: "ABC12387", active: true, count: 5, max_use: 6, promo_id: 1})
-    iex> {:ok, _coupon} = Tpe.Coupon.Update.increment_use(coupon)
-    iex> {:ok, updated_coupon} = Tpe.Coupon.Read.get_coupon(coupon.id)
-    iex> updated_coupon.count
-    6
+  iex> Tpe.TestTools.cleanup()
+  iex> {:ok, coupon} = Tpe.Coupon.Create.create_coupon(%{code: "ABC12387", active: true, count: 5, max_use: 6, promo_id: 1})
+  iex> {:ok, _coupon} = Tpe.Coupon.Update.increment_use(coupon)
+  iex> {:ok, updated_coupon} = Tpe.Coupon.Read.get_coupon(coupon.id)
+  iex> updated_coupon.count
+  6
   ## Params
 
   - `coupon` (`Tpe.Coupon`): The coupon struct.
@@ -29,12 +29,12 @@ defmodule Tpe.Coupon.Update do
   Changes a coupon.
 
   ## Examples
-    iex> Tpe.TestTools.cleanup()
-    iex> {:ok, coupon} = Tpe.Coupon.Create.create_coupon(%{code: "ABC12387", active: true, count: 5, max_use: 6, promo_id: 1})
-    iex> {:ok, _coupon} = Tpe.Coupon.Update.update_coupon(coupon, %{active: false, count: 5, promo_id: 2})
-    iex> {:ok, updated_coupon} = Tpe.Coupon.Read.get_coupon(coupon.id)
-    iex> updated_coupon.promo_id
-    2
+  iex> Tpe.TestTools.cleanup()
+  iex> {:ok, coupon} = Tpe.Coupon.Create.create_coupon(%{code: "ABC12387", active: true, count: 5, max_use: 6, promo_id: 1})
+  iex> {:ok, _coupon} = Tpe.Coupon.Update.update_coupon(coupon, %{active: false, count: 5, promo_id: 2})
+  iex> {:ok, updated_coupon} = Tpe.Coupon.Read.get_coupon(coupon.id)
+  iex> updated_coupon.promo_id
+  2
   ## Params
 
   - `coupon` (`Tpe.Coupon`): The coupon struct.
@@ -54,7 +54,8 @@ defmodule Tpe.Coupon.Update do
 
   @doc """
   Sets the active status of coupons by promo ID.
-  ##Examples
+
+  ## Examples
   iex> Tpe.TestTools.cleanup()
   iex> {:ok, coupon1} = Tpe.Coupon.Create.create_coupon(%{code: "ABC123", active: false, count: 10, promo_id: 1})
   iex> {:ok, coupon2} = Tpe.Coupon.Create.create_coupon(%{code: "DEF456", active: false, count: 5, promo_id: 1})
@@ -66,6 +67,7 @@ defmodule Tpe.Coupon.Update do
   true
   iex> updated_coupon2.active
   true
+
   ## Params
 
   - `promo_id` (`any`): The promo ID.

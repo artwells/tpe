@@ -31,11 +31,11 @@ defmodule Tpe.Coupon.Create do
   - `coupons` (`list`): The list of coupons to insert.
 
   ## Examples
-    iex> Tpe.TestTools.cleanup()
-    iex> coupons = [%{code: "ABC8123", active: true, count: 10, promo_id: 1}, %{code: "DEF8456", active: true, count: 5, promo_id: 2}]
-    iex> {:ok, success_count} = Tpe.Coupon.Create.insert_coupons(coupons)
-    iex> success_count
-    {2, nil}
+  iex> Tpe.TestTools.cleanup()
+  iex> coupons = [%{code: "ABC8123", active: true, count: 10, promo_id: 1}, %{code: "DEF8456", active: true, count: 5, promo_id: 2}]
+  iex> {:ok, success_count} = Tpe.Coupon.Create.insert_coupons(coupons)
+  iex> success_count
+  {2, nil}
   ## Returns
 
   The number of successfully inserted coupons.
@@ -163,10 +163,10 @@ defmodule Tpe.Coupon.Create do
   - `file_path` (`string`): The path to the CSV file.
 
   ## Examples
-    iex> Tpe.TestTools.cleanup()
-    iex> {:ok, success_count} = Tpe.Coupon.Create.insert_coupons_from_csv("test/fixtures/coupons_with_promo_id.csv")
-    iex> success_count
-    2000
+  iex> Tpe.TestTools.cleanup()
+  iex> {:ok, success_count} = Tpe.Coupon.Create.insert_coupons_from_csv("test/fixtures/coupons_with_promo_id.csv")
+  iex> success_count
+  2000
   ## Returns
 
   The number of successfully inserted coupons.
@@ -196,13 +196,14 @@ defmodule Tpe.Coupon.Create do
    Inserts coupons from a CSV file with a fixed promo_id in chunks.
 
   ## Examples
-    iex> Tpe.TestTools.cleanup()
-    iex> {:ok, success_count} = Tpe.Coupon.Create.insert_coupons_from_csv_fixed_promo_id("test/fixtures/coupons.csv", 13)
-    iex> success_count
-    2000
+  iex> Tpe.TestTools.cleanup()
+  iex> {:ok, success_count} = Tpe.Coupon.Create.insert_coupons_from_csv_fixed_promo_id("test/fixtures/coupons.csv", 13)
+  iex> success_count
+  2000
+
   ## Parameters:
-     - file_path: The path to the CSV file.
-     - promo_id: The fixed promo_id to assign to each coupon.
+  - file_path: The path to the CSV file.
+  - promo_id: The fixed promo_id to assign to each coupon.
 
   ## Returns:
      - `{:ok, success_count}`: A tuple with the success count indicating the number of coupons successfully inserted into the database.

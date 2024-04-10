@@ -1,4 +1,4 @@
-defmodule Tpe.CoupTest do
+defmodule Tpe.CoupTest.Create do
   use ExUnit.Case, async: true
   use Ecto.Repo, otp_app: :my_app, adapter: Ecto.Adapters.Postgres
   alias Tpe.Coupon

@@ -11,9 +11,12 @@ defmodule Tpe.RulePart.Read do
   Retrieves a rule part by its ID.
 
   ## Examples
+  iex> attrs = %{rule_id: 9, block: "tester block", verb: "verb", arguments: %{}}
+  iex> {:ok, rule_part1} = Create.create_rule_part(attrs)
+  iex> rule_part1 = Tpe.RulePart.Read.get_rule_part(rule_part1.id)
+  iex> rule_part1[:rule_id]
+  9
 
-      iex> Tpe.RulePart.Read.get_rule_part(1)
-      {:ok, %Tpe.RulePart{}}
 
   """
   def get_rule_part(id) do
@@ -31,9 +34,13 @@ defmodule Tpe.RulePart.Read do
   Retrieves a list of rule parts by the rule ID.
 
   ## Examples
-
-      iex> Tpe.RulePart.Read.list_rule_parts_by_rule_id(1)
-      {:ok, [%Tpe.RulePart{}, %Tpe.RulePart{}]}
+    iex> attrs = %{rule_id: 11, block: "tester block", verb: "verb", arguments: %{}}
+    iex> {:ok, rule_part1} = Create.create_rule_part(attrs)
+    iex> attrs = %{rule_id: 11, block: "tester block", verb: "verb", arguments: %{}}
+    iex> {:ok, rule_part2} = Create.create_rule_part(attrs)
+    iex> {:ok, [rule_part_1, rule_part_2]} = Tpe.RulePart.Read.list_rule_parts_by_rule_id(11)
+    iex> rule_part_1.rule_id
+    11
 
   """
   def list_rule_parts_by_rule_id(rule_id) do
@@ -43,7 +50,7 @@ defmodule Tpe.RulePart.Read do
     rule_parts = Tpe.Repo.all(from(rp in Tpe.RulePart, where: rp.rule_id == ^rule_id))
 
     cond do
-      rule_parts == nil ->
+      rule_parts in [nil, []] ->
         {:error, :rule_part_not_found}
 
       true ->
