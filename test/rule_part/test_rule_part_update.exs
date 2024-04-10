@@ -2,7 +2,6 @@ defmodule Tpe.RulePart.UpdateTest do
   use ExUnit.Case
   alias Tpe.RulePart.Update
   alias Tpe.RulePart.Create
-  alias Tpe.RulePart.Read
 
   doctest Tpe.RulePart.Update
 

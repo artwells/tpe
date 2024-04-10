@@ -19,8 +19,8 @@ defmodule Tpe.RulePart.Update do
     iex> attrs = %{rule_id: 11, block: "tester block", verb: "verb", arguments: %{}}
     iex> {:ok, rule_part1} = Create.create_rule_part(attrs)
     iex> updated_attrs = %{block: "updated block", verb: "updated verb"}
-    iex> {:ok, updated_rule_part} = Update.update_rule_part(rule_part1.id, updated_attrs)
-    iex> updated_rule = Tpe.RulePart.Read.get_rule_part(rule_part1.id)
+    iex> {:ok, _} = Update.update_rule_part(rule_part1.id, updated_attrs)
+    iex> {:ok, updated_rule} = Tpe.RulePart.Read.get_rule_part(rule_part1.id)
     iex> updated_rule.verb
     "updated verb"
 

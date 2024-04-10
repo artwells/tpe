@@ -1,6 +1,5 @@
 defmodule Tpe.RulePart.ReadTest do
   use ExUnit.Case
-  alias Tpe.RulePart.Read
   alias Tpe.RulePart.Create
 
   doctest Tpe.RulePart.Read, import: true

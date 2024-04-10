@@ -13,8 +13,8 @@ defmodule Tpe.RulePart.Read do
   ## Examples
   iex> attrs = %{rule_id: 9, block: "tester block", verb: "verb", arguments: %{}}
   iex> {:ok, rule_part1} = Create.create_rule_part(attrs)
-  iex> rule_part1 = Tpe.RulePart.Read.get_rule_part(rule_part1.id)
-  iex> rule_part1[:rule_id]
+  iex> {:ok, rule_part1} = Tpe.RulePart.Read.get_rule_part(rule_part1.id)
+  iex> rule_part1.rule_id
   9
 
 
