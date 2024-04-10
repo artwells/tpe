@@ -4,8 +4,13 @@ defmodule Tpe.Test.Coupon.Delete do
   alias Tpe.Coupon
   doctest Tpe.Coupon.Delete, import: true
 
-  test "delete_by_promo_id/1 deletes all coupons with a given promo_id" do
+
+  setup_all do
     Tpe.TestTools.cleanup()
+    :ok
+  end
+
+  test "delete_by_promo_id/1 deletes all coupons with a given promo_id" do
     promo_id = 12
     {:ok, _coupon1} = Coupon.Create.create_coupon(%{code: "ABC123", active: true, count: 10, promo_id: promo_id})
     {:ok, _coupon2} = Coupon.Create.create_coupon(%{code: "DEF456", active: true, count: 5, promo_id: promo_id})
@@ -18,7 +23,6 @@ defmodule Tpe.Test.Coupon.Delete do
   end
 
   test "delete_by_inserted_at_before/1 deletes all coupons inserted before a given date" do
-    Tpe.TestTools.cleanup()
     {:ok, _coupon1} = Coupon.Create.create_coupon(%{code: "TIMEABC123", active: true, count: 10, promo_id: 1})
     {:ok, _coupon2} = Coupon.Create.create_coupon(%{code: "TIMEDEF456", active: true, count: 5, promo_id: 2})
 

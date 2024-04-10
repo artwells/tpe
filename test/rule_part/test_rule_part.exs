@@ -3,6 +3,10 @@ defmodule Tpe.RulePartTest do
   doctest Tpe.RulePart, import: true
   alias Tpe.RulePart
 
+  setup do
+    Tpe.TestTools.cleanup()
+    :ok
+  end
   describe "changeset/2" do
     test "casts and validates the rule part changeset" do
       rule_part = %RulePart{}

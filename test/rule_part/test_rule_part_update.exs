@@ -5,6 +5,11 @@ defmodule Tpe.RulePart.UpdateTest do
 
   doctest Tpe.RulePart.Update
 
+
+  setup do
+    Tpe.TestTools.cleanup()
+    :ok
+  end
   test "update_rule_part/2 updates a rule part with the given ID and attributes" do
     # Setup
     attrs = %{rule_id: 1, block: "tester block", verb: "verb", arguments: %{}}

@@ -4,6 +4,12 @@ defmodule Tpe.CoupTest.Create do
   alias Tpe.Coupon
   doctest Tpe.Coupon.Create, import: true
 
+
+  setup_all do
+    Tpe.TestTools.cleanup()
+    :ok
+  end
+
   test "create_coupon/1 creates a new coupon" do
     attrs = %{code: "DEF4056", active: true, count: 5, promo_id: 2}
     {:ok, coupon} = Coupon.Create.create_coupon(attrs)
@@ -16,7 +22,6 @@ defmodule Tpe.CoupTest.Create do
   end
 
   test "mass_create/4 generates random codes and inserts them in chunks" do
-    Tpe.TestTools.cleanup()
     count = 1
     promo_id = 3
     chunk_size = 10
@@ -62,7 +67,6 @@ defmodule Tpe.CoupTest.Create do
   end
 
   test "insert_coupons/1 inserts a list of coupons" do
-    Tpe.TestTools.cleanup()
 
     coupons = [
       %{code: "ABC8123", active: true, count: 10, promo_id: 1},
@@ -79,7 +83,6 @@ defmodule Tpe.CoupTest.Create do
   end
 
   test "insert_coupons_from_csv/1 inserts coupons from a CSV file" do
-    Tpe.TestTools.cleanup()
     file_path = "test/fixtures/coupons_with_promo_id.csv"
     {:ok, 2_000} = Coupon.Create.insert_coupons_from_csv(file_path)
 
@@ -91,7 +94,6 @@ defmodule Tpe.CoupTest.Create do
   end
 
   test "insert_coupons_from_csv_fixed_promo_id/2 inserts coupons from a CSV file with a fixed promo_id" do
-    Tpe.TestTools.cleanup()
     file_path = "test/fixtures/coupons.csv"
     promo_id = 17
     {:ok, 2_000} = Coupon.Create.insert_coupons_from_csv_fixed_promo_id(file_path, promo_id)

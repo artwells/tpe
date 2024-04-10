@@ -3,6 +3,10 @@ defmodule Tpe.RulePart.CreateTest do
   doctest Tpe.RulePart.Create, import: true
   alias Tpe.RulePart.Create
 
+  setup do
+      Tpe.TestTools.cleanup()
+      :ok
+  end
 
   describe "create_rule_part/1" do
     test "creates a new rule part with the given attributes" do

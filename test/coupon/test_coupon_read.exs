@@ -4,6 +4,12 @@ defmodule Tpe.CouponTest.Read do
   alias Tpe.Coupon
   doctest Tpe.Coupon.Read, import: true
 
+
+  setup_all do
+    Tpe.TestTools.cleanup()
+    :ok
+  end
+
   test "get_coupon/1 retrieves a coupon by id" do
     {:ok, coupon} =
       Coupon.Create.create_coupon(%{code: "ABC1235", active: true, count: 10, promo_id: 1})
@@ -87,7 +93,6 @@ defmodule Tpe.CouponTest.Read do
   end
 
   test "dump_coupon_codes_by_promo_id_with_dashes/2 retrieves coupon codes by promo_id with dashes" do
-    Tpe.TestTools.cleanup()
     promo_id = 6
     interv = 3
 

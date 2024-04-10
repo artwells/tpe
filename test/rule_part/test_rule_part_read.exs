@@ -2,7 +2,14 @@ defmodule Tpe.RulePart.ReadTest do
   use ExUnit.Case
   alias Tpe.RulePart.Create
 
+  alias Tpe.RulePart.Read
+
   doctest Tpe.RulePart.Read, import: true
+
+  setup do
+    Tpe.TestTools.cleanup()
+    :ok
+  end
 
   test "get_rule_part/1 retrieves a rule part by its ID" do
     # Setup

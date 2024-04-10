@@ -5,6 +5,11 @@ defmodule Tpe.RulePart.DeleteTest do
 
   doctest Tpe.RulePart.Delete, import: true
 
+  setup do
+    Tpe.TestTools.cleanup()
+    :ok
+  end
+
   test "delete_rule_part/1 deletes a rule part with the given ID from the database" do
     attrs = %{rule_id: 8, block: "tester block", verb: "verb", arguments: %{}}
     {:ok, rule_part} = Create.create_rule_part(attrs)
