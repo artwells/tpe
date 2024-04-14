@@ -1,13 +1,19 @@
 defmodule Tpe.RulePart.UpdateTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
   alias Tpe.RulePart.Update
   alias Tpe.RulePart.Create
+  alias Tpe.TestTools
 
   doctest Tpe.RulePart.Update
 
 
   setup do
-    Tpe.TestTools.cleanup()
+    TestTools.sandbox_connection()
+    :ok
+  end
+
+  setup_all do
+    TestTools.cleanup()
     :ok
   end
   test "update_rule_part/2 updates a rule part with the given ID and attributes" do

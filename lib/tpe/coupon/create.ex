@@ -31,7 +31,6 @@ defmodule Tpe.Coupon.Create do
   - `coupons` (`list`): The list of coupons to insert.
 
   ## Examples
-  iex> Tpe.TestTools.cleanup()
   iex> coupons = [%{code: "ABC8123", active: true, count: 10, promo_id: 1}, %{code: "DEF8456", active: true, count: 5, promo_id: 2}]
   iex> {:ok, success_count} = Tpe.Coupon.Create.insert_coupons(coupons)
   iex> success_count

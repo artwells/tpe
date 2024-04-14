@@ -6,10 +6,7 @@ defmodule Tpe.CouponTest do
 
 
 
-  setup do
-    Tpe.TestTools.cleanup()
-    :ok
-  end
+
 
   test "changeset/2 casts and validates the coupon changeset" do
     changeset =

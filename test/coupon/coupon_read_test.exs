@@ -1,12 +1,17 @@
 defmodule Tpe.CouponTest.Read do
   use ExUnit.Case, async: true
   use Ecto.Repo, otp_app: :my_app, adapter: Ecto.Adapters.Postgres
+  alias Tpe.TestTools
   alias Tpe.Coupon
   doctest Tpe.Coupon.Read, import: true
 
+  setup do
+    TestTools.sandbox_connection()
+    :ok
+  end
 
   setup_all do
-    Tpe.TestTools.cleanup()
+    TestTools.cleanup()
     :ok
   end
 

@@ -1,12 +1,18 @@
 defmodule Tpe.CoupTest.Create do
   use ExUnit.Case, async: true
   use Ecto.Repo, otp_app: :my_app, adapter: Ecto.Adapters.Postgres
+  alias Tpe.TestTools
   alias Tpe.Coupon
   doctest Tpe.Coupon.Create, import: true
 
 
+  setup do
+    TestTools.sandbox_connection()
+    :ok
+  end
+
   setup_all do
-    Tpe.TestTools.cleanup()
+    TestTools.cleanup()
     :ok
   end
 
@@ -40,13 +46,13 @@ defmodule Tpe.CoupTest.Create do
     assert coupon.inserted_at == coupon.updated_at
     assert coupon.inserted_at != nil
 
-    Tpe.TestTools.cleanup()
-
     {:ok, success_count} =
       Coupon.Create.mass_create(count, promo_id, chunk_size, max_use, "PREFIX", "SUFFIX")
 
     # confirm that the count of coupons for the promo is equal to the count
     assert success_count == count
+
+    TestTools.cleanup()
 
     assert Enum.all?(
              Coupon.Read.dump_coupons_by_promo_id(promo_id),
@@ -75,11 +81,15 @@ defmodule Tpe.CoupTest.Create do
 
     {:ok, success_count} = Coupon.Create.insert_coupons(coupons)
     assert success_count == {2, nil}
+    {:ok, retrieved_coupon} =  Coupon.Read.get_coupon_by_code("ABC8123")
+    assert %Tpe.Coupon{} = retrieved_coupon
+    assert "ABC8123" == retrieved_coupon.code
+    assert true == retrieved_coupon.active
+    {:ok, retrieved_coupon} =  Coupon.Read.get_coupon_by_code("DEF8456")
+    assert %Tpe.Coupon{} = retrieved_coupon
+    assert "DEF8456" == retrieved_coupon.code
+    assert true == retrieved_coupon.active
 
-    inserted_coupons = Tpe.Repo.all(Tpe.Coupon)
-    assert length(inserted_coupons) == 2
-    assert Enum.any?(inserted_coupons, fn coupon -> coupon.code == "ABC8123" end)
-    assert Enum.any?(inserted_coupons, fn coupon -> coupon.code == "DEF8456" end)
   end
 
   test "insert_coupons_from_csv/1 inserts coupons from a CSV file" do
@@ -94,6 +104,7 @@ defmodule Tpe.CoupTest.Create do
   end
 
   test "insert_coupons_from_csv_fixed_promo_id/2 inserts coupons from a CSV file with a fixed promo_id" do
+
     file_path = "test/fixtures/coupons.csv"
     promo_id = 17
     {:ok, 2_000} = Coupon.Create.insert_coupons_from_csv_fixed_promo_id(file_path, promo_id)

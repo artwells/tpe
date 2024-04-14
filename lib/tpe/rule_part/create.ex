@@ -7,7 +7,6 @@ defmodule Tpe.RulePart.Create do
   use Ecto.Schema
   use Ecto.Repo, otp_app: :my_app, adapter: Ecto.Adapters.Postgres
 
-  @spec create_rule_part() :: {:ok, any()}
   @doc """
   Creates a new rule part with the given attributes.
 

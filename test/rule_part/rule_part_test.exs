@@ -1,10 +1,17 @@
 defmodule Tpe.RulePartTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
   doctest Tpe.RulePart, import: true
   alias Tpe.RulePart
+  alias Tpe.TestTools
+
 
   setup do
-    Tpe.TestTools.cleanup()
+    TestTools.sandbox_connection()
+    :ok
+  end
+
+  setup_all do
+    TestTools.cleanup()
     :ok
   end
   describe "changeset/2" do

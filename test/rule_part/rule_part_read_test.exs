@@ -1,13 +1,17 @@
 defmodule Tpe.RulePart.ReadTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
   alias Tpe.RulePart.Create
-
   alias Tpe.RulePart.Read
-
+  alias Tpe.TestTools
   doctest Tpe.RulePart.Read, import: true
 
   setup do
-    Tpe.TestTools.cleanup()
+    TestTools.sandbox_connection()
+    :ok
+  end
+
+  setup_all do
+    TestTools.cleanup()
     :ok
   end
 

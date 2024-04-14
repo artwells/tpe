@@ -1,11 +1,17 @@
 defmodule Tpe.RulePart.CreateTest do
-  use ExUnit.Case
-  doctest Tpe.RulePart.Create, import: true
+  use ExUnit.Case, async: true
   alias Tpe.RulePart.Create
+  alias Tpe.TestTools
+  doctest Tpe.RulePart.Create, import: true
 
   setup do
-      Tpe.TestTools.cleanup()
-      :ok
+    TestTools.sandbox_connection()
+    :ok
+  end
+
+  setup_all do
+    TestTools.cleanup()
+    :ok
   end
 
   describe "create_rule_part/1" do

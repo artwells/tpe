@@ -1,15 +1,19 @@
 defmodule Tpe.CouponTest.Update do
   use ExUnit.Case, async: true
   use Ecto.Repo, otp_app: :my_app, adapter: Ecto.Adapters.Postgres
+  alias Tpe.TestTools
   alias Tpe.Coupon
   doctest Tpe.Coupon.Update, import: true
 
-
-  setup_all do
-    Tpe.TestTools.cleanup()
+  setup do
+    TestTools.sandbox_connection()
     :ok
   end
 
+  setup_all do
+    TestTools.cleanup()
+    :ok
+  end
   test "increment_use/1 increments the count of a coupon" do
     coupon = %{code: "ABC1238", active: true, count: 10, promo_id: 1}
     {:ok, coupon} = Coupon.Create.create_coupon(coupon)
@@ -42,7 +46,6 @@ defmodule Tpe.CouponTest.Update do
     {:ok, retrieved_coupon} = Coupon.Read.get_coupon(coupon.id)
     updated_at = retrieved_coupon.updated_at
     inserted_at = retrieved_coupon.inserted_at
-    Process.sleep(1000)
 
     {:ok, updated_coupon} =
       Coupon.Update.update_coupon(retrieved_coupon, %{count: 7, promo_id: 2})
@@ -68,7 +71,6 @@ defmodule Tpe.CouponTest.Update do
     {:ok, coupon4} =
       Coupon.Create.create_coupon(%{code: "GHI000", active: false, count: 8, promo_id: 8})
 
-    Process.sleep(2000)
     assert {3, nil} == Coupon.Update.set_active_by_promo_id(promo_id, active)
 
     updated_coupon1 = Tpe.Repo.get(Tpe.Coupon, coupon1.id)
