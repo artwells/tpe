@@ -12,7 +12,7 @@ defmodule Tpe.RulePart.Create do
 
   ## Examples
 
-  iex>   {:ok, rp} = Tpe.RulePart.Create.create_rule_part(%{rule_id: 8, block: "block", verb: "verb", arguments: %{}})
+  iex> {:ok, rp} = Tpe.RulePart.Create.create_rule_part(%{rule_id: 8, block: "block", verb: "verb", arguments: %{}})
   iex> part = Map.from_struct(rp)
   iex> part.rule_id
   8

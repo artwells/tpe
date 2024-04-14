@@ -1,7 +1,7 @@
 defmodule Tpe.RulePart.Update do
   @moduledoc """
   This module provides functions for updating a rule part in the Tpe application.
-"""
+  """
 
   use Ecto.Schema
   use Ecto.Repo, otp_app: :my_app, adapter: Ecto.Adapters.Postgres
@@ -16,13 +16,13 @@ defmodule Tpe.RulePart.Update do
   * `attrs` - A map of attributes to update.
 
   ## Examples
-    iex> attrs = %{rule_id: 11, block: "tester block", verb: "verb", arguments: %{}}
-    iex> {:ok, rule_part1} = Create.create_rule_part(attrs)
-    iex> updated_attrs = %{block: "updated block", verb: "updated verb"}
-    iex> {:ok, _} = Update.update_rule_part(rule_part1.id, updated_attrs)
-    iex> {:ok, updated_rule} = Tpe.RulePart.Read.get_rule_part(rule_part1.id)
-    iex> updated_rule.verb
-    "updated verb"
+  iex> attrs = %{rule_id: 11, block: "tester block", verb: "verb", arguments: %{}}
+  iex> {:ok, rule_part1} = Create.create_rule_part(attrs)
+  iex> updated_attrs = %{block: "updated block", verb: "updated verb"}
+  iex> {:ok, _} = Update.update_rule_part(rule_part1.id, updated_attrs)
+  iex> {:ok, updated_rule} = Tpe.RulePart.Read.get_rule_part(rule_part1.id)
+  iex> updated_rule.verb
+  "updated verb"
 
   ## Returns
 

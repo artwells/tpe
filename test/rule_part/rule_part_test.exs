@@ -1,8 +1,9 @@
 defmodule Tpe.RulePartTest do
   use ExUnit.Case, async: true
-  doctest Tpe.RulePart, import: true
   alias Tpe.RulePart
   alias Tpe.TestTools
+
+  doctest Tpe.RulePart, import: true
 
 
   setup do

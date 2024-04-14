@@ -3,6 +3,7 @@ defmodule Tpe.RulePart.ReadTest do
   alias Tpe.RulePart.Create
   alias Tpe.RulePart.Read
   alias Tpe.TestTools
+
   doctest Tpe.RulePart.Read, import: true
 
   setup do

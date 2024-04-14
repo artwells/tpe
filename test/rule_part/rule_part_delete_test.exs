@@ -3,6 +3,7 @@ defmodule Tpe.RulePart.DeleteTest do
   alias Tpe.RulePart.Delete
   alias Tpe.RulePart.Create
   alias Tpe.TestTools
+
   doctest Tpe.RulePart.Delete, import: true
 
   setup do
