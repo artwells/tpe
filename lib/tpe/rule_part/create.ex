@@ -11,11 +11,11 @@ defmodule Tpe.RulePart.Create do
   Creates a new rule part with the given attributes.
 
   ## Examples
-
-  iex> {:ok, rp} = Tpe.RulePart.Create.create_rule_part(%{rule_id: 8, block: "block", verb: "verb", arguments: %{}})
+  iex> {:ok, rule} = Tpe.Rule.Create.create_rule(%{name: "Rule 1", description: "a new rule"})
+  iex> {:ok, rp} = Tpe.RulePart.Create.create_rule_part(%{rule_id: rule.id, block: "block", verb: "verb", arguments: %{}})
   iex> part = Map.from_struct(rp)
   iex> part.rule_id
-  8
+  rule.id
 
   """
   def create_rule_part(attrs \\ %{}) do

@@ -21,8 +21,9 @@ defmodule Tpe.Rule do
     field :name, :string
     field :description, :string
     field :type, :string, default: "basic"
-    field(:inserted_at, :utc_datetime_usec)
-    field(:updated_at, :utc_datetime_usec)
+    field :inserted_at, :utc_datetime_usec
+    field :updated_at, :utc_datetime_usec
+    has_many :rule_parts, Tpe.RulePart
   end
 
   @doc """

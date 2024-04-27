@@ -11,11 +11,7 @@ defmodule Tpe.RulePartTest do
     :ok
   end
 
-  setup_all do
-    TestTools.cleanup()
-    :ok
-  end
-  describe "changeset/2" do
+
     test "casts and validates the rule part changeset" do
       rule_part = %RulePart{}
       now = DateTime.utc_now()
@@ -38,5 +34,4 @@ defmodule Tpe.RulePartTest do
       assert {"can't be blank", [validation: :required]} = changeset.errors[:verb]
       assert {"can't be blank", [validation: :required]} = changeset.errors[:arguments]
     end
-  end
 end

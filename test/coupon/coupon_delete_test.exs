@@ -11,20 +11,15 @@ defmodule Tpe.Test.Coupon.Delete do
     :ok
   end
 
-  setup_all do
-    TestTools.cleanup()
-    :ok
-  end
-
   test "delete_by_promo_id/1 deletes all coupons with a given promo_id" do
     promo_id = 12
     {:ok, _coupon1} = Coupon.Create.create_coupon(%{code: "ABC123", active: true, count: 10, promo_id: promo_id})
     {:ok, _coupon2} = Coupon.Create.create_coupon(%{code: "DEF456", active: true, count: 5, promo_id: promo_id})
     {:ok, _coupon3} = Coupon.Create.create_coupon(%{code: "GHI789", active: true, count: 8, promo_id: promo_id})
 
-    deleted_count = Coupon.Delete.delete_by_promo_id(promo_id)
+    {deleted_count, nil} = Coupon.Delete.delete_by_promo_id(promo_id)
 
-    assert deleted_count == {3, nil}
+    assert 3 == deleted_count
     assert [] == Tpe.Repo.all(Tpe.Coupon)
   end
 

@@ -6,6 +6,17 @@ defmodule Tpe.Coupon do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @spec __struct__() :: %Tpe.Coupon{
+          __meta__: Ecto.Schema.Metadata.t(),
+          active: nil,
+          code: nil,
+          count: nil,
+          id: nil,
+          inserted_at: nil,
+          max_use: nil,
+          promo_id: nil,
+          updated_at: nil
+        }
   @doc """
   The `coupons` schema represents a coupon record in the database.
 

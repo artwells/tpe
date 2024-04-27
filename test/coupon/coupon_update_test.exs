@@ -10,10 +10,7 @@ defmodule Tpe.CouponTest.Update do
     :ok
   end
 
-  setup_all do
-    TestTools.cleanup()
-    :ok
-  end
+
   test "increment_use/1 increments the count of a coupon" do
     coupon = %{code: "ABC1238", active: true, count: 10, promo_id: 1}
     {:ok, coupon} = Coupon.Create.create_coupon(coupon)

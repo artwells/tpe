@@ -20,7 +20,7 @@ defmodule Tpe.Coupon.Read do
   - `{:error, :coupon_not_found}`: If the coupon is not found.
 
   ## Examples
-  iex> Tpe.TestTools.cleanup()
+  
   iex> {:ok, coupon} = Tpe.Coupon.Create.create_coupon(%{code: "ABC123", active: true, count: 10, promo_id: 1})
   iex> {:ok, retrieved_coupon} = Tpe.Coupon.Read.get_coupon(coupon.id)
   iex> retrieved_coupon.code
@@ -51,7 +51,7 @@ defmodule Tpe.Coupon.Read do
   - `{:error, :coupon_not_found}`: If the coupon is not found.
 
   ## Examples
-  iex> Tpe.TestTools.cleanup()
+  
   iex> {:ok, _coupon} = Tpe.Coupon.Create.create_coupon(%{code: "ABC123", active: true, count: 10, promo_id: 1})
   iex> {:ok, retrieved_coupon} = Tpe.Coupon.Read.get_coupon_by_code("ABC123")
   iex> retrieved_coupon.code
@@ -93,7 +93,7 @@ defmodule Tpe.Coupon.Read do
   - `{:error, :coupon_not_found}`: If the coupon is not found.
 
   ## Examples
-  iex> Tpe.TestTools.cleanup()
+  
   iex> {:ok, _coupon} = Tpe.Coupon.Create.create_coupon(%{code: "ABC123", active: true, count: 0, max_use: 10, promo_id: 1})
   iex> {:ok, coupon} = get_valid_coupon("ABC123")
   iex> coupon.code
@@ -128,7 +128,7 @@ defmodule Tpe.Coupon.Read do
   - A list of coupons associated with the promo_id.
 
   ## Examples
-  iex> Tpe.TestTools.cleanup()
+  
   iex> {:ok, _coupon1} = Tpe.Coupon.Create.create_coupon(%{code: "ABC123", active: true, count: 10, promo_id: 22})
   iex> {:ok, _coupon2} = Tpe.Coupon.Create.create_coupon(%{code: "DEF456", active: true, count: 5, promo_id: 22})
   iex> coupons = Tpe.Coupon.Read.dump_coupons_by_promo_id(22)
@@ -156,7 +156,7 @@ defmodule Tpe.Coupon.Read do
   - A list of coupon codes with optional dashes added at the specified interval.
 
   ## Examples
-  iex> Tpe.TestTools.cleanup()
+  
   iex> {:ok, _coupon1} = Tpe.Coupon.Create.create_coupon(%{code: "ABC123", active: true, count: 10, promo_id: 3})
   iex> {:ok, _coupon2} = Tpe.Coupon.Create.create_coupon(%{code: "DEF456", active: true, count: 5, promo_id: 3})
   iex> {:ok, _coupon3} = Tpe.Coupon.Create.create_coupon(%{code: "GHI789", active: true, count: 8, promo_id: 3})

@@ -10,10 +10,6 @@ defmodule Tpe.CouponTest.Read do
     :ok
   end
 
-  setup_all do
-    TestTools.cleanup()
-    :ok
-  end
 
   test "get_coupon/1 retrieves a coupon by id" do
     {:ok, coupon} =

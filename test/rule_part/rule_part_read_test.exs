@@ -11,14 +11,12 @@ defmodule Tpe.RulePart.ReadTest do
     :ok
   end
 
-  setup_all do
-    TestTools.cleanup()
-    :ok
-  end
 
   test "get_rule_part/1 retrieves a rule part by its ID" do
     # Setup
-    attrs = %{rule_id: 1, block: "tester block", verb: "verb", arguments: %{}}
+    {:ok, rule} = Tpe.Rule.Create.create_rule(%{name: "Rule 1", description: "a new rule"})
+
+    attrs = %{rule_id: rule.id, block: "tester block", verb: "verb", arguments: %{}}
     {:ok, rule_part} = Create.create_rule_part(attrs)
 
     # Action
@@ -40,13 +38,15 @@ defmodule Tpe.RulePart.ReadTest do
 
   test "list_rule_parts_by_rule_id/1 retrieves a list of rule parts by the rule ID" do
     # Setup
-    attrs = %{rule_id: 2, block: "tester block1", verb: "verb", arguments: %{}}
+    {:ok, rule} = Tpe.Rule.Create.create_rule(%{name: "Rule 1", description: "a new rule"})
+
+    attrs = %{rule_id: rule.id, block: "tester block1", verb: "verb", arguments: %{}}
     {:ok, rule_part1} = Create.create_rule_part(attrs)
-    attrs = %{rule_id: 2, block: "tester block2", verb: "verb", arguments: %{}}
+    attrs = %{rule_id: rule.id, block: "tester block2", verb: "verb", arguments: %{}}
     {:ok, rule_part2} = Create.create_rule_part(attrs)
 
     # Action
-    {:ok, [retrieved_rule_part1, retrieved_rule_part2]} = Read.list_rule_parts_by_rule_id(2)
+    {:ok, [retrieved_rule_part1, retrieved_rule_part2]} = Read.list_rule_parts_by_rule_id(rule.id)
 
     # Assertion
     assert rule_part1.rule_id == retrieved_rule_part1.rule_id

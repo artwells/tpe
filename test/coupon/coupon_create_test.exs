@@ -5,14 +5,8 @@ defmodule Tpe.CoupTest.Create do
   alias Tpe.Coupon
   doctest Tpe.Coupon.Create, import: true
 
-
   setup do
     TestTools.sandbox_connection()
-    :ok
-  end
-
-  setup_all do
-    TestTools.cleanup()
     :ok
   end
 
@@ -32,7 +26,6 @@ defmodule Tpe.CoupTest.Create do
     promo_id = 3
     chunk_size = 10
     max_use = 5
-
     {:ok, success_count} = Coupon.Create.mass_create(count, promo_id, chunk_size, max_use)
     # confirm that the count of coupons for the promo is equal to the count
     assert success_count == count
@@ -40,27 +33,33 @@ defmodule Tpe.CoupTest.Create do
     # check one coupon from the promo
     coupon = Enum.at(Coupon.Read.dump_coupons_by_promo_id(promo_id), 0)
     # check that the code is the correct length from config
-
     assert String.length(coupon.code) == Application.fetch_env!(:tpe, :code_length)
     # check that inserted_at and updated_at are the same and not null
     assert coupon.inserted_at == coupon.updated_at
     assert coupon.inserted_at != nil
+  end
+
+  test "mass_create/4 generates random codes and inserts them in chunks, with prefix and suffix" do
+    count = 1
+    promo_id = 3
+    chunk_size = 10
+    max_use = 5
+    prefix = "PREFIX"
+    suffix = "SUFFIX"
 
     {:ok, success_count} =
-      Coupon.Create.mass_create(count, promo_id, chunk_size, max_use, "PREFIX", "SUFFIX")
+      Coupon.Create.mass_create(count, promo_id, chunk_size, max_use, prefix, suffix)
 
     # confirm that the count of coupons for the promo is equal to the count
     assert success_count == count
 
-    TestTools.cleanup()
-
     assert Enum.all?(
-             Coupon.Read.dump_coupons_by_promo_id(promo_id),
-             # check each coupon with check_prefix_suffix
-             fn coupon ->
-               check_prefix_suffix(coupon, "PREFIX", "SUFFIX")
-             end
-           )
+      Coupon.Read.dump_coupons_by_promo_id(promo_id),
+      # check each coupon with check_prefix_suffix
+      fn coupon ->
+        check_prefix_suffix(coupon, prefix, suffix)
+      end
+    )
   end
 
   defp check_prefix_suffix(coupon, prefix, suffix) do
@@ -73,7 +72,6 @@ defmodule Tpe.CoupTest.Create do
   end
 
   test "insert_coupons/1 inserts a list of coupons" do
-
     coupons = [
       %{code: "ABC8123", active: true, count: 10, promo_id: 1},
       %{code: "DEF8456", active: true, count: 5, promo_id: 2}
@@ -89,7 +87,6 @@ defmodule Tpe.CoupTest.Create do
     assert %Tpe.Coupon{} = retrieved_coupon
     assert "DEF8456" == retrieved_coupon.code
     assert true == retrieved_coupon.active
-
   end
 
   test "insert_coupons_from_csv/1 inserts coupons from a CSV file" do
@@ -104,7 +101,6 @@ defmodule Tpe.CoupTest.Create do
   end
 
   test "insert_coupons_from_csv_fixed_promo_id/2 inserts coupons from a CSV file with a fixed promo_id" do
-
     file_path = "test/fixtures/coupons.csv"
     promo_id = 17
     {:ok, 2_000} = Coupon.Create.insert_coupons_from_csv_fixed_promo_id(file_path, promo_id)

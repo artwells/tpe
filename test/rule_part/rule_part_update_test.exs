@@ -12,15 +12,14 @@ defmodule Tpe.RulePart.UpdateTest do
     :ok
   end
 
-  setup_all do
-    TestTools.cleanup()
-    :ok
-  end
+
   test "update_rule_part/2 updates a rule part with the given ID and attributes" do
     # Setup
-    attrs = %{rule_id: 1, block: "tester block", verb: "verb", arguments: %{}}
-    {:ok, rule_part} = Create.create_rule_part(attrs)
+    attrs = %{name: "New Rule"}
+    {:ok, rule} = Tpe.Rule.Create.create_rule(%{name: "Rule 1", description: "a new rule"})
 
+    attrs = %{rule_id: rule.id, block: "tester block", verb: "verb", arguments: %{}}
+    {:ok, rule_part} = Create.create_rule_part(attrs)
     # Action
     updated_attrs = %{block: "updated block", verb: "updated verb"}
     {:ok, updated_rule_part} = Update.update_rule_part(rule_part.id, updated_attrs)

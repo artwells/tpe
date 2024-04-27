@@ -16,7 +16,9 @@ defmodule Tpe.RulePart.Update do
   * `attrs` - A map of attributes to update.
 
   ## Examples
-  iex> attrs = %{rule_id: 11, block: "tester block", verb: "verb", arguments: %{}}
+
+  iex> {:ok, rule} = Tpe.Rule.Create.create_rule(%{name: "Rule 1", description: "a new rule"})
+  iex> attrs = %{rule_id: rule.id, block: "tester block", verb: "verb", arguments: %{}}
   iex> {:ok, rule_part1} = Create.create_rule_part(attrs)
   iex> updated_attrs = %{block: "updated block", verb: "updated verb"}
   iex> {:ok, _} = Update.update_rule_part(rule_part1.id, updated_attrs)

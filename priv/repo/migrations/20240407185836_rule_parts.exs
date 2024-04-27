@@ -6,6 +6,7 @@ defmodule Tpe.Repo.Migrations.RuleParts do
       add :block, :string, null: false
       add :verb, :string, null: false
       add :arguments, :map, null: false
+
       timestamps(type: :timestamptz, default: fragment("now()"))
     end
     create index(:rule_parts, [:rule_id])

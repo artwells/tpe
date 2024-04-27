@@ -9,12 +9,13 @@ defmodule Tpe.Repo.Migrations.Rule do
       timestamps(type: :timestamptz, default: fragment("now()"))
     end
     alter table(:rule_parts) do
-      modify :rule_id, references(:rule, on_delete: :delete_all)
+      modify :rule_id, references(:rule, on_delete: :delete_all), null: true
     end
   end
 
   def down do
     drop constraint(:rule_parts, "rule_parts_rule_id_fkey")
+
     drop table(:rule)
   end
 end

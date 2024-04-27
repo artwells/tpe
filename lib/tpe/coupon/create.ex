@@ -162,7 +162,7 @@ defmodule Tpe.Coupon.Create do
   - `file_path` (`string`): The path to the CSV file.
 
   ## Examples
-  iex> Tpe.TestTools.cleanup()
+  
   iex> {:ok, success_count} = Tpe.Coupon.Create.insert_coupons_from_csv("test/fixtures/coupons_with_promo_id.csv")
   iex> success_count
   2000
@@ -195,7 +195,7 @@ defmodule Tpe.Coupon.Create do
    Inserts coupons from a CSV file with a fixed promo_id in chunks.
 
   ## Examples
-  iex> Tpe.TestTools.cleanup()
+  
   iex> {:ok, success_count} = Tpe.Coupon.Create.insert_coupons_from_csv_fixed_promo_id("test/fixtures/coupons.csv", 13)
   iex> success_count
   2000

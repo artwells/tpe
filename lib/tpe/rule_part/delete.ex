@@ -8,7 +8,8 @@ defmodule Tpe.RulePart.Delete do
   Deletes a rule part with the given ID from the database.
 
   ## Examples
-  iex> attrs = %{rule_id: 8, block: "tester block", verb: "verb", arguments: %{}}
+  iex> {:ok, rule} = Tpe.Rule.Create.create_rule(%{name: "Rule 1", description: "a new rule"})
+  iex> attrs = %{rule_id: rule.id, block: "tester block", verb: "verb", arguments: %{}}
   iex>{:ok, rule_part} = Tpe.RulePart.Create.create_rule_part(attrs)
   iex> {:ok, _} = Tpe.RulePart.Delete.delete_rule_part(rule_part.id)
   """
@@ -25,9 +26,10 @@ defmodule Tpe.RulePart.Delete do
   Deletes all rule parts associated with a given rule ID from the database.
 
   ## Examples
-  iex> attrs = %{rule_id: 7, block: "tester block", verb: "verb", arguments: %{}}
+  iex> {:ok, rule} = Tpe.Rule.Create.create_rule(%{name: "Rule 1", description: "a new rule"})
+  iex> attrs = %{rule_id: rule.id, block: "tester block", verb: "verb", arguments: %{}}
   iex>{:ok, _} = Tpe.RulePart.Create.create_rule_part(attrs)
-  iex> Tpe.RulePart.Delete.delete_rule_parts_by_rule_id(7)
+  iex> Tpe.RulePart.Delete.delete_rule_parts_by_rule_id(rule.id)
   {1, nil}
   """
   def delete_rule_parts_by_rule_id(rule_id) do

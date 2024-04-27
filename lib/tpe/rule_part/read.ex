@@ -11,11 +11,12 @@ defmodule Tpe.RulePart.Read do
   Retrieves a rule part by its ID.
 
   ## Examples
-  iex> attrs = %{rule_id: 9, block: "tester block", verb: "verb", arguments: %{}}
+  iex> {:ok, rule} = Tpe.Rule.Create.create_rule(%{name: "Rule 1", description: "a new rule"})
+  iex> attrs = %{rule_id: rule.id, block: "tester block", verb: "verb", arguments: %{}}
   iex> {:ok, rule_part1} = Create.create_rule_part(attrs)
   iex> {:ok, rule_part1} = Tpe.RulePart.Read.get_rule_part(rule_part1.id)
   iex> rule_part1.rule_id
-  9
+  rule.id
   """
   def get_rule_part(id) do
     rule_part = Tpe.Repo.get(Tpe.RulePart, id)
@@ -32,13 +33,14 @@ defmodule Tpe.RulePart.Read do
   Retrieves a list of rule parts by the rule ID.
 
   ## Examples
-  iex> attrs = %{rule_id: 11, block: "tester block", verb: "verb", arguments: %{}}
+  iex> {:ok, rule} = Tpe.Rule.Create.create_rule(%{name: "Rule 1", description: "a new rule"})
+  iex> attrs = %{rule_id: rule.id, block: "tester block", verb: "verb", arguments: %{}}
   iex> {:ok, rule_part1} = Create.create_rule_part(attrs)
-  iex> attrs = %{rule_id: 11, block: "tester block", verb: "verb", arguments: %{}}
+  iex> attrs = %{rule_id: rule.id, block: "tester block", verb: "verb", arguments: %{}}
   iex> {:ok, rule_part2} = Create.create_rule_part(attrs)
-  iex> {:ok, [rule_part_1, rule_part_2]} = Tpe.RulePart.Read.list_rule_parts_by_rule_id(11)
+  iex> {:ok, [rule_part_1, rule_part_2]} = Tpe.RulePart.Read.list_rule_parts_by_rule_id(rule.id)
   iex> rule_part_1.rule_id
-  11
+  rule.id
   """
   def list_rule_parts_by_rule_id(rule_id) do
     from(rp in Tpe.RulePart, where: rp.rule_id == ^rule_id, order_by: [asc: rp.id])
