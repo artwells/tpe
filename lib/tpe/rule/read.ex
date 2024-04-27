@@ -53,9 +53,11 @@ defmodule Tpe.Rule.Read do
     def get_rule_and_rule_parts(id) do
       rule = Tpe.Repo.get(Tpe.Rule, id)
       rule_parts = Tpe.RulePart.Read.list_rule_parts_by_rule_id(id)
-      cond do
+      rule_parts = cond do
         rule_parts == {:error, :rule_part_not_found} ->
-          ^rule_parts = []
+            []
+          true ->
+            rule_parts
         end
       cond do
         rule == nil ->
@@ -63,8 +65,6 @@ defmodule Tpe.Rule.Read do
         true ->
           {:ok, %{rule: rule, rule_parts: rule_parts}}
       end
-
-
     end
 
 end

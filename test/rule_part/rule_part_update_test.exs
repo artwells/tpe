@@ -15,7 +15,6 @@ defmodule Tpe.RulePart.UpdateTest do
 
   test "update_rule_part/2 updates a rule part with the given ID and attributes" do
     # Setup
-    attrs = %{name: "New Rule"}
     {:ok, rule} = Tpe.Rule.Create.create_rule(%{name: "Rule 1", description: "a new rule"})
 
     attrs = %{rule_id: rule.id, block: "tester block", verb: "verb", arguments: %{}}

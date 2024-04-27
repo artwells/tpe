@@ -35,10 +35,10 @@ defmodule Tpe.RulePart.Read do
   ## Examples
   iex> {:ok, rule} = Tpe.Rule.Create.create_rule(%{name: "Rule 1", description: "a new rule"})
   iex> attrs = %{rule_id: rule.id, block: "tester block", verb: "verb", arguments: %{}}
-  iex> {:ok, rule_part1} = Create.create_rule_part(attrs)
+  iex> {:ok, _} = Create.create_rule_part(attrs)
   iex> attrs = %{rule_id: rule.id, block: "tester block", verb: "verb", arguments: %{}}
-  iex> {:ok, rule_part2} = Create.create_rule_part(attrs)
-  iex> {:ok, [rule_part_1, rule_part_2]} = Tpe.RulePart.Read.list_rule_parts_by_rule_id(rule.id)
+  iex> {:ok, _} = Create.create_rule_part(attrs)
+  iex> {:ok, [rule_part_1, _]} = Tpe.RulePart.Read.list_rule_parts_by_rule_id(rule.id)
   iex> rule_part_1.rule_id
   rule.id
   """
