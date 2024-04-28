@@ -33,18 +33,22 @@ defmodule Tpe.Rule.ReadTest do
     Enum.each(rule_part_attrs, &Tpe.RulePart.Create.create_rule_part/1)
 
     {:ok, %{rule: rule, rule_parts: rule_parts}} = Read.get_rule_and_rule_parts(rule.id)
-
     assert rule.name == "test rule"
     assert length(rule_parts) == 2
-  #  assert Enum.all?(rule_parts, fn rp -> rp.rule_id == rule.id end)
+    assert Enum.all?(rule_parts, fn rp -> rp.rule_id == rule.id end)
   end
 
   test "get_rule_and_rule_parts/1 returns an error tuple if rule is not found" do
     {:error, :rule_not_found} = Read.get_rule_and_rule_parts(0)
   end
 
+  test "get_rule_and_rule_parts/1 retrieves a rule and empty rule parts by ID" do
+    attrs = %{name: "test rule", description: "test description"}
+    {:ok, rule} = Create.create_rule(attrs)
 
-
-
+    {:ok, %{rule: rule, rule_parts: rule_parts}} = Read.get_rule_and_rule_parts(rule.id)
+    assert rule.name == "test rule"
+    assert length(rule_parts) == 0
+  end
 
 end

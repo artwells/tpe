@@ -56,8 +56,9 @@ defmodule Tpe.Rule.Read do
       rule_parts = cond do
         rule_parts == {:error, :rule_part_not_found} ->
             []
-          true ->
-            rule_parts
+        true ->
+            {:ok, rule_parts_new} = rule_parts
+            rule_parts_new
         end
       cond do
         rule == nil ->
