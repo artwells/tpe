@@ -1,0 +1,81 @@
+[
+  forall: [
+    %Wongi.Engine.DSL.Has{
+      subject: %Wongi.Engine.DSL.Var{name: :planet},
+      predicate: :satellite,
+      object: %Wongi.Engine.DSL.Var{name: :satellite},
+      filters: nil
+    },
+    %Wongi.Engine.DSL.Has{
+      subject: %Wongi.Engine.DSL.Var{name: :planet},
+      predicate: :mass,
+      object: %Wongi.Engine.DSL.Var{name: :planet_mass},
+      filters: nil
+    },
+    %Wongi.Engine.DSL.Has{
+      subject: %Wongi.Engine.DSL.Var{name: :satellite},
+      predicate: :mass,
+      object: %Wongi.Engine.DSL.Var{name: :sat_mass},
+      filters: nil
+    },
+    %Wongi.Engine.DSL.Has{
+      subject: %Wongi.Engine.DSL.Var{name: :satellite},
+      predicate: :distance,
+      object: %Wongi.Engine.DSL.Var{name: :distance},
+      filters: nil
+    },
+    %Wongi.Engine.DSL.Assign{
+      name: :pull,
+      value: #Function<1.64142228 in file:new.ex>
+    }
+  ],
+  do: [
+    %Wongi.Engine.Action.Generator{
+      template: WME.new(%Wongi.Engine.DSL.Var{name: :satellite}, :pull, %Wongi.Engine.DSL.Var{
+        name: :pull
+      })
+    }
+  ]
+]
+[
+  {"do",
+   [
+     %Wongi.Engine.Action.Generator{
+       template: WME.new("pull", "var(:pull)", "var(:satellite)")
+     }
+   ]},
+  {"forall",
+   [
+     %Wongi.Engine.DSL.Assign{
+       name: "&(6.674e-11 * &1[:sat_mass] * &1[:planet_mass] / :math.pow(&1[:distance], 2))",
+       value: "pull"
+     },
+     %Wongi.Engine.DSL.Has{
+       subject: ":distance",
+       predicate: "var(:distance)",
+       object: "var(:satellite)",
+       filters: nil
+     },
+     %Wongi.Engine.DSL.Has{
+       subject: ":mass",
+       predicate: "var(:sat_mass)",
+       object: "var(:satellite)",
+       filters: nil
+     },
+     %Wongi.Engine.DSL.Has{
+       subject: ":mass",
+       predicate: "var(:planet_mass)",
+       object: "var(:planet)",
+       filters: nil
+     },
+     %Wongi.Engine.DSL.Has{
+       subject: ":distance",
+       predicate: "var(:distance)",
+       object: "var(:satellite)",
+       filters: nil
+     }
+
+
+
+   ]}
+]
