@@ -95,22 +95,44 @@ attrs = %{rule_id: rule.id, block: "do", verb: "generator", arguments: args}
 IO.puts("=====rule id " <> to_string(rule.id))
 
 ##### retrieve and eval
-import Wongi.Engine.DSL
+# import Wongi.Engine.DSL
 
 {:ok, %{ rule_parts: new_rule_parts, rule: _new_rule}} = Tpe.Rule.Read.get_rule_and_rule_parts(rule.id)
- all = new_rule_parts |> Enum.reduce([], fn rule_part, acc ->
+
+
+
+all = new_rule_parts |> Enum.reduce([], fn rule_part, acc ->
   #statement = apply(Wongi.Engine.DSL, String.to_atom(rule_part.verb), rule_part.arguments)
   #https://elixirforum.com/t/idiomatic-way-to-convert-from-one-struct-to-another/7499/2
 #  statement = %{rule_part.arguments | __struct__: Wongi.Engine.DSL.Has}
 #
+arguments = Map.get(rule_part, :arguments)
+verb = Map.get(rule_part, :verb)
+
+
+
+arguments = Enum.reduce(arguments, %{}, fn {key, value}, acc ->
+  new_value = Regex.run(~r/var\(:(.*)\)/, value, capture: :all_but_first)
+  new_value = case new_value do
+    [var] -> %Wongi.Engine.DSL.Var{name: String.to_atom(var)}
+    nil -> String.to_atom(value)
+    _ -> throw("Unknown value")
+  end
+  Map.put(acc, String.to_atom(key), new_value)
+end)
+
+import Wongi.Engine.DSL
 statement =
-case rule_part.verb do
+case verb do
   "has" ->
-    %Wongi.Engine.DSL.Has{subject: var(String.to_atom(rule_part.arguments.subject)), predicate: String.to_atom(rule_part.arguments.predicate), object: var(String.to_atom(rule_part.arguments.object))}
+    has(arguments.subject, arguments.predicate, arguments.object)
+
   "assign" ->
-    %Wongi.Engine.DSL.Assign{name: String.to_atom(rule_part.arguments.subject), value: String.to_atom(rule_part.arguments.object)}
+    assign(arguments.name, Code.eval_string(arguments.value))
+
   "generator" ->
-    %Wongi.Engine.Action.Generator{template: WME.new(var(String.to_atom(rule_part.arguments.subject)), String.to_atom(rule_part.arguments.object), var(String.to_atom(rule_part.arguments.predicate)))}
+    gen(arguments.subject, arguments.object, arguments.predicate)
+
   _ ->
     throw("Unknown verb" <> rule_part.verb)
 end
@@ -123,7 +145,7 @@ end
  end)
 
 
-IO.inspect(all)
+ IO.inspect(all)
 
 # all_list2 = [all]
 #add_element = fn list, element -> [element | list] end
