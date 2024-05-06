@@ -15,7 +15,7 @@ defmodule Tpe.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger],
+      extra_applications: [:logger, :runtime_tools, :wongi_engine],
       mod: {Tpe.Application, []}
     ]
   end
@@ -29,7 +29,8 @@ defmodule Tpe.MixProject do
       {:csv, "~> 2.3.0"},
       {:ex_doc, ">= 0.0.0", runtime: false, only: [:docs, :dev]},
       {:wongi_engine, "~> 0.9.13"},
-      {:jason, "~> 1.4"}
+      {:jason, "~> 1.4"},
+      {:dune, "~> 0.3.6"}
     ]
   end
 

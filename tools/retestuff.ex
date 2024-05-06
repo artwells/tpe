@@ -1,28 +1,28 @@
 import Wongi.Engine
 import Wongi.Engine.DSL
-# engine = new()
-# engine = engine |> assert({:earth, :satellite, :moon})
-# [fact] = engine |> select(:earth, :satellite, :_) |> Enum.to_list()
+engine = new()
+engine = engine |> assert({:earth, :satellite, :moon})
+[fact] = engine |> select(:earth, :satellite, :_) |> Enum.to_list()
 
-# IO.inspect(fact.object)
-# # => :moon
+IO.inspect(fact.object)
+# => :moon
 
-# #########################3
-# rule = rule("optional name", forall: [
-#   {:earth, :satellite, :moon},
-#   {:jupiter, :satellite, :io},
-#   {:jupiter, :satellite, :europa},
-#   {:jupiter, :satellite, :ganymede},
-#   {:jupiter, :satellite, :callisto},
-#   {:mars, :satellite, :deimos},
-#   {:mars, :satellite, :phobos}
-# ])
+#########################3
+rule = rule("optional name", forall: [
+  {:earth, :satellite, :moon},
+  {:jupiter, :satellite, :io},
+  {:jupiter, :satellite, :europa},
+  {:jupiter, :satellite, :ganymede},
+  {:jupiter, :satellite, :callisto},
+  {:mars, :satellite, :deimos},
+  {:mars, :satellite, :phobos}
+])
 
-# IO.inspect(rule.ref)
-# # => #Reference<...>
-# engine = engine |> compile(rule)
+IO.inspect(rule.ref)
+# => #Reference<...>
+engine = engine |> compile(rule)
 
-# #################
+#################
 
 rule =
   rule(
