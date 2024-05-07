@@ -1,7 +1,10 @@
+defmodule Tpe.Tool do
+
+
 import Wongi.Engine
 import Wongi.Engine.DSL
 
-{:ok, rule} = Tpe.Rule.Create.create_rule(%{name: "Rule 1", description: "a new rule"})
+ {:ok, rule} = Tpe.Rule.Create.create_rule(%{name: "Rule 1", description: "a new rule"})
 
 args = %{subject: "var(:planet)", predicate: :satellite, object: "var(:satellite)"}
 attrs = %{rule_id: rule.id, block: "forall", verb: "has", arguments: args}
@@ -29,6 +32,10 @@ attrs = %{rule_id: rule.id, block: "do", verb: "generator", arguments: args}
 {:ok, _} = Tpe.RulePart.Create.create_rule_part(attrs)
 
 {:ok, %{rule_parts: new_rule_parts, rule: _new_rule}} = Tpe.Rule.Read.get_rule_and_rule_parts(rule.id)
+
+new_rule_parts = Enum.sort_by(new_rule_parts, &Map.fetch(&1, :verb), :desc)
+
+
 
 all = new_rule_parts |> Enum.reduce([], fn rule_part, acc ->
   arguments = Map.get(rule_part, :arguments)
@@ -60,6 +67,7 @@ all = new_rule_parts |> Enum.reduce([], fn rule_part, acc ->
               dune_test = Dune.eval_string(to_string(arguments.value))
               if is_binary(dune_test.inspected) do
                 Code.eval_string(to_string(arguments.value))|>elem(0)
+
               else
                 arguments.value
               end
@@ -67,7 +75,6 @@ all = new_rule_parts |> Enum.reduce([], fn rule_part, acc ->
                 arguments.value
           end
         assign(arguments.name, value)
-
       "generator" ->
         gen(arguments.subject, arguments.predicate, arguments.object)
 
@@ -82,15 +89,56 @@ all = new_rule_parts |> Enum.reduce([], fn rule_part, acc ->
   end
 end)
 
+# def alphabetize(string, alphabet \\ @default_alphabet) do
+#   list = String.split(string, "", trim: true)
+#   sorted = Enum.sort(list,
+#     fn (a, b) ->
+#       compare_alpha?(a, b, alphabet)
+#     end)
+#   Enum.join(sorted)
+# end
+
+
+def tsort_order(rule_part) do
+  case rule_part.block do
+    "forall" -> 1
+    "assign" -> 2
+    _ -> 3
+  end
+end
+
+
+
 rule = rule(all)
+engine =
+  new()
+  |> compile(rule)
+engine = engine
+  |> assert(:earth, :satellite, :moon)
+  |> assert(:earth, :mass, 5.972)
+  |> assert(:moon, :mass, 7.34767309)
+  |> assert(:moon, :distance, 384_400)
+
+[wme] = engine |> select(:moon, :pull, :_) |> Enum.to_list()
+IO.inspect(wme.object)
+
+
+
 
 engine =
   new()
   |> compile(rule)
+engine = engine
   |> assert(:earth, :satellite, :moon)
-  |> assert(:earth, :mass, 5.972e24)
-  |> assert(:moon, :mass, 7.34767309e22)
-  |> assert(:moon, :distance, 384_400.0e3)
+  |> assert(:earth, :mass, 5.972)
+  |> assert(:moon, :mass, 7.34767309)
+  |> assert(:moon, :distance, 384_400)
 
 [wme] = engine |> select(:moon, :pull, :_) |> Enum.to_list()
 IO.inspect(wme.object)
+
+
+
+[wme] = engine |> select(:moon, :pull, :_) |> Enum.to_list()
+IO.inspect(wme.object)
+end
