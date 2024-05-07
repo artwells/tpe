@@ -43,9 +43,6 @@ defmodule Tpe.RulePart.Read do
   rule.id
   """
   def list_rule_parts_by_rule_id(rule_id) do
-    from(rp in Tpe.RulePart, where: rp.rule_id == ^rule_id, order_by: [asc: rp.id])
-    |> Tpe.Repo.all()
-
     rule_parts = Tpe.Repo.all(from(rp in Tpe.RulePart, where: rp.rule_id == ^rule_id))
 
     cond do
