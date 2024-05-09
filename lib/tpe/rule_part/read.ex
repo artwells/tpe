@@ -53,4 +53,98 @@ defmodule Tpe.RulePart.Read do
         {:ok, rule_parts}
     end
   end
+
+  # Sorts the given list of rule parts based on a specific order.
+  #
+  # The rule parts are sorted in the following order:
+  #   - Rule parts with the verb "has" come first.
+  #   - Rule parts with the verb "assign" come second.
+  #   - Rule parts with the block "do" come last.
+  #
+  # Examples:
+  #
+  #   sort_rule_parts([
+  #     %{verb: "assign"},
+  #     %{verb: "has"},
+  #     %{block: "do"}
+  #   ])
+  #   # => [
+  #   #      %{verb: "has"},
+  #   #      %{verb: "assign"},
+  #   #      %{block: "do"}
+  #   #    ]
+  #
+  defp sort_rule_parts(rule_parts) do
+    rule_parts |> Enum.sort_by(fn
+      %{verb: "has"} -> 0
+      %{verb: "assign"} -> 1
+      %{block: "do"} -> 2
+    end)
+  end
+
+  defp process_arguments(arguments) do
+    Enum.reduce(arguments, %{}, fn {key, value}, acc ->
+      value = if is_binary(value) do
+        new_value = Regex.run(~r/var\(:(.*)\)/, value, capture: :all_but_first)
+        case new_value do
+          [var] -> %Wongi.Engine.DSL.Var{name: String.to_atom(var)}
+          _ -> String.to_atom(value)
+        end
+      else
+        value
+      end
+      Map.put(acc, String.to_atom(key), value)
+    end)
+  end
+
+  defp get_statement(rule_part) do
+    import Wongi.Engine.DSL
+    arguments = Map.get(rule_part, :arguments)
+    arguments = arguments |> process_arguments()
+
+    verb = Map.get(rule_part, :verb)
+
+    case verb do
+      "has" ->
+        has(arguments.subject, arguments.predicate, arguments.object)
+
+      "assign" ->
+        value =
+          case to_string(arguments.eval) do
+            "dune" ->
+              dune_test = Dune.eval_string(to_string(arguments.value))
+              if is_binary(dune_test.inspected) do
+                Code.eval_string(to_string(arguments.value)) |> elem(0)
+              else
+                arguments.value
+              end
+            _ ->
+              arguments.value
+          end
+        assign(arguments.name, value)
+      "generator" ->
+        gen(arguments.subject, arguments.predicate, arguments.object)
+
+      _ ->
+        throw("Unknown verb" <> rule_part.verb)
+    end
+  end
+
+  defp gather_rule_parts(rule_parts) do
+    rule_parts |> Enum.reduce([], fn rule_part, acc ->
+      statement = get_statement(rule_part)
+      block = String.to_atom(rule_part.block)
+      case acc[block] do
+        nil ->
+          put_in(acc, [block], [statement])
+        _ ->
+          update_in(acc, [block], & &1 ++ [statement])
+      end
+    end)
+  end
+
+  def get_processed_rule_parts(rule_id) do
+    {:ok, rule_parts} = list_rule_parts_by_rule_id(rule_id)
+    rule_parts |> sort_rule_parts() |> gather_rule_parts()
+  end
 end
