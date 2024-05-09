@@ -30,7 +30,7 @@ defmodule Tpe.RulePart.ReadTest do
 
   test "get_rule_part/1 returns an error if the rule part is not found" do
     # Action
-    error = Read.get_rule_part(98)
+    error = Read.get_rule_part(0)
 
     # Assertion
     assert {:error, :rule_part_not_found} == error
@@ -59,9 +59,53 @@ defmodule Tpe.RulePart.ReadTest do
 
   test "list_rule_parts_by_rule_id/1 returns an error if no rule parts are found" do
     # Action
-    error = Read.list_rule_parts_by_rule_id(97)
+    error = Read.list_rule_parts_by_rule_id(0)
 
     # Assertion
     assert {:error, :rule_part_not_found} == error
   end
-end
+
+
+    describe "get_processed_rule_parts/1" do
+      import Wongi.Engine.DSL
+      test "returns the processed rule parts for a given rule ID" do
+        {:ok, rule} = Tpe.Rule.Create.create_rule(%{name: "Rule 1", description: "a new rule"})
+        attrs1 = %{rule_id: rule.id, block: "block1", verb: "has", arguments: %{subject: "Alice", predicate: "likes", object: "Bob"}}
+        attrs2 = %{rule_id: rule.id, block: "block2", verb: "assign", arguments: %{name: "var1", value: "value1"}}
+        {:ok, _} = Create.create_rule_part(attrs1)
+        {:ok, _} = Create.create_rule_part(attrs2)
+
+        expected = Enum.sort([
+          block1: [
+            has(:Alice, :likes, :Bob)
+          ],
+          block2: [
+            assign(:var1, :value1)
+          ]
+        ])
+        returned = Read.get_processed_rule_parts(rule.id)
+        assert Enum.sort(expected) == Enum.sort(returned)
+      end
+      test "returns the processed rule parts for a given rule ID with compilation" do
+        {:ok, rule} = Tpe.Rule.Create.create_rule(%{name: "Rule 1", description: "a new rule"})
+        attrs1 = %{rule_id: rule.id, block: "block1", verb: "has", arguments: %{subject: "Alice", predicate: "likes", object: "Bob"}}
+        attrs2 = %{rule_id: rule.id, block: "block2", verb: "assign", arguments: %{name: :var1,  eval: "dune", value: "&(6.674e-11 * &1[:sat_mass] * &1[:planet_mass] / :math.pow(&1[:distance], 2))"}}
+
+        {:ok, _} = Create.create_rule_part(attrs1)
+        {:ok, _} = Create.create_rule_part(attrs2)
+
+        expected = Enum.sort([
+          block1: [
+            has(:Alice, :likes, :Bob)
+          ],
+          block2: [
+            assign(:var1, "&(6.674e-11 * &1[:sat_mass] * &1[:planet_mass] / :math.pow(&1[:distance], 2))")
+          ]
+        ])
+        returned = Read.get_processed_rule_parts(rule.id)
+        assert expected[:block1] == returned[:block1]
+        assert expected[:block2][:name] == returned[:block2][:name]
+        #assert is_float(returned[:block2][:value])
+      end
+    end
+  end

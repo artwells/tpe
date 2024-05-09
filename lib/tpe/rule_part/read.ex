@@ -82,6 +82,13 @@ defmodule Tpe.RulePart.Read do
     end)
   end
 
+  # Processes the arguments and returns a map with atom keys and corresponding values.
+  #
+  # Arguments:
+  #   - arguments: a list of key-value pairs
+  #
+  # Returns:
+  #   - a map with atom keys and corresponding values
   defp process_arguments(arguments) do
     Enum.reduce(arguments, %{}, fn {key, value}, acc ->
       value = if is_binary(value) do
@@ -97,6 +104,22 @@ defmodule Tpe.RulePart.Read do
     end)
   end
 
+  # Retrieves the statement based on the given rule_part.
+  #
+  # Args:
+  #   - rule_part: A map representing a rule part.
+  #
+  # Returns:
+  #   The statement corresponding to the rule_part.
+  #
+  # Raises:
+  #   - "Unknown verb" if the verb in the rule_part is not recognized.
+  #
+  # Examples:
+  #   iex> rule_part = %{verb: "has", arguments: %{subject: "Alice", predicate: "likes", object: "Bob"}}
+  #   iex> get_statement(rule_part)
+  #   iex> has("Alice", "likes", "Bob")
+  #
   defp get_statement(rule_part) do
     import Wongi.Engine.DSL
     arguments = Map.get(rule_part, :arguments)
@@ -109,8 +132,9 @@ defmodule Tpe.RulePart.Read do
         has(arguments.subject, arguments.predicate, arguments.object)
 
       "assign" ->
+        eval = Map.get(arguments, :eval, nil)
         value =
-          case to_string(arguments.eval) do
+          case to_string(eval) do
             "dune" ->
               dune_test = Dune.eval_string(to_string(arguments.value))
               if is_binary(dune_test.inspected) do
@@ -130,6 +154,17 @@ defmodule Tpe.RulePart.Read do
     end
   end
 
+  # Gathers rule parts and groups them by block
+  #
+  # This function takes a list of rule parts and groups them by their associated block.
+  # Each rule part consists of a statement and a block. The function iterates over the
+  # rule parts and adds the statement to the corresponding block in the accumulator.
+  #
+  # Params:
+  # - rule_parts: A list of rule parts to be grouped
+  #
+  # Returns:
+  # A map where the keys are the blocks and the values are lists of statements
   defp gather_rule_parts(rule_parts) do
     rule_parts |> Enum.reduce([], fn rule_part, acc ->
       statement = get_statement(rule_part)
@@ -143,6 +178,23 @@ defmodule Tpe.RulePart.Read do
     end)
   end
 
+  # Retrieves and processes rule parts for a given rule ID.
+  #
+  # ## Parameters
+  # - `rule_id` - The ID of the rule to retrieve and process rule parts for.
+  #
+  # ## Returns
+  # A tuple containing the result of retrieving and processing the rule parts:
+  # - `:ok` - If the rule parts were successfully retrieved and processed.
+  # - `rule_parts` - The processed rule parts.
+  #
+  # ## Examples
+  #
+  #     get_processed_rule_parts(123)
+  #
+  #     # Output:
+  #     # {:ok, [processed_rule_part1, processed_rule_part2, ...]}
+  #
   def get_processed_rule_parts(rule_id) do
     {:ok, rule_parts} = list_rule_parts_by_rule_id(rule_id)
     rule_parts |> sort_rule_parts() |> gather_rule_parts()
