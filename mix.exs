@@ -21,6 +21,8 @@ defmodule Tpe.MixProject do
   end
 
   # Run "mix help deps" to learn about dependencies.
+
+  @compile {:nowarn_unused_function, {:process_arguments, 1}}
   defp deps do
     [
       {:dep_from_hexpm, "~> 0.3.0"},

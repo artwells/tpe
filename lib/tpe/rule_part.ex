@@ -24,13 +24,14 @@ defmodule Tpe.RulePart do
     field(:block, :string)
     field(:verb, :string)
     field(:arguments, :map)
+    field(:order, :integer)
     field(:inserted_at, :utc_datetime_usec)
     field(:updated_at, :utc_datetime_usec)
   end
 
   def changeset(rule_part, params \\ %{}) do
     rule_part
-    |> cast(params, [:rule_id, :block, :verb, :arguments, :updated_at])
+    |> cast(params, [:rule_id, :block, :verb, :arguments, :updated_at, :order])
     |> validate_required([:rule_id, :block, :verb, :arguments])
   end
 end

@@ -1,5 +1,10 @@
+
 defmodule Tpe.RulePart.Read do
-  @moduledoc """
+# @compile {:nowarn_unused_function, {:process_arguments, 1}}
+# @compile {:nowarn_unused_function, {:gather_rule_parts, 2}}
+# not sure what to do about this
+
+@moduledoc """
   This module provides functions for reading rule parts from the database.
   """
 
@@ -42,9 +47,13 @@ defmodule Tpe.RulePart.Read do
   iex> rule_part_1.rule_id
   rule.id
   """
-  def list_rule_parts_by_rule_id(rule_id) do
-    rule_parts = Tpe.Repo.all(from(rp in Tpe.RulePart, where: rp.rule_id == ^rule_id))
-
+  def list_rule_parts_by_rule_id(rule_id, verb \\ nil) do
+    rule_parts = case verb do
+      nil ->
+        Tpe.Repo.all(from(rp in Tpe.RulePart, where: rp.rule_id == ^rule_id))
+      _ ->
+        Tpe.Repo.all(from(rp in Tpe.RulePart, where: rp.rule_id == ^rule_id and rp.verb == ^verb))
+    end
     cond do
       rule_parts in [nil, []] ->
         {:error, :rule_part_not_found}
@@ -54,28 +63,12 @@ defmodule Tpe.RulePart.Read do
     end
   end
 
-  # Sorts the given list of rule parts based on a specific order.
-  #
-  # The rule parts are sorted in the following order:
-  #   - Rule parts with the verb "has" come first.
-  #   - Rule parts with the verb "assign" come second.
-  #   - Rule parts with the block "do" come last.
-  #
-  # Examples:
-  #
-  #   sort_rule_parts([
-  #     %{verb: "assign"},
-  #     %{verb: "has"},
-  #     %{block: "do"}
-  #   ])
-  #   # => [
-  #   #      %{verb: "has"},
-  #   #      %{verb: "assign"},
-  #   #      %{block: "do"}
-  #   #    ]
-  #
-  defp sort_rule_parts(rule_parts) do
-    rule_parts |> Enum.sort_by(fn
+
+
+  defp sort_and_gather(rule_parts) do
+    rule_parts
+    |>Enum.sort_by(&Map.get(&1.arguments, "order"))
+      |> Enum.sort_by(fn
       %{verb: "has"} -> 0
       %{verb: "assign"} -> 1
       %{block: "do"} -> 2
@@ -136,7 +129,7 @@ defmodule Tpe.RulePart.Read do
         value =
           case to_string(eval) do
             "dune" ->
-              dune_test = Dune.eval_string(to_string(arguments.value))
+              dune_test = Dune.eval_string(to_string(arguments.value), timeout: 100)
               if is_binary(dune_test.inspected) do
                 Code.eval_string(to_string(arguments.value)) |> elem(0)
               else
@@ -148,7 +141,6 @@ defmodule Tpe.RulePart.Read do
         assign(arguments.name, value)
       "generator" ->
         gen(arguments.subject, arguments.predicate, arguments.object)
-
       _ ->
         throw("Unknown verb" <> rule_part.verb)
     end
@@ -197,6 +189,8 @@ defmodule Tpe.RulePart.Read do
   #
   def get_processed_rule_parts(rule_id) do
     {:ok, rule_parts} = list_rule_parts_by_rule_id(rule_id)
-    rule_parts |> sort_rule_parts() |> gather_rule_parts()
+    #rule_parts |> sort_rule_parts() |> sort_assigns|> gather_rule_parts()
+    rule_parts |> sort_and_gather()
   end
+
 end
