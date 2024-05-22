@@ -1,6 +1,6 @@
 
 defmodule Tpe.RulePart.Read do
-# @compile {:nowarn_unused_function, {:process_arguments, 1}}
+#@compile ({:nowarn_unused_function, {:process_arguments, 1}})
 # @compile {:nowarn_unused_function, {:gather_rule_parts, 2}}
 # not sure what to do about this
 
@@ -65,15 +65,24 @@ defmodule Tpe.RulePart.Read do
 
 
 
-  defp sort_and_gather(rule_parts) do
-    rule_parts
-    |>Enum.sort_by(&Map.get(&1.arguments, "order"))
-      |> Enum.sort_by(fn
-      %{verb: "has"} -> 0
-      %{verb: "assign"} -> 1
-      %{block: "do"} -> 2
-    end)
-  end
+  # Sorts and gathers rule parts based on specific criteria.
+    #
+    # This function sorts and gathers rule parts based on the order and the type of rule part.
+    #
+    # Params:
+    # - rule_parts: A list of rule parts to be sorted and gathered.
+    #
+    # Returns:
+    # A sorted list of rule parts.
+    defp sort_and_gather(rule_parts) do
+      rule_parts
+      |> Enum.sort_by(&Map.get(&1.arguments, "order"))
+        |> Enum.sort_by(fn
+        %{verb: "has"} -> 0
+        %{verb: "assign"} -> 1
+        %{block: "do"} -> 2
+      end)
+    end
 
   # Processes the arguments and returns a map with atom keys and corresponding values.
   #
@@ -107,12 +116,7 @@ defmodule Tpe.RulePart.Read do
   #
   # Raises:
   #   - "Unknown verb" if the verb in the rule_part is not recognized.
-  #
-  # Examples:
-  #   iex> rule_part = %{verb: "has", arguments: %{subject: "Alice", predicate: "likes", object: "Bob"}}
-  #   iex> get_statement(rule_part)
-  #   iex> has("Alice", "likes", "Bob")
-  #
+
   defp get_statement(rule_part) do
     import Wongi.Engine.DSL
     arguments = Map.get(rule_part, :arguments)
@@ -170,26 +174,26 @@ defmodule Tpe.RulePart.Read do
     end)
   end
 
-  # Retrieves and processes rule parts for a given rule ID.
-  #
-  # ## Parameters
-  # - `rule_id` - The ID of the rule to retrieve and process rule parts for.
-  #
-  # ## Returns
-  # A tuple containing the result of retrieving and processing the rule parts:
-  # - `:ok` - If the rule parts were successfully retrieved and processed.
-  # - `rule_parts` - The processed rule parts.
-  #
-  # ## Examples
-  #
-  #     get_processed_rule_parts(123)
-  #
-  #     # Output:
-  #     # {:ok, [processed_rule_part1, processed_rule_part2, ...]}
-  #
+@doc """
+  Retrieves and processes rule parts for a given rule ID.
+
+  ## Parameters
+  - `rule_id` - The ID of the rule to retrieve and process rule parts for.
+
+  ## Returns
+  A tuple containing the result of retrieving and processing the rule parts:
+  - `:ok` - If the rule parts were successfully retrieved and processed.
+  - `rule_parts` - The processed rule parts.
+
+  ## Examples
+
+      get_processed_rule_parts(123)
+
+      # Output:
+      # {:ok, [processed_rule_part1, processed_rule_part2, ...]}
+  """
   def get_processed_rule_parts(rule_id) do
     {:ok, rule_parts} = list_rule_parts_by_rule_id(rule_id)
-    #rule_parts |> sort_rule_parts() |> sort_assigns|> gather_rule_parts()
     rule_parts |> sort_and_gather()
   end
 
