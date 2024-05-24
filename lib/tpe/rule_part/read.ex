@@ -118,7 +118,7 @@ defmodule Tpe.RulePart.Read do
 
   # Retrieves the statement based on the given rule_part.
   #
-  # Args:
+  # Params:
   #   - rule_part: A map representing a rule part.
   #
   # Returns:
