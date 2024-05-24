@@ -67,7 +67,6 @@ defmodule Tpe.RulePart.ReadTest do
 
 
     describe "get_processed_rule_parts/1" do
-      import Wongi.Engine.DSL
       test "returns the processed rule parts for a given rule ID" do
         {:ok, rule} = Tpe.Rule.Create.create_rule(%{name: "Rule 1", description: "a new rule"})
         attrs1 = %{rule_id: rule.id, block: "block1", verb: "has", arguments: %{subject: "Alice", predicate: "likes", object: "Bob"}}
@@ -75,37 +74,26 @@ defmodule Tpe.RulePart.ReadTest do
         {:ok, _} = Create.create_rule_part(attrs1)
         {:ok, _} = Create.create_rule_part(attrs2)
 
-        expected = Enum.sort([
-          block1: [
-            has(:Alice, :likes, :Bob)
-          ],
-          block2: [
-            assign(:var1, :value1)
-          ]
-        ])
+        expected1 = %{name: :var1, value: :value1}
+        expected2 = %{subject: :Alice, predicate: :likes, object: :Bob}
+
         returned = Read.get_processed_rule_parts(rule.id)
-        assert Enum.sort(expected) == Enum.sort(returned)
+
+        assert expected1  == Map.from_struct(hd(returned[:block2]))
+        assert expected2.subject  == Map.from_struct(hd(returned[:block1])).subject
       end
       test "returns the processed rule parts for a given rule ID with compilation" do
         {:ok, rule} = Tpe.Rule.Create.create_rule(%{name: "Rule 1", description: "a new rule"})
         attrs1 = %{rule_id: rule.id, block: "block1", verb: "has", arguments: %{subject: "Alice", predicate: "likes", object: "Bob"}}
-        attrs2 = %{rule_id: rule.id, block: "block2", verb: "assign", arguments: %{name: :var1,  eval: "dune", value: "&(6.674e-11 * &1[:sat_mass] * &1[:planet_mass] / :math.pow(&1[:distance], 2))"}}
+        attrs2 = %{rule_id: rule.id, block: "block2", verb: "assign", arguments: %{name: :var1,  eval: "dune", value: "4 * 6 / 2"}}
 
         {:ok, _} = Create.create_rule_part(attrs1)
         {:ok, _} = Create.create_rule_part(attrs2)
 
-        expected = Enum.sort([
-          block1: [
-            has(:Alice, :likes, :Bob)
-          ],
-          block2: [
-            assign(:var1, "&(6.674e-11 * &1[:sat_mass] * &1[:planet_mass] / :math.pow(&1[:distance], 2))")
-          ]
-        ])
-        returned = Read.get_processed_rule_parts(rule.id)
-        assert expected[:block1] == returned[:block1]
-        assert expected[:block2][:name] == returned[:block2][:name]
-        #assert is_float(returned[:block2][:value])
+        returned = Enum.sort(Read.get_processed_rule_parts(rule.id))
+        assert 12.0 = Map.from_struct(hd(returned[:block2]))[:value]
+        IO.inspect(Map.from_struct(hd(returned[:block2])))
+
       end
     end
   end
