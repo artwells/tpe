@@ -160,15 +160,17 @@ defmodule Tpe.RulePart.Create do
     rule_part = Enum.at(remains.remaining_assigns, 0)
     cond do
       nil == rule_part ->
+        # remove any nils from the list
         Map.put(remains, :remaining_assigns, List.delete(remains.remaining_assigns, rule_part))
       check_rule_part_deps(rule_part, remains.remaining_names) ->
         remains = Map.put(remains, :remaining_assigns, List.delete(remains.remaining_assigns, rule_part))
-        rule_part = Map.put(rule_part, :order, remains.order)
+        rule_part = Map.put(rule_part, :order, remains.order + 1)
         remains = Map.put(remains, :ordered_assigns, [rule_part] ++ remains.ordered_assigns)
-        remains = Map.put(remains, :order, remains.order + 1)
+        remains = Map.put(remains, :order, remains.order + 2)
         Map.put(remains, :remaining_names, List.delete(remains.remaining_names, Map.get(rule_part.arguments, "name")))
       true ->
         # if there are dependencies, we need to shift the first entry of remaining_assigns to the end
+        # in order to check the next one
         remaining_assigns = List.delete(remains.remaining_assigns, rule_part)
         Map.put(remains, :remaining_assigns, remaining_assigns ++ [rule_part])
     end

@@ -147,6 +147,15 @@ defmodule Tpe.RulePart.Read do
         eval = Map.get(arguments, :eval, nil)
         value =
           case to_string(eval) do
+            # @TODO: This is a hack to get around a weird failure in the way I am using Dune and anonymous functions
+            #
+            # if value is something like Dune.eval_string("&(&1[:test_number] / 50)") it will fail with
+            # ** (UndefinedFunctionError) Access.get/50 is undefined or private
+            # I'm sure there is a solution out there, but for now
+            # if you are finding this a problem, you can convert the denomenator to its inverse and multiply
+            # e.g. 4 / 2 becomes 4 * 0.5
+            # or use div(num*1000, den*1000) or similar
+
             "dune" ->
               dune_test = Dune.eval_string(to_string(arguments.value), timeout: 100)
               if is_binary(dune_test.inspected) do

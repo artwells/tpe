@@ -13,16 +13,16 @@ alias Tpe.RulePart.Read, as: RulePartRead
 
 {:ok, _} = Tpe.RulePart.Create.has_rule_part(rule.id, :item, :discount, :discount)
 {:ok, _} = Tpe.RulePart.Create.generator_rule_part(rule.id, :item, :base_total, :base_total)
+{:ok, _} = Tpe.RulePart.Create.assign_rule_part(rule.id, :base_total, "&(&1[:price] * 4 * &1[:quantity])", "dune")
 {:ok, _} = Tpe.RulePart.Create.has_rule_part(rule.id, :item, :price, :price)
-{:ok, _} = Tpe.RulePart.Create.assign_rule_part(rule.id, :discounted_total, "&(&1[:base_total] * &1[:discount])", "dune")
 {:ok, _} = Tpe.RulePart.Create.generator_rule_part(rule.id, :item, :discounted_total, :discounted_total)
 
 {:ok, _} = Tpe.RulePart.Create.has_rule_part(rule.id, :item, :quantity, :quantity)
-{:ok, _} = Tpe.RulePart.Create.assign_rule_part(rule.id, :base_total, "&(&1[:price] * &1[:quantity])", "dune")
+{:ok, _} = Tpe.RulePart.Create.assign_rule_part(rule.id, :discounted_total, "&(&1[:base_total] + &1[:discount])", "dune")
 
 
 all = RulePartRead.get_processed_rule_parts(rule.id)
-IO.inspect(all)
+
 
 
 rule = rule(all)

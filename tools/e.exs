@@ -17,7 +17,7 @@ alias Tpe.RulePart.Read, as: RulePartRead
 {:ok, _} = Tpe.RulePart.Create.has_rule_part(rule.id, :item, :quantity, :quantity)
 {:ok, _} = Tpe.RulePart.Create.has_rule_part(rule.id, :item, :discount, :discount)
 {:ok, _} = Tpe.RulePart.Create.assign_rule_part(rule.id, :base_total, "&(&1[:price] * &1[:quantity])", "dune")
-{:ok, _} = Tpe.RulePart.Create.assign_rule_part(rule.id, :discounted_total, "&(&1[:base_total] * ( &1[:discount]) / 100 )", "dune")
+{:ok, _} = Tpe.RulePart.Create.assign_rule_part(rule.id, :discounted_total, "&(&1[:base_total]) * &1[:discount]", "dune")
 
 all = RulePartRead.get_processed_rule_parts(rule.id)
 IO.inspect(all)
@@ -29,7 +29,9 @@ engine =
   |> compile(rule)
   |> assert(:item, :price, 10)
   |> assert(:item, :quantity, 2)
-  |> assert(:item, :discount, 1)
+  |> assert(:item, :discount, 0.5)
+
+  |> assert(:item, :discount, 0.23)
 
 wme = engine |> select(:item, :_, :_) |> Enum.to_list()
 IO.inspect(wme)
