@@ -5,6 +5,9 @@ defmodule Tpe.Repo.Migrations.Rule do
     create table(:rule) do
       add :name, :string, null: false
       add :description, :string
+      add :active, :boolean, null: false, default: true
+      add :valid_from, :utc_datetime, null: false, default: fragment("now()")
+      add :valid_to, :utc_datetime, null: true #, default: :null
       add :type, :string, null: false, default: "basic"
       timestamps(type: :timestamptz, default: fragment("now()"))
     end

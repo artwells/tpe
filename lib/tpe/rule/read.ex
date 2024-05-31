@@ -5,6 +5,7 @@ defmodule Tpe.Rule.Read do
 
   use Ecto.Schema
   use Ecto.Repo, otp_app: :my_app, adapter: Ecto.Adapters.Postgres
+  import Ecto.Query, only: [from: 2]
 
 
   @doc """
@@ -67,5 +68,19 @@ defmodule Tpe.Rule.Read do
           {:ok, %{rule: rule, rule_parts: rule_parts}}
       end
     end
+
+
+      def get_all_valid_ids(ignore_date \\ :false) do
+        case ignore_date do
+          :true ->
+            from(r in Tpe.Rule, where: r.active == :true, select: r.id)
+          _ ->
+          from(r in Tpe.Rule, where: r.active == :true, where: r.valid_from <= ^DateTime.utc_now(), where: is_nil(r.valid_to) or r.valid_to >= ^DateTime.utc_now(), select: r.id)
+        end
+        |> Tpe.Repo.all()
+        |> Enum.to_list()
+      end
+
+
 
 end

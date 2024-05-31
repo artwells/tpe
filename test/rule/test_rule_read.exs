@@ -1,7 +1,7 @@
 defmodule Tpe.Rule.ReadTest do
   use ExUnit.Case
   alias Tpe.Rule.Read
-  alias Tpe.Rule.Create
+  alias Tpe.Rule.Create, as: RuleCreate
   doctest(Tpe.Rule.Read)
 
   setup do
@@ -12,7 +12,7 @@ defmodule Tpe.Rule.ReadTest do
 
   test "get_rule/1 retrieves a rule by its ID" do
     attrs = %{rule_id: 9, name: "test rule", description: "test description"}
-    {:ok, rule} = Create.create_rule(attrs)
+    {:ok, rule} = RuleCreate.create_rule(attrs)
 
     {:ok, rule1} = Read.get_rule(rule.id)
 
@@ -25,12 +25,12 @@ defmodule Tpe.Rule.ReadTest do
 
   test "get_rule_and_rule_parts/1 retrieves a rule and its rule parts by ID" do
     attrs = %{name: "test rule", description: "test description"}
-    {:ok, rule} = Create.create_rule(attrs)
+    {:ok, rule} = RuleCreate.create_rule(attrs)
     rule_part_attrs = [
       %{rule_id: rule.id, block: "tester block 1", verb: "verb", arguments: %{}},
       %{rule_id: rule.id, block: "tester block 2", verb: "verb", arguments: %{}}
     ]
-    Enum.each(rule_part_attrs, &Tpe.RulePart.Create.create_rule_part/1)
+    Enum.each(rule_part_attrs, &Tpe.RulePart.RuleCreate.create_rule_part/1)
 
     {:ok, %{rule: rule, rule_parts: rule_parts}} = Read.get_rule_and_rule_parts(rule.id)
     assert rule.name == "test rule"
@@ -44,11 +44,12 @@ defmodule Tpe.Rule.ReadTest do
 
   test "get_rule_and_rule_parts/1 retrieves a rule and empty rule parts by ID" do
     attrs = %{name: "test rule", description: "test description"}
-    {:ok, rule} = Create.create_rule(attrs)
+    {:ok, rule} = RuleCreate.create_rule(attrs)
 
     {:ok, %{rule: rule, rule_parts: rule_parts}} = Read.get_rule_and_rule_parts(rule.id)
     assert rule.name == "test rule"
     assert length(rule_parts) == 0
   end
+
 
 end
