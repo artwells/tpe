@@ -19,16 +19,15 @@ import Wongi.Engine
 {:ok, _} = Tpe.RulePart.Create.assign_rule_part(rule.id, :base_total, "&(&1[:price] * &1[:quantity])", "dune")
 {:ok, _} = Tpe.RulePart.Create.assign_rule_part(rule.id, :discounted_total, "&(&1[:base_total]) * &1[:discount]", "dune")
 
-#ids = RuleRead.get_all_valid_ids()
-#IO.inspect(ids)
-
 engine = Tpe.Engine.Create.create_engine()
-  |> assert(:item, :price, 10)
-  |> assert(:item, :quantity, 2)
 
-  |> assert(:item, :discount, 0.5)
-
-  |> assert(:item, :discount, 0.23)
+wmes = [
+  {:item, :price, 10},
+  {:item, :quantity, 2},
+  {:item, :discount, 0.5},
+  {:item, :discount, 0.23}
+]
+engine = engine |> Tpe.Engine.Update.assert_wmes(wmes)
 
 wme = engine |> select(:item, :_, :_) |> Enum.to_list()
 IO.inspect(wme)
