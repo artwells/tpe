@@ -104,7 +104,7 @@ defmodule Tpe.RulePart.Read do
   defp process_arguments(arguments) do
     Enum.reduce(arguments, %{}, fn {key, value}, acc ->
       value = if is_binary(value) do
-        new_value = Regex.run(~r/var\(:(.*)\)/, value, capture: :all_but_first)
+        new_value = Regex.run(~r/var\(:(.*)\)/U, value, capture: :all_but_first)
         case new_value do
           [var] -> %Wongi.Engine.DSL.Var{name: String.to_atom(var)}
           _ -> String.to_atom(value)
@@ -141,8 +141,19 @@ defmodule Tpe.RulePart.Read do
 
     case verb do
       "has" ->
-        has(arguments.subject, arguments.predicate, arguments.object)
-
+        case arguments.filter do
+          nil ->
+            has(arguments.subject, arguments.predicate, arguments.object)
+          _ ->
+            IO.inspect(arguments.filter)
+            dune_test = Dune.eval_string(to_string(arguments.filter), allowlist: Tpe.RulePart.DuneAllowlist)
+            filter = if is_binary(dune_test.inspected) do
+              Code.eval_string(to_string(arguments.filter)) |> elem(0)
+            else
+              arguments.filter
+            end
+            has(arguments.subject, arguments.predicate, arguments.object, %{when: filter})
+          end
       "assign" ->
         eval = Map.get(arguments, :eval, nil)
         value =

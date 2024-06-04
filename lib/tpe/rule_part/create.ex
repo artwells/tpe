@@ -43,11 +43,12 @@ defmodule Tpe.RulePart.Create do
   Returns:
   The created rule part.
   """
-  def has_rule_part(rule_id, subject, predicate, object) do
+  def has_rule_part(rule_id, subject, predicate, object, filter \\ nil) do
     args = %{
       subject: "var(:#{subject})",
       predicate: predicate,
-      object: "var(:#{object})"
+      object: "var(:#{object})",
+      filter: filter
     }
     attrs = %{rule_id: rule_id, block: "forall", verb: "has", arguments: args}
     create_rule_part(attrs)
