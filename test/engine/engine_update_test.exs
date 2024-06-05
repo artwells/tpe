@@ -18,7 +18,7 @@ defmodule Tpe.Engine.UpdateTest do
     {:ok, _} = Tpe.RulePart.Create.generator_rule_part(rule.id, :item, :base_total, :base_total)
     {:ok, _} = Tpe.RulePart.Create.generator_rule_part(rule.id, :item, :discounted_total, :discounted_total)
     {:ok, _} = Tpe.RulePart.Create.has_rule_part(rule.id, :item, :price, :price)
-    {:ok, _} = Tpe.RulePart.Create.has_rule_part(rule.id, :item, :quantity, :quantity)
+    {:ok, _} = Tpe.RulePart.Create.has_rule_part(rule.id, :item, :quantity, :quantity, "Wongi.Engine.DSL.gte( var(:quantity), 1)")
     {:ok, _} = Tpe.RulePart.Create.has_rule_part(rule.id, :item, :discount, :discount)
     {:ok, _} = Tpe.RulePart.Create.assign_rule_part(rule.id, :base_total, "&(&1[:price] * &1[:quantity])", "dune")
     {:ok, _} = Tpe.RulePart.Create.assign_rule_part(rule.id, :discounted_total, "&(&1[:base_total]) * &1[:discount]", "dune")
@@ -35,5 +35,14 @@ defmodule Tpe.Engine.UpdateTest do
     wme_result = engine |> select(:item, :discounted_total, 10.0) |> Enum.to_list()
     assert 1 == Enum.count(wme_result)
     assert Wongi.Engine.WME.new(:item, :discounted_total, 10.0) == wme_result |> hd()
+    #confirm that the filters are added to the beta table
+    join = engine.beta_table
+      |> Enum.filter(fn {key,val} -> is_map_key(val, :filters) && !is_nil(val.filters) end)
+      |> hd()
+      |> elem(1)
+    assert %Wongi.Engine.Filter.GTE{
+      a: %Wongi.Engine.DSL.Var{name: :quantity},
+      b: 1
+    } == join.filters
   end
 end
