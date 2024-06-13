@@ -8,4 +8,4 @@ config :tpe, Tpe.Repo,
   pool: Ecto.Adapters.SQL.Sandbox,
   pool_size: 30
 
-  config :logger, level: :info
+config :logger, level: :info

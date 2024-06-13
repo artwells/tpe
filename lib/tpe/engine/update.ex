@@ -23,5 +23,4 @@ defmodule Tpe.Engine.Update do
       acc |> assert(wme)
     end)
   end
-
 end

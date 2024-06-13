@@ -19,9 +19,11 @@ defmodule Tpe.RulePart.Create do
   def create_rule_part(attrs \\ %{}) do
     attrs = Map.put(attrs, :updated_at, DateTime.utc_now())
 
-    rule_part = %Tpe.RulePart{}
-    |> Tpe.RulePart.changeset(attrs)
-    |> Tpe.Repo.insert()
+    rule_part =
+      %Tpe.RulePart{}
+      |> Tpe.RulePart.changeset(attrs)
+      |> Tpe.Repo.insert()
+
     rule_part
   end
 
@@ -50,6 +52,7 @@ defmodule Tpe.RulePart.Create do
       object: "var(:#{object})",
       filter: filter
     }
+
     attrs = %{rule_id: rule_id, block: "forall", verb: "has", arguments: args}
     create_rule_part(attrs)
   end
@@ -84,10 +87,13 @@ defmodule Tpe.RulePart.Create do
     case Enum.count(assigns) do
       n when n < 2 ->
         nil
+
       _ ->
-        names = assigns |> Enum.reduce([], fn rule_part, acc ->
-          [Map.get(rule_part.arguments, "name")] ++ acc
-        end)
+        names =
+          assigns
+          |> Enum.reduce([], fn rule_part, acc ->
+            [Map.get(rule_part.arguments, "name")] ++ acc
+          end)
 
         remains = %{
           remaining_assigns: assigns,
@@ -95,11 +101,14 @@ defmodule Tpe.RulePart.Create do
           ordered_assigns: [],
           order: 0
         }
+
         ordered_assigns = order_assigns(remains).ordered_assigns
+
         Enum.each(ordered_assigns, fn rule_part ->
           Tpe.RulePart.Update.update_rule_part(rule_part.id, %{order: Map.get(rule_part, :order)})
         end)
     end
+
     new_rule
   end
 
@@ -119,6 +128,7 @@ defmodule Tpe.RulePart.Create do
   defp check_deps(deps, names) do
     Enum.take_while(deps, fn [dep] ->
       dep = to_string(dep)
+
       if Enum.member?(names, dep) do
         false
       else
@@ -159,16 +169,26 @@ defmodule Tpe.RulePart.Create do
   # The updated `remains` map with the assigns and names modified accordingly
   defp pop_assigns(remains) do
     rule_part = Enum.at(remains.remaining_assigns, 0)
+
     cond do
       nil == rule_part ->
         # remove any nils from the list
         Map.put(remains, :remaining_assigns, List.delete(remains.remaining_assigns, rule_part))
+
       check_rule_part_deps(rule_part, remains.remaining_names) ->
-        remains = Map.put(remains, :remaining_assigns, List.delete(remains.remaining_assigns, rule_part))
+        remains =
+          Map.put(remains, :remaining_assigns, List.delete(remains.remaining_assigns, rule_part))
+
         rule_part = Map.put(rule_part, :order, remains.order + 1)
         remains = Map.put(remains, :ordered_assigns, [rule_part] ++ remains.ordered_assigns)
         remains = Map.put(remains, :order, remains.order + 2)
-        Map.put(remains, :remaining_names, List.delete(remains.remaining_names, Map.get(rule_part.arguments, "name")))
+
+        Map.put(
+          remains,
+          :remaining_names,
+          List.delete(remains.remaining_names, Map.get(rule_part.arguments, "name"))
+        )
+
       true ->
         # if there are dependencies, we need to shift the first entry of remaining_assigns to the end
         # in order to check the next one
@@ -191,6 +211,7 @@ defmodule Tpe.RulePart.Create do
     case remains.remaining_assigns do
       true ->
         remains
+
       _ ->
         remains |> pop_assigns |> repeat_remains
     end
@@ -212,6 +233,7 @@ defmodule Tpe.RulePart.Create do
     cond do
       Enum.count(remains.remaining_assigns) > 0 ->
         order_assigns(remains)
+
       true ->
         remains
     end
@@ -242,6 +264,7 @@ defmodule Tpe.RulePart.Create do
       predicate: predicate,
       object: "var(:#{object})"
     }
+
     attrs = %{rule_id: rule_id, block: "do", verb: "generator", arguments: args}
     create_rule_part(attrs)
   end
@@ -260,7 +283,8 @@ defmodule Tpe.RulePart.Create do
   # Returns a list of atom names found in the arguments
   defp scan_for_atoms(arguments) do
     Regex.scan(
-      ~r/\&\d+\[:(\w*)\]/U, Map.get(arguments, "value"),
+      ~r/\&\d+\[:(\w*)\]/U,
+      Map.get(arguments, "value"),
       capture: :all_but_first
     )
   end

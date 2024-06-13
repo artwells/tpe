@@ -54,12 +54,12 @@ defmodule Tpe.CoupTest.Create do
     assert success_count == count
 
     assert Enum.all?(
-      Coupon.Read.dump_coupons_by_promo_id(promo_id),
-      # check each coupon with check_prefix_suffix
-      fn coupon ->
-        check_prefix_suffix(coupon, prefix, suffix)
-      end
-    )
+             Coupon.Read.dump_coupons_by_promo_id(promo_id),
+             # check each coupon with check_prefix_suffix
+             fn coupon ->
+               check_prefix_suffix(coupon, prefix, suffix)
+             end
+           )
   end
 
   defp check_prefix_suffix(coupon, prefix, suffix) do
@@ -79,11 +79,11 @@ defmodule Tpe.CoupTest.Create do
 
     {:ok, success_count} = Coupon.Create.insert_coupons(coupons)
     assert success_count == {2, nil}
-    {:ok, retrieved_coupon} =  Coupon.Read.get_coupon_by_code("ABC8123")
+    {:ok, retrieved_coupon} = Coupon.Read.get_coupon_by_code("ABC8123")
     assert %Tpe.Coupon{} = retrieved_coupon
     assert "ABC8123" == retrieved_coupon.code
     assert true == retrieved_coupon.active
-    {:ok, retrieved_coupon} =  Coupon.Read.get_coupon_by_code("DEF8456")
+    {:ok, retrieved_coupon} = Coupon.Read.get_coupon_by_code("DEF8456")
     assert %Tpe.Coupon{} = retrieved_coupon
     assert "DEF8456" == retrieved_coupon.code
     assert true == retrieved_coupon.active

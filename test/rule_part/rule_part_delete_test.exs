@@ -11,7 +11,6 @@ defmodule Tpe.RulePart.DeleteTest do
     :ok
   end
 
-
   test "delete_rule_part/1 deletes a rule part with the given ID from the database" do
     {:ok, rule} = Tpe.Rule.Create.create_rule(%{name: "Rule 1", description: "a new rule"})
 
@@ -41,5 +40,4 @@ defmodule Tpe.RulePart.DeleteTest do
     assert nil == Tpe.Repo.get(Tpe.RulePart, rule_part1.id)
     assert nil == Tpe.Repo.get(Tpe.RulePart, rule_part2.id)
   end
-
 end

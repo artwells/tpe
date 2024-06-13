@@ -21,9 +21,11 @@ defmodule Tpe.Rule.Update do
   def update_rule(id, attrs \\ %{}) do
     attrs = Map.put(attrs, :updated_at, DateTime.utc_now())
     rule = Tpe.Repo.get(Tpe.Rule, id)
+
     cond do
       rule == nil ->
         {:error, :rule_not_found}
+
       true ->
         rule
         |> Tpe.Rule.changeset(attrs)

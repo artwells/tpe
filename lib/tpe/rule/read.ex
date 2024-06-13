@@ -19,6 +19,7 @@ defmodule Tpe.Rule.Read do
   """
   def get_rule(id) do
     rule = Tpe.Repo.get(Tpe.Rule, id)
+
     cond do
       rule == nil ->
         {:error, :rule_not_found}
@@ -54,27 +55,38 @@ defmodule Tpe.Rule.Read do
   def get_rule_and_rule_parts(id) do
     rule = Tpe.Repo.get(Tpe.Rule, id)
     rule_parts = Tpe.RulePart.Read.list_rule_parts_by_rule_id(id)
-    rule_parts = cond do
-      rule_parts == {:error, :rule_part_not_found} ->
-        []
-      true ->
-        {:ok, rule_parts_new} = rule_parts
-        rule_parts_new
-    end
+
+    rule_parts =
+      cond do
+        rule_parts == {:error, :rule_part_not_found} ->
+          []
+
+        true ->
+          {:ok, rule_parts_new} = rule_parts
+          rule_parts_new
+      end
+
     cond do
       rule == nil ->
         {:error, :rule_not_found}
+
       true ->
         {:ok, %{rule: rule, rule_parts: rule_parts}}
     end
   end
 
-  def get_all_valid_ids(ignore_date \\ :false) do
+  def get_all_valid_ids(ignore_date \\ false) do
     case ignore_date do
-      :true ->
-        from(r in Tpe.Rule, where: r.active == :true, select: r.id)
+      true ->
+        from(r in Tpe.Rule, where: r.active == true, select: r.id)
+
       _ ->
-        from(r in Tpe.Rule, where: r.active == :true, where: r.valid_from <= ^DateTime.utc_now(), where: is_nil(r.valid_to) or r.valid_to >= ^DateTime.utc_now(), select: r.id)
+        from(r in Tpe.Rule,
+          where: r.active == true,
+          where: r.valid_from <= ^DateTime.utc_now(),
+          where: is_nil(r.valid_to) or r.valid_to >= ^DateTime.utc_now(),
+          select: r.id
+        )
     end
     |> Tpe.Repo.all()
     |> Enum.to_list()

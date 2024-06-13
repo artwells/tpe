@@ -19,5 +19,4 @@ defmodule Tpe.Rule.Delete do
       _ -> Tpe.Repo.delete(rule)
     end
   end
-
 end

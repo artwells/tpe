@@ -31,9 +31,11 @@ defmodule Tpe.Rule.Create do
   def create_rule(attrs \\ %{}) do
     attrs = Map.put(attrs, :updated_at, DateTime.utc_now())
 
-    rule = %Tpe.Rule{}
-    |> Tpe.Rule.changeset(attrs)
-    |> Tpe.Repo.insert()
+    rule =
+      %Tpe.Rule{}
+      |> Tpe.Rule.changeset(attrs)
+      |> Tpe.Repo.insert()
+
     rule
   end
 end

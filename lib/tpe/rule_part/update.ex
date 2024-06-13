@@ -6,7 +6,6 @@ defmodule Tpe.RulePart.Update do
   use Ecto.Schema
   use Ecto.Repo, otp_app: :my_app, adapter: Ecto.Adapters.Postgres
 
-
   @doc """
   Updates a rule part with the given ID and attributes.
 
@@ -34,9 +33,11 @@ defmodule Tpe.RulePart.Update do
   def update_rule_part(id, attrs \\ %{}) do
     attrs = Map.put(attrs, :updated_at, DateTime.utc_now())
     rule_part = Tpe.Repo.get(Tpe.RulePart, id)
+
     cond do
       rule_part == nil ->
         {:error, :rule_part_not_found}
+
       true ->
         rule_part
         |> Tpe.RulePart.changeset(attrs)

@@ -1,7 +1,5 @@
 import Config
 
-
-
 config :tpe, Tpe.Repo,
   migration_timestamps: [
     type: :timestamptz,
@@ -18,6 +16,5 @@ config :tpe,
   # length of the coupon code
   code_length: 24,
   insert_all_timeout: 30_000
-
 
 import_config "#{config_env()}.exs"

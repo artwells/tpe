@@ -10,7 +10,6 @@ defmodule Tpe.CouponTest.Update do
     :ok
   end
 
-
   test "increment_use/1 increments the count of a coupon" do
     coupon = %{code: "ABC1238", active: true, count: 10, promo_id: 1}
     {:ok, coupon} = Coupon.Create.create_coupon(coupon)
@@ -21,7 +20,6 @@ defmodule Tpe.CouponTest.Update do
   end
 
   test "update_coupon/2 changes the attributes of a coupon" do
-
     coupon = %{code: "ABC1239", active: true, count: 10, promo_id: 1}
     {:ok, coupon} = Coupon.Create.create_coupon(coupon)
     attrs = %{code: "DEF456", active: false, count: 5, promo_id: 2}
@@ -36,7 +34,6 @@ defmodule Tpe.CouponTest.Update do
 
   # test that checks that updated_at is updated when a coupon is changed and inserted_at is unchanged
   test "updated_at is updated when a coupon is changed" do
-
     {:ok, coupon} =
       Coupon.Create.create_coupon(%{code: "ABC12390", active: true, count: 10, promo_id: 1})
 
@@ -52,7 +49,6 @@ defmodule Tpe.CouponTest.Update do
   end
 
   test "set_active_by_promo_id/2 sets the active status of coupons by promo_id" do
-
     promo_id = 1
     active = true
 

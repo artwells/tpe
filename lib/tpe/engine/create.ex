@@ -16,8 +16,8 @@ defmodule Tpe.Engine.Create do
   """
   def create_engine() do
     engine = new()
-    #collect all valid rule IDs and compile them into the engine
-    Enum.reduce(Tpe.Rule.Read.get_all_valid_ids, engine, fn id, acc ->
+    # collect all valid rule IDs and compile them into the engine
+    Enum.reduce(Tpe.Rule.Read.get_all_valid_ids(), engine, fn id, acc ->
       rule = Tpe.RulePart.Read.get_processed_rule_parts(id) |> rule()
       acc |> Wongi.Engine.compile(rule)
     end)

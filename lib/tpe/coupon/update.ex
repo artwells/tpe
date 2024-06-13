@@ -5,7 +5,7 @@ defmodule Tpe.Coupon.Update do
   Increments the count of a coupon.
 
   ## Examples
-  
+
   iex> {:ok, coupon} = Tpe.Coupon.Create.create_coupon(%{code: "ABC12387", active: true, count: 5, max_use: 6, promo_id: 1})
   iex> {:ok, _coupon} = Tpe.Coupon.Update.increment_use(coupon)
   iex> {:ok, updated_coupon} = Tpe.Coupon.Read.get_coupon(coupon.id)
@@ -29,7 +29,7 @@ defmodule Tpe.Coupon.Update do
   Changes a coupon.
 
   ## Examples
-  
+
   iex> {:ok, coupon} = Tpe.Coupon.Create.create_coupon(%{code: "ABC12387", active: true, count: 5, max_use: 6, promo_id: 1})
   iex> {:ok, _coupon} = Tpe.Coupon.Update.update_coupon(coupon, %{active: false, count: 5, promo_id: 2})
   iex> {:ok, updated_coupon} = Tpe.Coupon.Read.get_coupon(coupon.id)
@@ -56,7 +56,7 @@ defmodule Tpe.Coupon.Update do
   Sets the active status of coupons by promo ID.
 
   ## Examples
-  
+
   iex> {:ok, coupon1} = Tpe.Coupon.Create.create_coupon(%{code: "ABC123", active: false, count: 10, promo_id: 1})
   iex> {:ok, coupon2} = Tpe.Coupon.Create.create_coupon(%{code: "DEF456", active: false, count: 5, promo_id: 1})
   iex> Coupon.Update.set_active_by_promo_id(1, true)

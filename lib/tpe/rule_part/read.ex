@@ -1,7 +1,5 @@
-
 defmodule Tpe.RulePart.Read do
-
-@moduledoc """
+  @moduledoc """
   This module provides functions for reading rule parts from the database.
   """
 
@@ -32,9 +30,11 @@ defmodule Tpe.RulePart.Read do
   """
   def get_rule_part(id) do
     rule_part = Tpe.Repo.get(Tpe.RulePart, id)
+
     cond do
       rule_part == nil ->
         {:error, :rule_part_not_found}
+
       true ->
         {:ok, rule_part}
     end
@@ -66,33 +66,37 @@ defmodule Tpe.RulePart.Read do
 
   """
   def list_rule_parts_by_rule_id(rule_id, verb \\ nil) do
-    rule_parts = case verb do
-      nil ->
-        Tpe.Repo.all(from(rp in Tpe.RulePart, where: rp.rule_id == ^rule_id))
-      _ ->
-        Tpe.Repo.all(from(rp in Tpe.RulePart, where: rp.rule_id == ^rule_id and rp.verb == ^verb))
-    end
+    rule_parts =
+      case verb do
+        nil ->
+          Tpe.Repo.all(from(rp in Tpe.RulePart, where: rp.rule_id == ^rule_id))
+
+        _ ->
+          Tpe.Repo.all(
+            from(rp in Tpe.RulePart, where: rp.rule_id == ^rule_id and rp.verb == ^verb)
+          )
+      end
+
     cond do
       rule_parts in [nil, []] ->
         {:error, :rule_part_not_found}
+
       true ->
         {:ok, rule_parts}
     end
   end
 
-
   # Sorts and gathers the given rule parts based on their order and verb.
-    #
-    # Params:
-    # - rule_parts: A list of rule parts to be sorted and gathered.
-    #  Returns:
-    # A list of maps where the keys are the blocks and the values are lists of statements
+  #
+  # Params:
+  # - rule_parts: A list of rule parts to be sorted and gathered.
+  #  Returns:
+  # A list of maps where the keys are the blocks and the values are lists of statements
 
-
-    defp sort_and_gather(rule_parts) do
-      rule_parts
-      |> Enum.sort_by(&{&1.order, &1.verb})
-    end
+  defp sort_and_gather(rule_parts) do
+    rule_parts
+    |> Enum.sort_by(&{&1.order, &1.verb})
+  end
 
   # Processes the arguments and returns a map with atom keys and corresponding values.
   #
@@ -103,22 +107,27 @@ defmodule Tpe.RulePart.Read do
   #   - a map with atom keys and corresponding values
   defp process_arguments(arguments) do
     Enum.reduce(arguments, %{}, fn {key, value}, acc ->
-      value = case is_binary(value) do
-        true ->
-          case key do
-         "filter" ->
-            Regex.replace(~r/var\((:.*)\)/U, value, "Wongi.Engine.DSL.var(\\1)")
-          _ ->
-            #if it is a simple var() string
-            new_value = Regex.run(~r/var\(:(.*)\)/U, value, capture: :all_but_first)
-            case new_value do
-              [var] -> %Wongi.Engine.DSL.Var{name: String.to_atom(var)}
-              _ -> String.to_atom(value)
+      value =
+        case is_binary(value) do
+          true ->
+            case key do
+              "filter" ->
+                Regex.replace(~r/var\((:.*)\)/U, value, "Wongi.Engine.DSL.var(\\1)")
+
+              _ ->
+                # if it is a simple var() string
+                new_value = Regex.run(~r/var\(:(.*)\)/U, value, capture: :all_but_first)
+
+                case new_value do
+                  [var] -> %Wongi.Engine.DSL.Var{name: String.to_atom(var)}
+                  _ -> String.to_atom(value)
+                end
             end
-          end
-      _ ->
-        value
-      end
+
+          _ ->
+            value
+        end
+
       Map.put(acc, String.to_atom(key), value)
     end)
   end
@@ -151,17 +160,24 @@ defmodule Tpe.RulePart.Read do
         case Map.get(arguments, :filter, nil) do
           nil ->
             has(arguments.subject, arguments.predicate, arguments.object)
+
           _ ->
-            dune_test = Dune.eval_string(to_string(arguments.filter), allowlist: Tpe.RulePart.DuneAllowlist)
-            filter = if is_binary(dune_test.inspected) do
-              Code.eval_string(to_string(arguments.filter)) |> elem(0)
-            else
-              arguments.filter
-            end
+            dune_test =
+              Dune.eval_string(to_string(arguments.filter), allowlist: Tpe.RulePart.DuneAllowlist)
+
+            filter =
+              if is_binary(dune_test.inspected) do
+                Code.eval_string(to_string(arguments.filter)) |> elem(0)
+              else
+                arguments.filter
+              end
+
             has(arguments.subject, arguments.predicate, arguments.object, %{when: filter})
-          end
+        end
+
       "assign" ->
         eval = Map.get(arguments, :eval, nil)
+
         value =
           case to_string(eval) do
             # @TODO: This is a hack to get around a weird failure in the way I am using Dune and anonymous functions
@@ -175,17 +191,22 @@ defmodule Tpe.RulePart.Read do
 
             "dune" ->
               dune_test = Dune.eval_string(to_string(arguments.value), timeout: 100)
+
               if is_binary(dune_test.inspected) do
                 Code.eval_string(to_string(arguments.value)) |> elem(0)
               else
                 arguments.value
               end
+
             _ ->
               arguments.value
           end
+
         assign(arguments.name, value)
+
       "generator" ->
         gen(arguments.subject, arguments.predicate, arguments.object)
+
       _ ->
         throw("Unknown verb" <> rule_part.verb)
     end
@@ -203,14 +224,17 @@ defmodule Tpe.RulePart.Read do
   # Returns:
   # A map where the keys are the blocks and the values are lists of statements
   defp gather_rule_parts(rule_parts) do
-    rule_parts |> Enum.reduce([], fn rule_part, acc ->
+    rule_parts
+    |> Enum.reduce([], fn rule_part, acc ->
       statement = get_statement(rule_part)
       block = String.to_atom(rule_part.block)
+
       case acc[block] do
         nil ->
           put_in(acc, [block], [statement])
+
         _ ->
-          update_in(acc, [block], & &1 ++ [statement])
+          update_in(acc, [block], &(&1 ++ [statement]))
       end
     end)
   end
@@ -234,8 +258,7 @@ defmodule Tpe.RulePart.Read do
   #
   def get_processed_rule_parts(rule_id) do
     {:ok, rule_parts} = list_rule_parts_by_rule_id(rule_id)
-    #rule_parts |> sort_rule_parts() |> sort_assigns|> gather_rule_parts()
+    # rule_parts |> sort_rule_parts() |> sort_assigns|> gather_rule_parts()
     rule_parts |> sort_and_gather() |> gather_rule_parts()
   end
-
 end

@@ -11,7 +11,6 @@ defmodule Tpe.RulePart.ReadTest do
     :ok
   end
 
-
   test "get_rule_part/1 retrieves a rule part by its ID" do
     # Setup
     {:ok, rule} = Tpe.Rule.Create.create_rule(%{name: "Rule 1", description: "a new rule"})
@@ -65,34 +64,58 @@ defmodule Tpe.RulePart.ReadTest do
     assert {:error, :rule_part_not_found} == error
   end
 
+  describe "get_processed_rule_parts/1" do
+    test "returns the processed rule parts for a given rule ID" do
+      {:ok, rule} = Tpe.Rule.Create.create_rule(%{name: "Rule 1", description: "a new rule"})
 
-    describe "get_processed_rule_parts/1" do
-      test "returns the processed rule parts for a given rule ID" do
-        {:ok, rule} = Tpe.Rule.Create.create_rule(%{name: "Rule 1", description: "a new rule"})
-        attrs1 = %{rule_id: rule.id, block: "block1", verb: "has", arguments: %{subject: "Alice", predicate: "likes", object: "Bob"}}
-        attrs2 = %{rule_id: rule.id, block: "block2", verb: "assign", arguments: %{name: "var1", value: "value1"}}
-        {:ok, _} = Create.create_rule_part(attrs1)
-        {:ok, _} = Create.create_rule_part(attrs2)
+      attrs1 = %{
+        rule_id: rule.id,
+        block: "block1",
+        verb: "has",
+        arguments: %{subject: "Alice", predicate: "likes", object: "Bob"}
+      }
 
-        expected1 = %{name: :var1, value: :value1}
-        expected2 = %{subject: :Alice, predicate: :likes, object: :Bob}
+      attrs2 = %{
+        rule_id: rule.id,
+        block: "block2",
+        verb: "assign",
+        arguments: %{name: "var1", value: "value1"}
+      }
 
-        returned = Read.get_processed_rule_parts(rule.id)
+      {:ok, _} = Create.create_rule_part(attrs1)
+      {:ok, _} = Create.create_rule_part(attrs2)
 
-        assert expected1  == Map.from_struct(hd(returned[:block2]))
-        assert expected2.subject  == Map.from_struct(hd(returned[:block1])).subject
-      end
-      test "returns the processed rule parts for a given rule ID with compilation" do
-        {:ok, rule} = Tpe.Rule.Create.create_rule(%{name: "Rule 1", description: "a new rule"})
-        attrs1 = %{rule_id: rule.id, block: "block1", verb: "has", arguments: %{subject: "Alice", predicate: "likes", object: "Bob"}}
-        attrs2 = %{rule_id: rule.id, block: "block2", verb: "assign", arguments: %{name: :var1,  eval: "dune", value: "4 * 6 / 2"}}
+      expected1 = %{name: :var1, value: :value1}
+      expected2 = %{subject: :Alice, predicate: :likes, object: :Bob}
 
-        {:ok, _} = Create.create_rule_part(attrs1)
-        {:ok, _} = Create.create_rule_part(attrs2)
+      returned = Read.get_processed_rule_parts(rule.id)
 
-        returned = Enum.sort(Read.get_processed_rule_parts(rule.id))
-        assert 12.0 = Map.from_struct(hd(returned[:block2]))[:value]
+      assert expected1 == Map.from_struct(hd(returned[:block2]))
+      assert expected2.subject == Map.from_struct(hd(returned[:block1])).subject
+    end
 
-      end
+    test "returns the processed rule parts for a given rule ID with compilation" do
+      {:ok, rule} = Tpe.Rule.Create.create_rule(%{name: "Rule 1", description: "a new rule"})
+
+      attrs1 = %{
+        rule_id: rule.id,
+        block: "block1",
+        verb: "has",
+        arguments: %{subject: "Alice", predicate: "likes", object: "Bob"}
+      }
+
+      attrs2 = %{
+        rule_id: rule.id,
+        block: "block2",
+        verb: "assign",
+        arguments: %{name: :var1, eval: "dune", value: "4 * 6 / 2"}
+      }
+
+      {:ok, _} = Create.create_rule_part(attrs1)
+      {:ok, _} = Create.create_rule_part(attrs2)
+
+      returned = Enum.sort(Read.get_processed_rule_parts(rule.id))
+      assert 12.0 = Map.from_struct(hd(returned[:block2]))[:value]
     end
   end
+end

@@ -28,7 +28,7 @@ defmodule Tpe.Coupon.Delete do
   Deletes all coupons inserted before a given date.
 
   ## Examples
-  
+
   iex> {:ok, _} = Tpe.Coupon.Create.create_coupon(%{code: "ABC12387", active: true, count: 5, max_use: 6, promo_id: 1})
   iex> Tpe.Coupon.Delete.delete_by_inserted_at_before(~U[2048-11-15 10:00:00Z])
   {1, nil}

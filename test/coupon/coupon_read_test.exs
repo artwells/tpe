@@ -10,7 +10,6 @@ defmodule Tpe.CouponTest.Read do
     :ok
   end
 
-
   test "get_coupon/1 retrieves a coupon by id" do
     {:ok, coupon} =
       Coupon.Create.create_coupon(%{code: "ABC1235", active: true, count: 10, promo_id: 1})
