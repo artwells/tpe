@@ -15,6 +15,6 @@ defmodule Tpe.RuleTest do
     changeset = Rule.changeset(rule, params)
 
     assert changeset.valid?
-    assert changeset.params == %{name: "New Rule", type: "advanced"}
+    assert changeset.params == %{"name" => "New Rule", "type" => "advanced"}
   end
 end

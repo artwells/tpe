@@ -30,7 +30,7 @@ defmodule Tpe.Rule.ReadTest do
       %{rule_id: rule.id, block: "tester block 1", verb: "verb", arguments: %{}},
       %{rule_id: rule.id, block: "tester block 2", verb: "verb", arguments: %{}}
     ]
-    Enum.each(rule_part_attrs, &Tpe.RulePart.RuleCreate.create_rule_part/1)
+    Enum.each(rule_part_attrs, &Tpe.RulePart.Create.create_rule_part/1)
 
     {:ok, %{rule: rule, rule_parts: rule_parts}} = Read.get_rule_and_rule_parts(rule.id)
     assert rule.name == "test rule"

@@ -14,7 +14,7 @@ defmodule Tpe.Rule.Update do
     iex> attrs = %{name: "Test Rule", description: "Test Description", type: "basic"}
     iex>{:ok, rule} = Tpe.Rule.Create.create_rule(attrs)
     iex> attrs = %{name: "New Rule", description: "New Description"}
-    iex> {:ok, new_rule} = Tpe.Rule.Update.update_rule(rule.id, attrs)
+    iex> {:ok, _new_rule} = Tpe.Rule.Update.update_rule(rule.id, attrs)
 
 
   """

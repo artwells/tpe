@@ -3,7 +3,6 @@ defmodule Tpe.Engine.UpdateTest do
   import Wongi.Engine
 
   alias Tpe.Engine.Create
-  alias Tpe.Engine.Update
   alias Tpe.TestTools
 
   setup do
@@ -37,7 +36,7 @@ defmodule Tpe.Engine.UpdateTest do
     assert Wongi.Engine.WME.new(:item, :discounted_total, 10.0) == wme_result |> hd()
     #confirm that the filters are added to the beta table
     join = engine.beta_table
-      |> Enum.filter(fn {key,val} -> is_map_key(val, :filters) && !is_nil(val.filters) end)
+      |> Enum.filter(fn {_key,val} -> is_map_key(val, :filters) && !is_nil(val.filters) end)
       |> hd()
       |> elem(1)
     assert %Wongi.Engine.Filter.GTE{

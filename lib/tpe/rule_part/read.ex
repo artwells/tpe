@@ -148,7 +148,7 @@ defmodule Tpe.RulePart.Read do
 
     case verb do
       "has" ->
-        case arguments.filter do
+        case Map.get(arguments, :filter, nil) do
           nil ->
             has(arguments.subject, arguments.predicate, arguments.object)
           _ ->

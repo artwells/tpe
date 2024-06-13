@@ -7,3 +7,5 @@ config :tpe, Tpe.Repo,
   hostname: "db",
   pool: Ecto.Adapters.SQL.Sandbox,
   pool_size: 30
+
+  config :logger, level: :info

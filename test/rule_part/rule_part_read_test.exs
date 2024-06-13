@@ -92,7 +92,6 @@ defmodule Tpe.RulePart.ReadTest do
 
         returned = Enum.sort(Read.get_processed_rule_parts(rule.id))
         assert 12.0 = Map.from_struct(hd(returned[:block2]))[:value]
-        IO.inspect(Map.from_struct(hd(returned[:block2])))
 
       end
     end
