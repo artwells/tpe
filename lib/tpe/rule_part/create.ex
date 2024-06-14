@@ -34,10 +34,12 @@ defmodule Tpe.RulePart.Create do
   It constructs the arguments and attributes required for creating the rule part, and then calls the create_rule_part function.
 
   Example:
-  has_rule_part(1, :item, :price, :price)
+  prep_rule_part(1, "forall", "has", :item, :price, :price)
 
   Params:
   - rule_id: The ID of the rule.
+  - block: The block of the rule part. Must be 'forall' or 'any'.
+  - verb: The verb of the rule part.  Must be 'has', 'neg', or 'ncc'.
   - subject: The subject of the rule part.
   - predicate: The predicate of the rule part.
   - object: The object of the rule part.
@@ -45,15 +47,21 @@ defmodule Tpe.RulePart.Create do
   Returns:
   The created rule part.
   """
-  def has_rule_part(rule_id, subject, predicate, object, filter \\ nil) do
+  def prep_rule_part(rule_id, block, verb, subject, predicate, object, filter \\ nil) do
     args = %{
       subject: "var(:#{subject})",
       predicate: predicate,
       object: "var(:#{object})",
       filter: filter
     }
+    if verb != "has" && verb != "neg" && verb != "ncc" do
+      raise ArgumentError, "Invalid verb. Verb must be 'has' or 'neg' or 'ncc'."
+    end
+    if block != "forall" && block != "any" do
+      raise ArgumentError, "Invalid verb. Block must be 'forall' or 'any'."
+    end
 
-    attrs = %{rule_id: rule_id, block: "forall", verb: "has", arguments: args}
+    attrs = %{rule_id: rule_id, block: block, verb: verb, arguments: args}
     create_rule_part(attrs)
   end
 

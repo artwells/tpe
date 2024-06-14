@@ -22,9 +22,9 @@ defmodule Tpe.Engine.CreateTest do
         :discounted_total
       )
 
-    {:ok, _} = Tpe.RulePart.Create.has_rule_part(rule.id, :item, :price, :price)
-    {:ok, _} = Tpe.RulePart.Create.has_rule_part(rule.id, :item, :quantity, :quantity)
-    {:ok, _} = Tpe.RulePart.Create.has_rule_part(rule.id, :item, :discount, :discount)
+    {:ok, _} = Tpe.RulePart.Create.prep_rule_part(rule.id, "forall", "has", :item, :price, :price)
+    {:ok, _} = Tpe.RulePart.Create.prep_rule_part(rule.id, "forall", "has", :item, :quantity, :quantity)
+    {:ok, _} = Tpe.RulePart.Create.prep_rule_part(rule.id, "forall", "has", :item, :discount, :discount)
 
     {:ok, _} =
       Tpe.RulePart.Create.assign_rule_part(
