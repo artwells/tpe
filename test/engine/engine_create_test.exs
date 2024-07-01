@@ -29,6 +29,7 @@ defmodule Tpe.Engine.CreateTest do
     {:ok, _} =
       Tpe.RulePart.Create.assign_rule_part(
         rule.id,
+        "forall",
         :base_total,
         "&(&1[:price] * &1[:quantity])",
         "dune"
@@ -37,6 +38,7 @@ defmodule Tpe.Engine.CreateTest do
     {:ok, _} =
       Tpe.RulePart.Create.assign_rule_part(
         rule.id,
+        "forall",
         :discounted_total,
         "&(&1[:base_total]) * &1[:discount]",
         "dune"

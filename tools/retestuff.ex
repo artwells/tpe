@@ -24,30 +24,46 @@ import Wongi.Engine.DSL
 
 #################
 
-rule =
-  rule(
-    forall: [
-      has(var(:planet), :satellite, var(:satellite)),
-      has(var(:planet), :mass, var(:planet_mass)),
-      has(var(:satellite), :mass, var(:sat_mass)),
-      has(var(:satellite), :distance, var(:distance)),
-      assign(:pull, &(6.674e-11 * &1[:sat_mass] * &1[:planet_mass] / :math.pow(&1[:distance], 2)))
-    ],
-    do: [
-      gen(var(:satellite), :pull, var(:pull))
-    ]
-  )
+# rule =
+#   rule(
+#     forall: [
+#       has(var(:planet), :satellite, var(:satellite)),
+#       has(var(:planet), :mass, var(:planet_mass)),
+#       has(var(:satellite), :mass, var(:sat_mass)),
+#       has(var(:satellite), :distance, var(:distance)),
+#       assign(:pull, &(6.674e-11 * &1[:sat_mass] * &1[:planet_mass] / :math.pow(&1[:distance], 2)))
+#     ],
+#     do: [
+#       gen(var(:satellite), :pull, var(:pull))
+#     ]
+#   )
 
-engine =
-  new()
-  |> compile(rule)
-  |> assert(:earth, :satellite, :moon)
-  |> assert(:earth, :mass, 5.972e24)
-  |> assert(:moon, :mass, 7.34767309e22)
-  |> assert(:moon, :distance, 384_400.0e3)
+ rule =
+   rule(
+     none: [
+    neg(var(:planet), :umbrella, 6),
+     #  assign(:pull, &(6.674e-11 * &1[:sat_mass] * &1[:planet_mass] / :math.pow(&1[:distance], 2)))
+     ],
+     do: [
+       gen(var(:satellite), :pull, var(:pull))
+     ]
+   )
 
-[wme] = engine |> select(:moon, :pull, :_) |> Enum.to_list()
-IO.inspect(wme.object)
+ engine =
+   new()
+   |> compile(rule)
+   |> assert(:earth, :satellite, 4)
+
+# engine =
+#   new()
+#   |> compile(rule)
+#   |> assert(:earth, :satellite, :moon)
+#   |> assert(:earth, :mass, 5.972e24)
+#   |> assert(:moon, :mass, 7.34767309e22)
+#   |> assert(:moon, :distance, 384_400.0e3)
+
+[wme] = engine |> select(:earth, :_, :_) |> Enum.to_list()
+IO.inspect(wme)
 
 
 #iex(38)> Enum.map(entity(engine,"Alice"), fn {a,b} -> {a,b} end)

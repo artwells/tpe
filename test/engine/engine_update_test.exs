@@ -23,7 +23,6 @@ defmodule Tpe.Engine.UpdateTest do
         :discounted_total,
         :discounted_total
       )
-
     {:ok, _} = Tpe.RulePart.Create.prep_rule_part(rule.id, "forall", "has", :item, :price, :price)
 
     {:ok, _} =
@@ -42,6 +41,7 @@ defmodule Tpe.Engine.UpdateTest do
     {:ok, _} =
       Tpe.RulePart.Create.assign_rule_part(
         rule.id,
+        "forall",
         :base_total,
         "&(&1[:price] * &1[:quantity])",
         "dune"
@@ -50,6 +50,7 @@ defmodule Tpe.Engine.UpdateTest do
     {:ok, _} =
       Tpe.RulePart.Create.assign_rule_part(
         rule.id,
+        "forall",
         :discounted_total,
         "&(&1[:base_total]) * &1[:discount]",
         "dune"

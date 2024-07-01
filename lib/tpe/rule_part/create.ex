@@ -23,7 +23,6 @@ defmodule Tpe.RulePart.Create do
       %Tpe.RulePart{}
       |> Tpe.RulePart.changeset(attrs)
       |> Tpe.Repo.insert()
-
     rule_part
   end
 
@@ -54,11 +53,12 @@ defmodule Tpe.RulePart.Create do
       object: "var(:#{object})",
       filter: filter
     }
-    if verb != "has" && verb != "neg" && verb != "ncc" do
-      raise ArgumentError, "Invalid verb. Verb must be 'has' or 'neg' or 'ncc'."
+    if verb != "has" && verb != "neg" do
+      raise ArgumentError, "Invalid verb. Verb must be 'has' or 'neg'."
     end
-    if block != "forall" && block != "any" do
-      raise ArgumentError, "Invalid verb. Block must be 'forall' or 'any'."
+    # note that any and none do not seem to work in Wongi
+    if block != "forall" && block != "any"  && block != "ncc" do
+      raise ArgumentError, "Invalid verb. Block must be 'forall' or 'any' or 'ncc'."
     end
 
     attrs = %{rule_id: rule_id, block: block, verb: verb, arguments: args}
@@ -80,15 +80,15 @@ defmodule Tpe.RulePart.Create do
   The newly created rule part.
 
   Examples:
-  assign_rule_part(1, "part1", "value1")
+  assign_rule_part(1, "forall", "part1", "value1")
   # => %Tpe.RulePart{...}
 
-  assign_rule_part(2, "part2", "value2", "eval2", 1)
+  assign_rule_part(2, "forall", "part2", "value2", "eval2", 1)
   # => %Tpe.RulePart{...}
   """
-  def assign_rule_part(rule_id, name, value, eval \\ nil, order \\ 0) do
+  def assign_rule_part(rule_id, block, name, value, eval \\ nil, order \\ 0) do
     args = %{name: name, eval: eval, value: value}
-    attrs = %{rule_id: rule_id, order: order, block: "forall", verb: "assign", arguments: args}
+    attrs = %{rule_id: rule_id, order: order, block: block, verb: "assign", arguments: args}
     new_rule = create_rule_part(attrs)
     {:ok, assigns} = Tpe.RulePart.Read.list_rule_parts_by_rule_id(rule_id, "assign")
 

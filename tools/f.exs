@@ -12,8 +12,8 @@ import Wongi.Engine
 {:ok, _} = Tpe.RulePart.Create.prep_rule_part(rule.id, "forall", "has", :item, :price, :price )
 {:ok, _} = Tpe.RulePart.Create.prep_rule_part(rule.id, "forall", "has", :item, :quantity, :quantity, "Wongi.Engine.DSL.gte( var(:quantity), 1)")
 {:ok, _} = Tpe.RulePart.Create.prep_rule_part(rule.id, "forall", "has", :item, :discount, :discount)
-{:ok, _} = Tpe.RulePart.Create.assign_rule_part(rule.id, :base_total, "&(&1[:price] * &1[:quantity])", "dune")
-{:ok, _} = Tpe.RulePart.Create.assign_rule_part(rule.id, :discounted_total, "&(&1[:base_total]) * &1[:discount]", "dune")
+{:ok, _} = Tpe.RulePart.Create.assign_rule_part(rule.id, "forall", :base_total, "&(&1[:price] * &1[:quantity])", "dune")
+{:ok, _} = Tpe.RulePart.Create.assign_rule_part(rule.id, "forall",:discounted_total, "&(&1[:base_total]) * &1[:discount]", "dune")
 
 engine = Tpe.Engine.Create.create_engine()
 
