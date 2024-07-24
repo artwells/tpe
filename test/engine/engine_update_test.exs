@@ -23,6 +23,7 @@ defmodule Tpe.Engine.UpdateTest do
         :discounted_total,
         :discounted_total
       )
+
     {:ok, _} = Tpe.RulePart.Create.prep_rule_part(rule.id, "forall", "has", :item, :price, :price)
 
     {:ok, _} =
@@ -36,7 +37,8 @@ defmodule Tpe.Engine.UpdateTest do
         "Wongi.Engine.DSL.gte( var(:quantity), 1)"
       )
 
-    {:ok, _} = Tpe.RulePart.Create.prep_rule_part(rule.id, "forall", "has", :item, :discount, :discount)
+    {:ok, _} =
+      Tpe.RulePart.Create.prep_rule_part(rule.id, "forall", "has", :item, :discount, :discount)
 
     {:ok, _} =
       Tpe.RulePart.Create.assign_rule_part(

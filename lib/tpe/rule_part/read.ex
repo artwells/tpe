@@ -132,33 +132,33 @@ defmodule Tpe.RulePart.Read do
     end)
   end
 
-
   defp dune_filter(filter) do
-      # Evaluates the given filter using Dune and returns the result.
-      #
-      # The `filter` parameter is a string representing the filter to be evaluated.
-      #
-      # If the evaluated result is a binary, it is further evaluated using Code and
-      # the first element of the result is returned. Otherwise, the original filter
-      # is returned.
-      #
-      # Examples:
-      #
-      #   iex> dune_filter("1 + 2")
-      #   3
-      #
-      #   iex> dune_filter("foo")
-      #   "foo"
-      #
-      # Returns the evaluated result or the original filter.
-      dune_test =
-        Dune.eval_string(to_string(filter), allowlist: Tpe.RulePart.DuneAllowlist)
-        if is_binary(dune_test.inspected) do
-          Code.eval_string(to_string(filter)) |> elem(0)
-        else
-          filter
-        end
+    # Evaluates the given filter using Dune and returns the result.
+    #
+    # The `filter` parameter is a string representing the filter to be evaluated.
+    #
+    # If the evaluated result is a binary, it is further evaluated using Code and
+    # the first element of the result is returned. Otherwise, the original filter
+    # is returned.
+    #
+    # Examples:
+    #
+    #   iex> dune_filter("1 + 2")
+    #   3
+    #
+    #   iex> dune_filter("foo")
+    #   "foo"
+    #
+    # Returns the evaluated result or the original filter.
+    dune_test =
+      Dune.eval_string(to_string(filter), allowlist: Tpe.RulePart.DuneAllowlist)
+
+    if is_binary(dune_test.inspected) do
+      Code.eval_string(to_string(filter)) |> elem(0)
+    else
+      filter
     end
+  end
 
   # Retrieves the statement based on the given rule_part.
   #
@@ -188,11 +188,13 @@ defmodule Tpe.RulePart.Read do
         case Map.get(arguments, :filter, nil) do
           nil ->
             has(arguments.subject, arguments.predicate, arguments.object)
+
           _ ->
             filter = dune_filter(arguments.filter)
 
             has(arguments.subject, arguments.predicate, arguments.object, %{when: filter})
         end
+
       "neg" ->
         neg(arguments.subject, arguments.predicate, arguments.object)
 

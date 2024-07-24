@@ -23,6 +23,7 @@ defmodule Tpe.RulePart.Create do
       %Tpe.RulePart{}
       |> Tpe.RulePart.changeset(attrs)
       |> Tpe.Repo.insert()
+
     rule_part
   end
 
@@ -53,11 +54,13 @@ defmodule Tpe.RulePart.Create do
       object: "var(:#{object})",
       filter: filter
     }
+
     if verb != "has" && verb != "neg" do
       raise ArgumentError, "Invalid verb. Verb must be 'has' or 'neg'."
     end
+
     # note that any and none do not seem to work in Wongi
-    if block != "forall" && block != "any"  && block != "ncc" do
+    if block != "forall" && block != "any" && block != "ncc" do
       raise ArgumentError, "Invalid verb. Block must be 'forall' or 'any' or 'ncc'."
     end
 
