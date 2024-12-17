@@ -76,9 +76,9 @@ defmodule Tpe.CouponTest.Update do
     assert true == updated_coupon3.active
     refute true == updated_coupon4.active
 
-    assert updated_coupon1.updated_at > coupon1.updated_at
-    assert updated_coupon2.updated_at > coupon2.updated_at
-    assert updated_coupon3.updated_at > coupon3.updated_at
-    assert updated_coupon4.updated_at == coupon4.updated_at
+    assert DateTime.compare(updated_coupon1.updated_at, coupon1.updated_at) == :gt
+    assert DateTime.compare(updated_coupon2.updated_at, coupon2.updated_at) == :gt
+    assert DateTime.compare(updated_coupon3.updated_at, coupon3.updated_at) == :gt
+    assert DateTime.compare(updated_coupon4.updated_at, coupon4.updated_at) == :eq
   end
 end

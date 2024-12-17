@@ -24,3 +24,6 @@ tpe-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+
+# vs files
+/.vs/ 

@@ -35,7 +35,7 @@ defmodule Tpe.CoupTest.Create do
     # check that the code is the correct length from config
     assert String.length(coupon.code) == Application.fetch_env!(:tpe, :code_length)
     # check that inserted_at and updated_at are the same and not null
-    assert coupon.inserted_at == coupon.updated_at
+    assert DateTime.compare(coupon.inserted_at, coupon.updated_at) == :eq
     assert coupon.inserted_at != nil
   end
 
