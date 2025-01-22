@@ -25,10 +25,9 @@ defmodule Tpe.MixProject do
   @compile {:nowarn_unused_function, {:process_arguments, 1}}
   defp deps do
     [
-      {:dep_from_hexpm, "~> 0.3.0"},
       {:ecto_sql, "~> 3.11.1"},
       {:postgrex, ">= 0.0.0"},
-      {:csv, "~> 2.3.0"},
+      {:csv, "~> 2.3.0", only: :test},
       {:ex_doc, ">= 0.0.0", runtime: false, only: [:docs, :dev]},
       {:wongi_engine, "~> 0.9.13"},
       {:jason, "~> 1.4"},
