@@ -6,6 +6,7 @@ defmodule Tpe.RulePart.Read do
   use Ecto.Schema
   use Ecto.Repo, otp_app: :my_app, adapter: Ecto.Adapters.Postgres
   import Ecto.Query, only: [from: 2]
+  import Wongi.Engine.DSL, only: [has: 4]
 
   @doc """
   Retrieves a rule part by its ID.
@@ -180,7 +181,6 @@ defmodule Tpe.RulePart.Read do
     import Wongi.Engine.DSL
     arguments = Map.get(rule_part, :arguments)
     arguments = arguments |> process_arguments()
-
     verb = Map.get(rule_part, :verb)
 
     case verb do
@@ -192,7 +192,7 @@ defmodule Tpe.RulePart.Read do
           _ ->
             filter = dune_filter(arguments.filter)
 
-            has(arguments.subject, arguments.predicate, arguments.object, %{when: filter})
+            has(arguments.subject, arguments.predicate, arguments.object, when: filter)
         end
 
       "neg" ->
@@ -231,7 +231,7 @@ defmodule Tpe.RulePart.Read do
         gen(arguments.subject, arguments.predicate, arguments.object)
 
       _ ->
-        raise MatchError, "Unknown verb"
+        raise RuntimeError, "Unknown verb"
     end
   end
 

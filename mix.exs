@@ -27,7 +27,7 @@ defmodule Tpe.MixProject do
     [
       {:ecto_sql, "~> 3.11.1"},
       {:postgrex, ">= 0.0.0"},
-      {:csv, "~> 2.3.0", only: :test},
+      {:csv, "~> 2.3.0"},
       {:ex_doc, ">= 0.0.0", runtime: false, only: [:docs, :dev]},
       {:wongi_engine, "~> 0.9.13"},
       {:jason, "~> 1.4"},
@@ -35,6 +35,6 @@ defmodule Tpe.MixProject do
     ]
   end
 
-  defp elixirc_paths(:test), do: ["lib", "test/helpers"]
+  defp elixirc_paths(:test), do: ["lib", "test/helpers", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
 end
