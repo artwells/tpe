@@ -2,12 +2,12 @@ defmodule Tpe.RulePart.DeleteTest do
   use ExUnit.Case, async: false
   alias Tpe.RulePart.Delete
   alias Tpe.RulePart.Create
-  alias Tpe.TestTools
+  
 
   doctest Tpe.RulePart.Delete, import: true
 
   setup do
-    TestTools.sandbox_connection()
+   Tpe.TestTools.sandbox_connection()
     :ok
   end
 

@@ -3,10 +3,10 @@ defmodule Tpe.Engine.UpdateTest do
   import Wongi.Engine
 
   alias Tpe.Engine.Create
-  alias Tpe.TestTools
+  
 
   setup do
-    TestTools.sandbox_connection()
+   Tpe.TestTools.sandbox_connection()
     :ok
   end
 

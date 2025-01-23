@@ -3,8 +3,7 @@ defmodule Tpe.RuleTest do
   alias Tpe.Rule
 
   setup do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Tpe.Repo)
-    Ecto.Adapters.SQL.Sandbox.mode(Tpe.Repo, {:shared, self()})
+    Tpe.TestTools.sandbox_connection()
     :ok
   end
 

@@ -5,8 +5,7 @@ defmodule Tpe.Rule.UpdateTest do
   doctest(Tpe.Rule.Update)
 
   setup do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Tpe.Repo)
-    Ecto.Adapters.SQL.Sandbox.mode(Tpe.Repo, {:shared, self()})
+    Tpe.TestTools.sandbox_connection()
     :ok
   end
 
