@@ -1,10 +1,9 @@
 defmodule Tpe.Engine.CreateTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: false
   alias Tpe.Engine.Create
-  alias Tpe.TestTools
 
   setup do
-    TestTools.sandbox_connection()
+    Tpe.TestTools.sandbox_connection()
     :ok
   end
 

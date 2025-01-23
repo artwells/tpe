@@ -1,5 +1,5 @@
 defmodule Tpe.RulePart.ReadTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
   alias Tpe.RulePart.Create
   alias Tpe.RulePart.Read
   alias Tpe.TestTools

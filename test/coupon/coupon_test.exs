@@ -1,5 +1,5 @@
 defmodule Tpe.CouponTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
   use Ecto.Repo, otp_app: :my_app, adapter: Ecto.Adapters.Postgres
   alias Tpe.Coupon
   doctest Tpe.Coupon, import: true

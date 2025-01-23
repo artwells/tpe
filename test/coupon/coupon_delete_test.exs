@@ -1,5 +1,5 @@
 defmodule Tpe.Test.Coupon.Delete do
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
   use Ecto.Repo, otp_app: :my_app, adapter: Ecto.Adapters.Postgres
   alias Tpe.TestTools
   alias Tpe.Coupon

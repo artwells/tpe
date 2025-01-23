@@ -151,7 +151,7 @@ defmodule Tpe.RulePart.Read do
     #
     # Returns the evaluated result or the original filter.
     dune_test =
-      Dune.eval_string(to_string(filter), allowlist: Tpe.RulePart.DuneAllowlist)
+      Dune.eval_string(to_string(filter), allowlist: Tpe.RulePart.DuneAllowlist, timeout: 100)
 
     if is_binary(dune_test.inspected) do
       Code.eval_string(to_string(filter)) |> elem(0)

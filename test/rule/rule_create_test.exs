@@ -1,11 +1,10 @@
 defmodule Tpe.Rule.CreateTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: false
   alias Tpe.Rule.Create
   doctest(Tpe.Rule.Create)
 
   setup do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Tpe.Repo)
-    Ecto.Adapters.SQL.Sandbox.mode(Tpe.Repo, {:shared, self()})
+    Tpe.TestTools.sandbox_connection()
     :ok
   end
 

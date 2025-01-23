@@ -1,5 +1,5 @@
 defmodule Tpe.RulePart.UpdateTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
   alias Tpe.RulePart.Update
   alias Tpe.RulePart.Create
   alias Tpe.TestTools
