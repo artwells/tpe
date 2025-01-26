@@ -7,6 +7,7 @@ defmodule Tpe.RulePart.Read do
   use Ecto.Repo, otp_app: :tpe, adapter: Ecto.Adapters.Postgres
   import Ecto.Query, only: [from: 2]
   import Wongi.Engine.DSL, only: [has: 4]
+  require Logger
 
   @doc """
   Retrieves a rule part by its ID.
@@ -280,7 +281,15 @@ defmodule Tpe.RulePart.Read do
   #     # {:ok, [processed_rule_part1, processed_rule_part2, ...]}
   #
   def get_processed_rule_parts(rule_id) do
-    {:ok, rule_parts} = list_rule_parts_by_rule_id(rule_id)
-    rule_parts |> sort_and_gather() |> gather_rule_parts()
+    case(list_rule_parts_by_rule_id(rule_id)) do
+      {:error, :rule_part_not_found} ->
+        Logger.warning("Rule ID #{rule_id} has no rule parts")
+        []
+
+      {:ok, rule_parts} ->
+        rule_parts
+    end
+    |> sort_and_gather()
+    |> gather_rule_parts()
   end
 end
