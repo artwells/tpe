@@ -4,7 +4,7 @@ defmodule Tpe.RulePart.Update do
   """
 
   use Ecto.Schema
-  use Ecto.Repo, otp_app: :my_app, adapter: Ecto.Adapters.Postgres
+  use Ecto.Repo, otp_app: :tpe, adapter: Ecto.Adapters.Postgres
 
   @doc """
   Updates a rule part with the given ID and attributes.

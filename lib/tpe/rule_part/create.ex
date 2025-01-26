@@ -4,7 +4,7 @@ defmodule Tpe.RulePart.Create do
   """
 
   use Ecto.Schema
-  use Ecto.Repo, otp_app: :my_app, adapter: Ecto.Adapters.Postgres
+  use Ecto.Repo, otp_app: :tpe, adapter: Ecto.Adapters.Postgres
 
   @doc """
   Creates a new rule part with the given attributes.

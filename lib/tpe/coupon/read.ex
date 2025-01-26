@@ -1,6 +1,6 @@
 defmodule Tpe.Coupon.Read do
   use Ecto.Schema
-  use Ecto.Repo, otp_app: :my_app, adapter: Ecto.Adapters.Postgres
+  use Ecto.Repo, otp_app: :tpe, adapter: Ecto.Adapters.Postgres
   import Ecto.Query, only: [from: 2]
 
   @moduledoc """
