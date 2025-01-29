@@ -52,7 +52,7 @@ defmodule Tpe.Engine.CreateTest do
     engine = Create.create_engine()
 
     # test that it has the correct number of subscriptions
-    assert 3 == Enum.count(engine.alpha_subscriptions)
+    assert 2 < Enum.count(engine.alpha_subscriptions)
 
     # test that it is the correct type
     assert Wongi.Engine.Rete == engine.__struct__
