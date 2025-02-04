@@ -1,17 +1,19 @@
 defmodule Tpe.Test.Coupon.Delete do
   use ExUnit.Case, async: false
   use Ecto.Repo, otp_app: :my_app, adapter: Ecto.Adapters.Postgres
-  
+
   alias Tpe.Coupon
   doctest Tpe.Coupon.Delete, import: true
 
   setup do
-   Tpe.TestTools.sandbox_connection()
+    Tpe.TestTools.sandbox_connection()
     :ok
   end
 
   test "delete_by_promo_id/1 deletes all coupons with a given promo_id" do
-    promo_id = 12
+    # delete all coupons before the current date
+    _ = Coupon.Delete.delete_by_inserted_at_before(DateTime.utc_now())
+    promo_id = 0
 
     {:ok, _coupon1} =
       Coupon.Create.create_coupon(%{code: "ABC123", active: true, count: 10, promo_id: promo_id})
@@ -29,6 +31,9 @@ defmodule Tpe.Test.Coupon.Delete do
   end
 
   test "delete_by_inserted_at_before/1 deletes all coupons inserted before a given date" do
+    # delete all coupons before the current date
+    _ = Coupon.Delete.delete_by_inserted_at_before(DateTime.utc_now())
+
     {:ok, coupon1} =
       Coupon.Create.create_coupon(%{code: "TIMEABC123", active: true, count: 10, promo_id: 1})
 

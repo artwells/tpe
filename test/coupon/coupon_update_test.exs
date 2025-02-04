@@ -1,12 +1,12 @@
 defmodule Tpe.CouponTest.Update do
   use ExUnit.Case, async: false
   use Ecto.Repo, otp_app: :my_app, adapter: Ecto.Adapters.Postgres
-  
+
   alias Tpe.Coupon
   doctest Tpe.Coupon.Update, import: true
 
   setup do
-   Tpe.TestTools.sandbox_connection()
+    Tpe.TestTools.sandbox_connection()
     :ok
   end
 
@@ -49,7 +49,7 @@ defmodule Tpe.CouponTest.Update do
   end
 
   test "set_active_by_promo_id/2 sets the active status of coupons by promo_id" do
-    promo_id = 1
+    promo_id = 0
     active = true
 
     {:ok, coupon1} =

@@ -9,7 +9,8 @@ defmodule Tpe.Coupon.Delete do
   Deletes all coupons with a given promo ID.
 
   ## Examples
-  iex> {:ok, coupon} = Tpe.Coupon.Create.create_coupon(%{code: "ABC12387", active: true, count: 5, max_use: 6, promo_id: 1})
+  iex> _ = Coupon.Delete.delete_by_inserted_at_before(DateTime.utc_now())
+  iex> {:ok, coupon} = Tpe.Coupon.Create.create_coupon(%{code: "ABC12387", active: true, count: 5, max_use: 6, promo_id: 0})
   iex> coup = Map.from_struct(coupon)
   iex> Tpe.Coupon.Delete.delete_by_promo_id(coup.promo_id)
   {1, nil}
@@ -29,7 +30,8 @@ defmodule Tpe.Coupon.Delete do
 
   ## Examples
 
-  iex> {:ok, _} = Tpe.Coupon.Create.create_coupon(%{code: "ABC12387", active: true, count: 5, max_use: 6, promo_id: 1})
+  iex> _ = Coupon.Delete.delete_by_inserted_at_before(DateTime.utc_now())
+  iex> {:ok, _} = Tpe.Coupon.Create.create_coupon(%{code: "ABC12387", active: true, count: 5, max_use: 6, promo_id: 0})
   iex> Tpe.Coupon.Delete.delete_by_inserted_at_before(~U[2048-11-15 10:00:00Z])
   {1, nil}
 

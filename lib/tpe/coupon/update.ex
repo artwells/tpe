@@ -57,9 +57,9 @@ defmodule Tpe.Coupon.Update do
 
   ## Examples
 
-  iex> {:ok, coupon1} = Tpe.Coupon.Create.create_coupon(%{code: "ABC123", active: false, count: 10, promo_id: 1})
-  iex> {:ok, coupon2} = Tpe.Coupon.Create.create_coupon(%{code: "DEF456", active: false, count: 5, promo_id: 1})
-  iex> Coupon.Update.set_active_by_promo_id(1, true)
+  iex> {:ok, coupon1} = Tpe.Coupon.Create.create_coupon(%{code: "ABC123", active: false, count: 10, promo_id: 0})
+  iex> {:ok, coupon2} = Tpe.Coupon.Create.create_coupon(%{code: "DEF456", active: false, count: 5, promo_id: 0})
+  iex> Coupon.Update.set_active_by_promo_id(0, true)
   {2, nil}
   iex> updated_coupon1 = Tpe.Repo.get(Tpe.Coupon, coupon1.id)
   iex> updated_coupon2 = Tpe.Repo.get(Tpe.Coupon, coupon2.id)
@@ -85,5 +85,36 @@ defmodule Tpe.Coupon.Update do
       update: [set: [active: ^active, updated_at: ^now]]
     )
     |> Tpe.Repo.update_all([])
+  end
+
+  @doc """
+  Sets the active status of a coupon.
+
+
+  ## Examples
+
+  iex > {:ok, coupon} =
+    Tpe.Coupon.Create.create_coupon(%{code: "ABC123", active: false, count: 10, promo_id: 1})
+
+  iex > Coupon.Update.set_active(coupon, true)
+  {:ok, %Tpe.Coupon{...}}
+
+  ## Params
+
+  - `coupon` (`Tpe.Coupon`): The coupon struct.
+
+  - `active` (`boolean`): The active status to set.
+
+  ## Returns
+
+  The updated coupon.
+  """
+
+  def set_active(coupon, active) do
+    now = DateTime.utc_now()
+
+    coupon
+    |> Ecto.Changeset.change(active: active, updated_at: now)
+    |> Tpe.Repo.update()
   end
 end
