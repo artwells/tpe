@@ -13,7 +13,7 @@
 
 ```bash
 # Clone the repository
-git clone git@github.com:artwells/pe.git
+git clone git@github.com:artwells/tpe.git
 
 # Install dependencies
 mix deps.get
@@ -31,7 +31,6 @@ mix test
 
 ## Architecture
 
-- Coupon management via GenServer
 - Rule engine using Wongi
 - PostgreSQL for persistence
 - Ecto for database interactions
